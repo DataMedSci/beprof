@@ -1,4 +1,4 @@
-from curve import Curve
+from curve import Curve, Axis
 import numpy as np
 
 __author__ = 'grzanka'
@@ -23,41 +23,43 @@ class Profile(Curve):
             return
         self.axis = getattr(obj, 'axis', None)
 
+
+
     def x_at_y(self, y, reverse=False):
-        # """
-        # Calculates inverse profile - for given y returns x such that f(x) = y
-        # If given y is not found in the self.y, then interpolation is used.
-        # By default returns first result looking from left, if reverse argument set to True, looks from right.
-        # If y is outside range of self.y then np.nan is returned.
-        #
-        # Use inverse lookup to get x-coordinate of first point:
-        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(5.))
-        # 0.0
-        #
-        # Use inverse lookup to get x-coordinate of second point, looking from left:
-        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10.))
-        # 0.1
-        #
-        # Use inverse lookup to get x-coordinate of fourth point, looking from right:
-        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10., reverse=True))
-        # 0.3
-        #
-        # Use interpolation between first two points:
-        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(7.5))
-        # 0.05
-        #
-        # Looking for y below self.y range:
-        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(2.0))
-        # nan
-        #
-        # Looking for y above self.y range:
-        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(22.0))
-        # nan
-        #
-        # :param y: reference value
-        # :param reverse: boolean value - direction of lookup
-        # :return: x value corresponding to given y or NaN if not found
-        # """
+        """
+        Calculates inverse profile - for given y returns x such that f(x) = y
+        If given y is not found in the self.y, then interpolation is used.
+        By default returns first result looking from left, if reverse argument set to True, looks from right.
+        If y is outside range of self.y then np.nan is returned.
+
+        Use inverse lookup to get x-coordinate of first point:
+        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(5.))
+        0.0
+
+        Use inverse lookup to get x-coordinate of second point, looking from left:
+        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10.))
+        0.1
+
+        Use inverse lookup to get x-coordinate of fourth point, looking from right:
+        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10., reverse=True))
+        0.3
+
+        Use interpolation between first two points:
+        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(7.5))
+        0.05
+
+        Looking for y below self.y range:
+        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(2.0))
+        nan
+
+        Looking for y above self.y range:
+        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(22.0))
+        nan
+
+        :param y: reference value
+        :param reverse: boolean value - direction of lookup
+        :return: x value corresponding to given y or NaN if not found
+        """
 
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
@@ -154,6 +156,13 @@ class LateralProfile(Profile):
             return
         self.axis = getattr(obj, 'axis', None)
 
+    def fix_profile(self, coordinate = Axis.x):
+        fun = lambda data: data[coordinate-1]
+        tempdata = [(self.x[ind], self.y[ind]) for ind in range(0,len(self.x))]
+        tempdata.sort(key=fun)
+        self.x = [item[0] for item in tempdata]
+        self.y = [item[1] for item in tempdata]
+
     def left_penumbra(self, upper=0.9, lower=0.1):
         return self.x_at_y(upper) - self.x_at_y(lower)
 
@@ -164,8 +173,9 @@ class LateralProfile(Profile):
         return 0.5 * (self.x_at_y(level) + self.x_at_y(level, reverse=True))
 
     def mirror(self, m=0):
+        # self.y = 2*m - self.y
         self.x = 2*m - self.x
-        # self.fix_profile()
+        self.fix_profile()
 
     def symmetrize(self):
         tmp = self.y[::-1].copy()
@@ -197,26 +207,28 @@ class DepthProfile(Profile):
 
 
 def main():
-    p = LateralProfile([[-1, 1], [0, -1], [1, 0], [2, 1], [3, 0], [4, 2]])
+    p = LateralProfile([[0, -1],[4, 2], [1, 0], [2, 1],[-1, 1], [3, 0]])
+
+    p.fix_profile()
     print("X:", p.x)
     print("Y:", p.y)
 
     p.mirror()
-
     print("X:", p.x)
     print("Y:", p.y)
 
 
     p.mirror()
-
     print("X:", p.x)
     print("Y:", p.y)
 
     p.mirror(3)
-
     print("X:", p.x)
     print("Y:", p.y)
 
+    p.mirror(4)
+    print("X:", p.x)
+    print("Y:", p.y)
 
     for y in (-1, 0, 0.5, 1, 1.5, 2, 5):
         print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
