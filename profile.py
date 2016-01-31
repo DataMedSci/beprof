@@ -164,8 +164,8 @@ class LateralProfile(Profile):
         return 0.5 * (self.x_at_y(level) + self.x_at_y(level, reverse=True))
 
     def mirror(self, m=0):
-        # self.y = 2*m - self.y
         self.x = 2*m - self.x
+        # self.fix_profile()
 
     def symmetrize(self):
         tmp = self.y[::-1].copy()
