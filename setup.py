@@ -5,10 +5,10 @@ from distutils.core import setup
 setup(
     name = 'beprof',
     packages = ['beprof'],
-    version = '1.0',
+    version = '0.1.0',
     description = 'Beam profile analysing tool',
-    author = 'Mateusz Krakowski',
-    author_email = 'mkrakowski.agh@gmail.com',
+    author = ['Leszek Grzanka', 'Mateusz Krakowski'],
+    author_email = 'grzanka@agh.edu.pl',
     url = 'https://github.com/grzanka/beprof',
     keywords = ["beam", "profile"],
     classifiers = [
