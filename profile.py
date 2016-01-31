@@ -24,40 +24,40 @@ class Profile(Curve):
         self.axis = getattr(obj, 'axis', None)
 
     def x_at_y(self, y, reverse=False):
-        """
-        Calculates inverse profile - for given y returns x such that f(x) = y
-        If given y is not found in the self.y, then interpolation is used.
-        By default returns first result looking from left, if reverse argument set to True, looks from right.
-        If y is outside range of self.y then np.nan is returned.
-
-        Use inverse lookup to get x-coordinate of first point:
-        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(5.))
-        0.0
-
-        Use inverse lookup to get x-coordinate of second point, looking from left:
-        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10.))
-        0.1
-
-        Use inverse lookup to get x-coordinate of fourth point, looking from right:
-        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10., reverse=True))
-        0.3
-
-        Use interpolation between first two points:
-        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(7.5))
-        0.05
-
-        Looking for y below self.y range:
-        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(2.0))
-        nan
-
-        Looking for y above self.y range:
-        >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(22.0))
-        nan
-
-        :param y: reference value
-        :param reverse: boolean value - direction of lookup
-        :return: x value corresponding to given y or NaN if not found
-        """
+        # """
+        # Calculates inverse profile - for given y returns x such that f(x) = y
+        # If given y is not found in the self.y, then interpolation is used.
+        # By default returns first result looking from left, if reverse argument set to True, looks from right.
+        # If y is outside range of self.y then np.nan is returned.
+        #
+        # Use inverse lookup to get x-coordinate of first point:
+        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(5.))
+        # 0.0
+        #
+        # Use inverse lookup to get x-coordinate of second point, looking from left:
+        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10.))
+        # 0.1
+        #
+        # Use inverse lookup to get x-coordinate of fourth point, looking from right:
+        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10., reverse=True))
+        # 0.3
+        #
+        # Use interpolation between first two points:
+        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(7.5))
+        # 0.05
+        #
+        # Looking for y below self.y range:
+        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(2.0))
+        # nan
+        #
+        # Looking for y above self.y range:
+        # >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(22.0))
+        # nan
+        #
+        # :param y: reference value
+        # :param reverse: boolean value - direction of lookup
+        # :return: x value corresponding to given y or NaN if not found
+        # """
 
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
@@ -80,6 +80,19 @@ class Profile(Curve):
         # B) if y < min(self.y) then condition self.y >= y will be satisfied on first item
         # np.argmax(cond) will be equal 0,
         # to exclude situation that y_handle[0] = y we also check if y < y_handle[0]
+
+        ## Consider this case: profiles values are descending from i.e. 5 to 1,
+        ## where f(0)=5, f(1)=4 ... f(4)=1
+        ## What would function x_at_y(2) return?
+
+        ## since ind==0 and 1 < 5 the if statement below is true and returned value
+        ## is nan. While the correct answer is 3 since f(3)=1.
+
+        ## Check main() function with the profile i entered there.
+        ## Also since the function returns x value given y value,
+        ## names of variable used in loop should be y not x (in my opinion)
+
+
         if ind == 0 and y < y_handle[0]:
             return np.nan
 
@@ -150,8 +163,9 @@ class LateralProfile(Profile):
     def center(self, level=0.5):
         return 0.5 * (self.x_at_y(level) + self.x_at_y(level, reverse=True))
 
-    def mirror(self):
-        self.y = self.y[::-1]
+    def mirror(self, m=0):
+        # self.y = 2*m - self.y
+        self.x = 2*m - self.x
 
     def symmetrize(self):
         tmp = self.y[::-1].copy()
@@ -183,11 +197,29 @@ class DepthProfile(Profile):
 
 
 def main():
-    p = Profile([[1, 0], [2, 1], [3, 0]])
+    p = LateralProfile([[-1, 1], [0, -1], [1, 0], [2, 1], [3, 0], [4, 2]])
     print("X:", p.x)
     print("Y:", p.y)
-    for x in (-1, 0, 0.5, 1, 1.5):
-        print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
+
+    p.mirror()
+
+    print("X:", p.x)
+    print("Y:", p.y)
+
+
+    p.mirror()
+
+    print("X:", p.x)
+    print("Y:", p.y)
+
+    p.mirror(3)
+
+    print("X:", p.x)
+    print("Y:", p.y)
+
+
+    for y in (-1, 0, 0.5, 1, 1.5, 2, 5):
+        print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
 
 
 if __name__ == '__main__':
