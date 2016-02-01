@@ -1,4 +1,4 @@
-from curve import Curve, Axis
+from curve import Curve, Axis, DataSerie
 import numpy as np
 
 __author__ = 'grzanka'
@@ -23,7 +23,21 @@ class Profile(Curve):
             return
         self.axis = getattr(obj, 'axis', None)
 
+    def fix_profile(self, axis = Axis.x):
 
+        tmp = list((self).view(DataSerie))
+        tmp.sort(key=lambda x: x[axis-1])
+
+        #not the best solution, works only for 2D  what method should I use here?
+        self.x = [x[0] for x in tmp]
+        self.y = [x[1] for x in tmp]
+
+        # another solution, still don't know how should I copy it to orginal array
+        # without loosing metadata if present
+
+        # tmp = np.asarray(self.view(DataSerie)).transpose()
+        # idx = np.argsort(tmp[axis-1])
+        # foo = tmp[:,idx].transpose()
 
     def x_at_y(self, y, reverse=False):
         """
@@ -156,12 +170,14 @@ class LateralProfile(Profile):
             return
         self.axis = getattr(obj, 'axis', None)
 
-    def fix_profile(self, coordinate = Axis.x):
-        fun = lambda data: data[coordinate-1]
-        tempdata = [(self.x[ind], self.y[ind]) for ind in range(0,len(self.x))]
-        tempdata.sort(key=fun)
-        self.x = [item[0] for item in tempdata]
-        self.y = [item[1] for item in tempdata]
+    # def fix_profile(self, coordinate = Axis.x):
+    #     fun = lambda data: data[coordinate-1]
+    #     tempdata = [(self.x[ind], self.y[ind]) for ind in range(0,len(self.x))]
+    #     tempdata.sort(key=fun)
+    #     self.x = [item[0] for item in tempdata]
+    #     self.y = [item[1] for item in tempdata]
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
     def left_penumbra(self, upper=0.9, lower=0.1):
         return self.x_at_y(upper) - self.x_at_y(lower)
@@ -173,9 +189,10 @@ class LateralProfile(Profile):
         return 0.5 * (self.x_at_y(level) + self.x_at_y(level, reverse=True))
 
     def mirror(self, m=0):
-        # self.y = 2*m - self.y
         self.x = 2*m - self.x
-        self.fix_profile()
+        self.x = self.x[::-1]
+        self.y = self.y[::-1]
+        # self.fix_profile()
 
     def symmetrize(self):
         tmp = self.y[::-1].copy()
@@ -209,29 +226,21 @@ class DepthProfile(Profile):
 def main():
     p = LateralProfile([[0, -1],[4, 2], [1, 0], [2, 1],[-1, 1], [3, 0]])
 
+    print("X:", p.x)
+    print("Y:", p.y)
+
     p.fix_profile()
     print("X:", p.x)
     print("Y:", p.y)
 
-    p.mirror()
+    p.mirror(2)
     print("X:", p.x)
     print("Y:", p.y)
 
 
-    p.mirror()
-    print("X:", p.x)
-    print("Y:", p.y)
 
-    p.mirror(3)
-    print("X:", p.x)
-    print("Y:", p.y)
-
-    p.mirror(4)
-    print("X:", p.x)
-    print("Y:", p.y)
-
-    for y in (-1, 0, 0.5, 1, 1.5, 2, 5):
-        print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
+    # for y in (-1, 0, 0.5, 1, 1.5, 2, 5):
+    #     print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
 
 
 if __name__ == '__main__':
