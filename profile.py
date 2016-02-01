@@ -163,6 +163,12 @@ class LateralProfile(Profile):
         return 0.5 * (self.x_at_y(level) + self.x_at_y(level, reverse=True))
 
     def mirror(self, m=0):
+        """
+        Provides mirror image of a profile with given Y axis (y=m).
+        Domain of profile might be changed due to this operation.
+        :param m: Y value for mirror image.
+        :return:
+        """
         self.x = 2*m - self.x
         self.x = self.x[::-1]
         self.y = self.y[::-1]
@@ -206,9 +212,10 @@ def main():
     print("X:", p.x)
     print("Y:", p.y)
 
-     for y in (-1, 0, 0.5, 1, 1.5):
-         print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
+    for y in (-1, 0, 0.5, 1, 1.5):
+        print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
 
 
 if __name__ == '__main__':
     main()
+    
