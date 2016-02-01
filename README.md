@@ -9,6 +9,8 @@ numerous tools for different computations and data analysis.
 
 # installation
 
+This module is dedicated for Python 3.x users
+
 Current version (0.1.0) is not available on PyPi, although once a <br>
 stable version is ready it will be pushed to PyPi repo.<br><br>
 
