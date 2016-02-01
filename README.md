@@ -27,18 +27,18 @@ To unistall, simply use:<br>
 Once you install beprof, you should be able to import is as a python module<br>
 Using ipython the code would be i.e.<br>
 ```
->>> import beprof
->>> from beprof import curve  #imports curve module
->>> from beprof import profile  #imports profile module
+import beprof
+from beprof import curve  #imports curve module
+from beprof import profile  #imports profile module
 ```
 
 Once you import necessery modules, you can use them to work with i.e. profiles:<br>
 
 ```
->>> from beprof import profile
->>> dir(profile)
->>> p = profile.Profile([[0, 1], [1, -1], [2, 3], [4, 0]])
->>> print(p)
+from beprof import profile
+dir(profile)
+p = profile.Profile([[0, 1], [1, -1], [2, 3], [4, 0]])
+print(p)
 ```
 
 A few examples of data you can work with using beprof can be downloaded from<br>
@@ -48,12 +48,12 @@ https://github.com/grzanka/beprof.git
 
 You can also use another modules as numpy or matplotlib to work with beprof:
 ```
->>> #assuming you already defined p as above
->>>import numpy as np
->>>import matplotlib.pyplot as plt
->>>foo = np.asarray(p)
->>>print(foo.shape())
->>>plt.plot(foo[:,0], foo[:,1])
->>>plt.show()
+#assuming you already defined p as above
+import numpy as np
+import matplotlib.pyplot as plt
+foo = np.asarray(p)
+print(foo.shape())
+plt.plot(foo[:,0], foo[:,1])
+plt.show()
 ```
 
