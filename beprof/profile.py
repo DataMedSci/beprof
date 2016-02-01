@@ -1,4 +1,4 @@
-from curve import Curve
+from beprof.curve import Curve
 import numpy as np
 
 __author__ = 'grzanka'
