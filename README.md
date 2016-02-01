@@ -13,10 +13,9 @@ Current version (0.1.0) is not available on PyPi, although once a <br>
 stable version is ready it will be pushed to PyPi repo.<br><br>
 
 For now, installation can be done from this GIT repository, using <br>
-`~$ pip3 install git+https://github.com/matkrak/beprof.git@pip3` <br>
-  this part needs to be changed[.........^^^^^^^.........] once repositories are merged<br>
+`~$ pip3 install git+https://github.com/grzanka/beprof.git@master` <br>
 
-(where `@pip3` refers to the name of a branch)
+(where `@master` refers to the name of a branch)
 
 
 
