@@ -23,22 +23,6 @@ class Profile(Curve):
             return
         self.axis = getattr(obj, 'axis', None)
 
-    def fix_profile(self, axis = Axis.x):
-
-        tmp = list((self).view(DataSerie))
-        tmp.sort(key=lambda x: x[axis-1])
-
-        #not the best solution, works only for 2D  what method should I use here?
-        self.x = [x[0] for x in tmp]
-        self.y = [x[1] for x in tmp]
-
-        # another solution, still don't know how should I copy it to orginal array
-        # without loosing metadata if present
-
-        # tmp = np.asarray(self.view(DataSerie)).transpose()
-        # idx = np.argsort(tmp[axis-1])
-        # foo = tmp[:,idx].transpose()
-
     def x_at_y(self, y, reverse=False):
         """
         Calculates inverse profile - for given y returns x such that f(x) = y
@@ -108,7 +92,6 @@ class Profile(Curve):
         ## Also since the function returns x value given y value,
         ## names of variable used in loop should be y not x (in my opinion)
 
-
         if ind == 0 and y < y_handle[0]:
             return np.nan
 
@@ -170,15 +153,6 @@ class LateralProfile(Profile):
             return
         self.axis = getattr(obj, 'axis', None)
 
-    # def fix_profile(self, coordinate = Axis.x):
-    #     fun = lambda data: data[coordinate-1]
-    #     tempdata = [(self.x[ind], self.y[ind]) for ind in range(0,len(self.x))]
-    #     tempdata.sort(key=fun)
-    #     self.x = [item[0] for item in tempdata]
-    #     self.y = [item[1] for item in tempdata]
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
     def left_penumbra(self, upper=0.9, lower=0.1):
         return self.x_at_y(upper) - self.x_at_y(lower)
 
@@ -192,7 +166,6 @@ class LateralProfile(Profile):
         self.x = 2*m - self.x
         self.x = self.x[::-1]
         self.y = self.y[::-1]
-        # self.fix_profile()
 
     def symmetrize(self):
         tmp = self.y[::-1].copy()
@@ -224,12 +197,8 @@ class DepthProfile(Profile):
 
 
 def main():
-    p = LateralProfile([[0, -1],[4, 2], [1, 0], [2, 1],[-1, 1], [3, 0]])
+    p = LateralProfile([[-1, 1], [0, -1], [1, 0], [2, 1], [3, 0], [4, 2]])
 
-    print("X:", p.x)
-    print("Y:", p.y)
-
-    p.fix_profile()
     print("X:", p.x)
     print("Y:", p.y)
 
@@ -237,10 +206,8 @@ def main():
     print("X:", p.x)
     print("Y:", p.y)
 
-
-
-    # for y in (-1, 0, 0.5, 1, 1.5, 2, 5):
-    #     print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
+     for y in (-1, 0, 0.5, 1, 1.5):
+         print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
 
 
 if __name__ == '__main__':
