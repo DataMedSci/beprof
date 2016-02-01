@@ -17,5 +17,8 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Information Analysis",
     ],
-    install_requires = ['numpy', 'scipy']
+    install_requires = [
+        'numpy>=1.10.4', 
+        'scipy>=0.16.0',
+        ]
 )
