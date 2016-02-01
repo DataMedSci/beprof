@@ -16,6 +16,6 @@ setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Information Analysis",
-    ]
+    ],
     install_requires = ['numpy']
 )
