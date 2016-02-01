@@ -81,17 +81,6 @@ class Profile(Curve):
         # np.argmax(cond) will be equal 0,
         # to exclude situation that y_handle[0] = y we also check if y < y_handle[0]
 
-        ## Consider this case: profiles values are descending from i.e. 5 to 1,
-        ## where f(0)=5, f(1)=4 ... f(4)=1
-        ## What would function x_at_y(2) return?
-
-        ## since ind==0 and 1 < 5 the if statement below is true and returned value
-        ## is nan. While the correct answer is 3 since f(3)=1.
-
-        ## Check main() function with the profile i entered there.
-        ## Also since the function returns x value given y value,
-        ## names of variable used in loop should be y not x (in my opinion)
-
         if ind == 0 and y < y_handle[0]:
             return np.nan
 
@@ -166,6 +155,16 @@ class LateralProfile(Profile):
         """
         Provides mirror image of a profile with given Y axis (y=m).
         Domain of profile might be changed due to this operation.
+
+        Use mirror() method to get f(-x):
+        >>> foo = LateralProfile([[0, 0], [1, 1], [2, 4], [4, -1]])
+        >>> foo.mirror()
+        >>> print(foo)
+        shape: (4, 2) X : [-4.000,0.000] Y : [-1.000000,4.000000]
+         FWHM = 1.467 None
+        Center = -1.950 Penumbra = [0.320,0.800]
+
+
         :param m: Y value for mirror image.
         :return:
         """
@@ -218,4 +217,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
