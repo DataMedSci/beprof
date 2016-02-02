@@ -66,6 +66,19 @@ class Curve(np.ndarray):
             return x
         return np.interp(x, self.x, self.y, left=np.nan, right=np.nan)
 
+    def change_domain(self, domain):
+
+        #check if new domain includes in the orginal domain
+        if np.max(domain)>np.max(self.x):
+            #maybe some exception here or stderr log ?
+            print('Error1')
+            return self
+        if np.min(domain)<np.min(self.x):
+            print('Error2')
+            return self
+        obj = Curve([[x, self.y_at_x(x)] for x in domain])
+        return obj
+
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
               " X : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
@@ -73,12 +86,16 @@ class Curve(np.ndarray):
         return ret
 
 def main():
-    c = Curve([[1, 0], [2, 1], [4, 0]])
+    c = Curve([[0, 0], [5, 5], [10, 0]])
     print("X:", c.x)
     print("Y:", c.y)
     for x in (0.5, 1, 1.5, 2.0, 4.5):
         print("x=", x, "y=", c.y_at_x(x))
 
+    nowa = c.change_domain([1, 2, 3, 5, 6, 7, 9])
+
+    print("X:", nowa.x)
+    print("Y:", nowa.y)
 
 if __name__ == '__main__':
     main()
