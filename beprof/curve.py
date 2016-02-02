@@ -76,7 +76,8 @@ class Curve(np.ndarray):
         if np.min(domain)<np.min(self.x):
             print('Error2')
             return self
-        obj = Curve([[x, self.y_at_x(x)] for x in domain])
+        y = np.interp(domain, self.x, self.y)
+        obj = Curve([[domain[ind], y[ind]] for ind in range(0, len(y)) ])
         return obj
 
     def __str__(self):
@@ -92,10 +93,10 @@ def main():
     for x in (0.5, 1, 1.5, 2.0, 4.5):
         print("x=", x, "y=", c.y_at_x(x))
 
-    nowa = c.change_domain([1, 2, 3, 5, 6, 7, 9])
+    new = c.change_domain([1, 2, 3, 5, 6, 7, 9])
 
-    print("X:", nowa.x)
-    print("Y:", nowa.y)
+    print("X:", new.x)
+    print("Y:", new.y)
 
 if __name__ == '__main__':
     main()
