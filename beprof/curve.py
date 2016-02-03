@@ -85,13 +85,23 @@ class Curve(np.ndarray):
 
     def fixed_step_domain(self, step=0.1, fixp=0):
         section = (np.min(self.x), np.max(self.x))
-        if fixp < section[0] or fixp > section[1]:
-            # some kind of error just as in change_domain above?
-            print("Section: ", section, "fixp: ", fixp)
-            print('Error3')
-            return self
-        count = int(np.min([fixp - section[0], section[1] - fixp]) / step)
-        domain = [fixp + n * step for n in range(-count, count+1)]
+        count_start = (abs(fixp - section[0]) / step)
+        count_stop = (abs(fixp - section[1]) / step)
+
+        # depending on position of fixp with respect to the orginal domain
+        # may be 1 of 3 cases:
+
+        if fixp < section[0]:
+            count_start = int(np.ceil(count_start))
+            count_stop = int(np.floor(count_stop))  # floor is not necessary, just makes the code
+        elif fixp > section[1]:                     # and my intentions more clear
+            count_start = -int(np.floor(count_start))
+            count_stop = -int(np.ceil(count_stop))
+        else:
+            count_start = -int(count_start)
+            count_stop = int(count_stop)
+
+        domain = [fixp + n * step for n in range(count_start, count_stop+1)]
         return self.change_domain(domain)
 
     def __str__(self):
@@ -121,7 +131,7 @@ def main():
 
     print("X:", c.x)
     print("Y:", c.y)
-    test = c.fixed_step_domain(0.4, 7)
+    test = c.fixed_step_domain(0.7, -1)
     print("X:", test.x)
     print("Y:", test.y)
 
