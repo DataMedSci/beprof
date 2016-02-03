@@ -3,6 +3,7 @@ import numpy as np
 import scipy
 from scipy.interpolate import interp1d
 from scipy import signal
+import copy
 
 
 class Axis(IntEnum):
@@ -32,11 +33,11 @@ class Curve(np.ndarray):
     """
 
     def __new__(cls, input_array, **meta):
-        obj = np.asarray(input_array).view(cls).copy()
+        obj = np.asarray(input_array).view(cls)
         if meta is None:
             obj.metadata = {}
         else:
-            obj.metadata = meta.copy()
+            obj.metadata = copy.deepcopy(meta)
         return obj
 
     def __array_finalize__(self, obj):
