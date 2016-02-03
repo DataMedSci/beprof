@@ -80,7 +80,6 @@ class Profile(Curve):
         # B) if y < min(self.y) then condition self.y >= y will be satisfied on first item
         # np.argmax(cond) will be equal 0,
         # to exclude situation that y_handle[0] = y we also check if y < y_handle[0]
-
         if ind == 0 and y < y_handle[0]:
             return np.nan
 
@@ -157,16 +156,16 @@ class LateralProfile(Profile):
         Domain of profile might be changed due to this operation.
 
         Use mirror() method to get values of mirrored profile:
-        >>> print((LateralProfile([[-1, 1], [0, -1], [1, 0]]).mirror()).y)
+        >>> lp = LateralProfile([[-1, 1], [0, -1], [1, 0]])
+        >>> lp.mirror()
+        >>> print(lp.y)
         [ 0 -1  1]
 
         :param m: Y value for mirror image.
-        :return: returns mirrored object
         """
         self.x = 2*m - self.x
         self.x = self.x[::-1]
         self.y = self.y[::-1]
-        return self
 
     def symmetrize(self):
         tmp = self.y[::-1].copy()
