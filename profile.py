@@ -156,21 +156,17 @@ class LateralProfile(Profile):
         Provides mirror image of a profile with given Y axis (y=m).
         Domain of profile might be changed due to this operation.
 
-        Use mirror() method to get f(-x):
-        >>> foo = LateralProfile([[0, 0], [1, 1], [2, 4], [4, -1]])
-        >>> foo.mirror()
-        >>> print(foo)
-        shape: (4, 2) X : [-4.000,0.000] Y : [-1.000000,4.000000]
-         FWHM = 1.467 None
-        Center = -1.950 Penumbra = [0.320,0.800]
-
+        Use mirror() method to get values of mirrored profile:
+        >>> print((LateralProfile([[-1, 1], [0, -1], [1, 0]]).mirror()).y)
+        [ 0 -1  1]
 
         :param m: Y value for mirror image.
-        :return:
+        :return: returns mirrored object
         """
         self.x = 2*m - self.x
         self.x = self.x[::-1]
         self.y = self.y[::-1]
+        return self
 
     def symmetrize(self):
         tmp = self.y[::-1].copy()
