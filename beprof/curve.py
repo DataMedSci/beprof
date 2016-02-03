@@ -110,8 +110,8 @@ class Curve(np.ndarray):
         :return: new Curve object with domain specified by step and fixp parameters
         '''
         a, b = (np.min(self.x), np.max(self.x))
-        count_start = (abs(fixp - a) / step)
-        count_stop = (abs(fixp - b) / step)
+        count_start = abs(fixp - a) / step
+        count_stop = abs(fixp - b) / step
 
         # depending on position of fixp with respect to the orginal domain
         # may be 1 of 3 cases:
