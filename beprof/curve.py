@@ -29,7 +29,16 @@ class Curve(np.ndarray):
     Subclass of numpy ndarray.
     All methods which change number of points in curve (i.e. interpolate) are
     returning new objects in similar way as ndarray.
-    Has additional field - info.
+
+    Extra metadata can be added to Curve object and is stored in a dictionary.
+    This data can be basically anything: date of measurement, string describing
+    gathered data, extra informations etc.
+
+    One can add metadata to Curve object in 2 ways:
+        1) When creating object, using extra arguments (**kwargs)
+        2) When object (obj) alrady exists, one can use dictionary methods
+           to add a field to obj.metadata dict.
+
     """
 
     def __new__(cls, input_array, **meta):
