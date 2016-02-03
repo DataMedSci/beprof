@@ -1,4 +1,5 @@
-from beprof.curve import Curve
+# from beprof.curve import Curve
+from curve import Curve # since the package is not installed curve is imported form curve.py file
 import numpy as np
 
 __author__ = 'grzanka'
@@ -10,8 +11,8 @@ class Profile(Curve):
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
     """
 
-    def __new__(cls, input_array, axis=None):
-        new = Curve.__new__(cls, input_array)
+    def __new__(cls, input_array, axis=None, **kwargs):
+        new = super().__new__(cls, input_array, **kwargs)
         if axis is None:
             new.axis = getattr(input_array,'axis',None)
         else:
@@ -33,23 +34,23 @@ class Profile(Curve):
         Use inverse lookup to get x-coordinate of first point:
         >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(5.))
         0.0
-
+        
         Use inverse lookup to get x-coordinate of second point, looking from left:
         >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10.))
         0.1
-
+        
         Use inverse lookup to get x-coordinate of fourth point, looking from right:
         >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(10., reverse=True))
         0.3
-
+        
         Use interpolation between first two points:
         >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(7.5))
         0.05
-
+        
         Looking for y below self.y range:
         >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(2.0))
         nan
-
+        
         Looking for y above self.y range:
         >>> float(Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]]).x_at_y(22.0))
         nan
@@ -132,8 +133,8 @@ class Profile(Curve):
 
 
 class LateralProfile(Profile):
-    def __new__(cls, input_array, axis=None, background=None):
-        new = Profile.__new__(cls, input_array, axis=axis)
+    def __new__(cls, input_array, axis=None, background=None, **kwargs):
+        new = super().__new__(cls, input_array, axis=axis, **kwargs)
         return new
 
     def __array_finalize__(self, obj):
@@ -183,11 +184,30 @@ class DepthProfile(Profile):
 
 
 def main():
-    p = Profile([[1, 0], [2, 1], [3, 0]])
+    print('\nProfile')
+    p = Profile([[1, 0], [2, 1], [3, 0]], first='one', second='two', third='three')
     print("X:", p.x)
     print("Y:", p.y)
-    for x in (-1, 0, 0.5, 1, 1.5):
-        print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
+    print("meta:", p.metadata)
+    print(p)
+
+    print('\nLateralProfile')
+    lp = LateralProfile([[1, 0], [2, 1], [3, 0]], example='foo', anotherex='bar')
+    print("X:", lp.x)
+    print("Y:", lp.y)
+    print("meta:", lp.metadata)
+    print(lp)
+
+    print('\nTEST:')
+    test = lp.fixed_step_domain(0.5, 2)
+    print('X:', test.x)
+    print('Y:', test.y)
+    print('M:', test.metadata)
+
+    print(test)
+
+    # for x in (-1, 0, 0.5, 1, 1.5):
+    #     print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
 
 
 if __name__ == '__main__':
