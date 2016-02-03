@@ -3,6 +3,7 @@ import numpy as np
 import scipy
 from scipy.interpolate import interp1d
 from scipy import signal
+import math
 
 
 class Axis(IntEnum):
@@ -67,23 +68,47 @@ class Curve(np.ndarray):
         return np.interp(x, self.x, self.y, left=np.nan, right=np.nan)
 
     def change_domain(self, domain):
+        '''
+        Creating new Curve object in memory with domain passed as a parameter.
+        New domain must include in the orignal domain.
+        Copies values from orginal curve and uses interpolation to calculate
+        values for new points in domain.
+
+        Calculate y - values of example curve with changed domain:
+        >>> print(Curve([[0,0], [5, 5], [10, 0]]).change_domain([1, 2, 8, 9]).y)
+        [ 1.  2.  2.  1.]
+
+        :param domain: set of points representing new domain. Might be a list or np.array
+        :return: new Curve object with domain set by 'domain' parameter
+        '''
 
         # check if new domain includes in the orginal domain
         if np.max(domain) > np.max(self.x):
-            # maybe some exception here or stderr log ?
-            # these prints only for testing purpose
+            # separate issue created to provide logging package
             print('Error1')
-            print('domain.max: ', np.max(domain), '|| self.max: ', np.max(self.x))
             return self
         if np.min(domain) < np.min(self.x):
             print('Error2')
-            print('domain.min: ', np.min(domain), '|| self.min: ', np.min(self.x))
             return self
         y = np.interp(domain, self.x, self.y)
-        obj = Curve([[domain[ind], y[ind]] for ind in range(0, len(y))])
+        obj = Curve(np.stack((domain, y), axis=1))
         return obj
 
-    def fixed_step_domain(self, step=0.1, fixp=0):
+    def rebinned(self, step=0.1, fixp=0):
+        '''
+        Provides effective way to compute new domain basing on step and fixp parameters.
+        Then using change_domain() method to create new object with calculated domain and returns it.
+
+        fixp doesn't have to be inside orginal domain.
+
+        Return domain of a new curve specified by fixp=0 and step=1 and another Curve object:
+        >>> print(Curve([[0,0], [5, 5], [10, 0]]).rebinned(1,0).x)
+        [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.]
+
+        :param step: step size of new domain
+        :param fixp: fixed point one of the points in new domain
+        :return: new Curve object with domain specified by step and fixp parameters
+        '''
         section = (np.min(self.x), np.max(self.x))
         count_start = (abs(fixp - section[0]) / step)
         count_stop = (abs(fixp - section[1]) / step)
@@ -92,16 +117,16 @@ class Curve(np.ndarray):
         # may be 1 of 3 cases:
 
         if fixp < section[0]:
-            count_start = int(np.ceil(count_start))
-            count_stop = int(np.floor(count_stop))  # floor is not necessary, just makes the code
-        elif fixp > section[1]:                     # and my intentions more clear
-            count_start = -int(np.floor(count_start))
-            count_stop = -int(np.ceil(count_stop))
+            count_start = (math.ceil(count_start))
+            count_stop = (math.floor(count_stop))
+        elif fixp > section[1]:
+            count_start = -(math.floor(count_start))
+            count_stop = -(math.ceil(count_stop))
         else:
-            count_start = -int(count_start)
-            count_stop = int(count_stop)
+            count_start = -(count_start)
+            count_stop = (count_stop)
 
-        domain = [fixp + n * step for n in range(count_start, count_stop+1)]
+        domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
         return self.change_domain(domain)
 
     def __str__(self):
@@ -131,7 +156,7 @@ def main():
 
     print("X:", c.x)
     print("Y:", c.y)
-    test = c.fixed_step_domain(0.7, -1)
+    test = c.rebinned(0.7, -1)
     print("X:", test.x)
     print("Y:", test.y)
 
