@@ -117,14 +117,14 @@ class Curve(np.ndarray):
         # may be 1 of 3 cases:
 
         if fixp < a:
-            count_start = (math.ceil(count_start))
-            count_stop = (math.floor(count_stop))
+            count_start = math.ceil(count_start)
+            count_stop = math.floor(count_stop)
         elif fixp > b:
-            count_start = -(math.floor(count_start))
-            count_stop = -(math.ceil(count_stop))
+            count_start = -math.floor(count_start)
+            count_stop = -math.ceil(count_stop)
         else:
-            count_start = -(count_start)
-            count_stop = (count_stop)
+            count_start = -count_start
+            count_stop = count_stop
 
         domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
         return self.change_domain(domain)
