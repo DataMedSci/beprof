@@ -10,8 +10,8 @@ class Profile(Curve):
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
     """
 
-    def __new__(cls, input_array, axis=None):
-        new = Curve.__new__(cls, input_array)
+    def __new__(cls, input_array, axis=None, **kwargs):
+        new = super().__new__(cls, input_array, **kwargs)
         if axis is None:
             new.axis = getattr(input_array,'axis',None)
         else:
@@ -132,8 +132,8 @@ class Profile(Curve):
 
 
 class LateralProfile(Profile):
-    def __new__(cls, input_array, axis=None, background=None):
-        new = Profile.__new__(cls, input_array, axis=axis)
+    def __new__(cls, input_array, axis=None, background=None, **kwargs):
+        new = super().__new__(cls, input_array, axis=axis, **kwargs)
         return new
 
     def __array_finalize__(self, obj):
@@ -197,17 +197,30 @@ class DepthProfile(Profile):
 
 
 def main():
-    p = LateralProfile([[-1, 1], [0, -1], [1, 0], [2, 1], [3, 0], [4, 2]])
-
+    print('\nProfile')
+    p = Profile([[1, 0], [2, 1], [3, 0]], first='one', second='two', third='three')
     print("X:", p.x)
     print("Y:", p.y)
+    print("meta:", p.metadata)
+    print(p)
 
-    p.mirror(2)
-    print("X:", p.x)
-    print("Y:", p.y)
+    print('\nLateralProfile')
+    lp = LateralProfile([[1, 0], [2, 1], [3, 0]], example='foo', anotherex='bar')
+    print("X:", lp.x)
+    print("Y:", lp.y)
+    print("meta:", lp.metadata)
+    print(lp)
 
-    for y in (-1, 0, 0.5, 1, 1.5):
-        print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
+    print('\nTEST:')
+    test = lp.fixed_step_domain(0.5, 2)
+    print('X:', test.x)
+    print('Y:', test.y)
+    print('M:', test.metadata)
+
+    print(test)
+
+    # for x in (-1, 0, 0.5, 1, 1.5):
+    #     print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
 
 
 if __name__ == '__main__':
