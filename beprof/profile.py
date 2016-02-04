@@ -150,7 +150,21 @@ class LateralProfile(Profile):
     def center(self, level=0.5):
         return 0.5 * (self.x_at_y(level) + self.x_at_y(level, reverse=True))
 
-    def mirror(self):
+    def mirror(self, m=0):
+        """
+        Provides mirror image of a profile with given Y axis (y=m).
+        Domain of profile might be changed due to this operation.
+
+        Use mirror() method to get values of mirrored profile:
+        >>> lp = LateralProfile([[-1, 1], [0, -1], [1, 0]])
+        >>> lp.mirror()
+        >>> print(lp.y)
+        [ 0 -1  1]
+
+        :param m: Y value for mirror image.
+        """
+        self.x = 2*m - self.x
+        self.x = self.x[::-1]
         self.y = self.y[::-1]
 
     def symmetrize(self):
@@ -183,11 +197,17 @@ class DepthProfile(Profile):
 
 
 def main():
-    p = Profile([[1, 0], [2, 1], [3, 0]])
+    p = LateralProfile([[-1, 1], [0, -1], [1, 0], [2, 1], [3, 0], [4, 2]])
+
     print("X:", p.x)
     print("Y:", p.y)
-    for x in (-1, 0, 0.5, 1, 1.5):
-        print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
+
+    p.mirror(2)
+    print("X:", p.x)
+    print("Y:", p.y)
+
+    for y in (-1, 0, 0.5, 1, 1.5):
+        print("x=", p.x_at_y(y), "y=",y , "rev", p.x_at_y(y, reverse=True))
 
 
 if __name__ == '__main__':
