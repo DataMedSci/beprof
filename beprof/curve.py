@@ -4,6 +4,7 @@ import scipy
 from scipy.interpolate import interp1d
 from scipy import signal
 import math
+import copy
 
 
 class Axis(IntEnum):
@@ -29,11 +30,24 @@ class Curve(np.ndarray):
     Subclass of numpy ndarray.
     All methods which change number of points in curve (i.e. interpolate) are
     returning new objects in similar way as ndarray.
-    Has additional field - info.
+
+    Extra metadata can be added to Curve object and is stored in a dictionary.
+    This data can be basically anything: date of measurement, string describing
+    gathered data, extra informations etc.
+
+    One can add metadata to Curve object in 2 ways:
+        1) When creating object, using extra arguments (**kwargs)
+        2) When object (obj) alrady exists, one can use dictionary methods
+           to add a field to obj.metadata dict.
+
     """
 
-    def __new__(cls, input_array):
-        obj = np.asarray(input_array).view(cls).copy()
+    def __new__(cls, input_array, **meta):
+        obj = np.asarray(input_array).view(cls)
+        if meta is None:
+            obj.metadata = {}
+        else:
+            obj.metadata = copy.deepcopy(meta)
         return obj
 
     def __array_finalize__(self, obj):
@@ -131,8 +145,9 @@ class Curve(np.ndarray):
 
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
-              " X : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
-              " Y : [{:4.6f},{:4.6f}]".format(min(self.y), max(self.y))
+              "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
+              "\nY : [{:4.6f},{:4.6f}]".format(min(self.y), max(self.y)) + \
+              "\nMetadata : " + str(self.metadata)
         return ret
 
 
@@ -143,6 +158,13 @@ def main():
     for x in (0.5, 1, 1.5, 2.0, 4.5):
         print("x=", x, "y=", c.y_at_x(x))
 
+    print('\n', '*'*30, 'Metadata testing\n')
+
+    k = Curve([[0, 1], [1, 2], [2, 3], [4, 0]], meta1='example 1', meta2='example 2')
+    print('X:', k.x)
+    print('Y:', k.y)
+    print('M:', k.metadata)
+    print(k)
 
     print('\n', '*'*30,'\nchange_domain:')
 
