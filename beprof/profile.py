@@ -10,8 +10,8 @@ class Profile(Curve):
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
     """
 
-    def __new__(cls, input_array, axis=None):
-        new = Curve.__new__(cls, input_array)
+    def __new__(cls, input_array, axis=None, **kwargs):
+        new = super().__new__(cls, input_array, **kwargs)
         if axis is None:
             new.axis = getattr(input_array,'axis',None)
         else:
@@ -132,8 +132,8 @@ class Profile(Curve):
 
 
 class LateralProfile(Profile):
-    def __new__(cls, input_array, axis=None, background=None):
-        new = Profile.__new__(cls, input_array, axis=axis)
+    def __new__(cls, input_array, axis=None, background=None, **kwargs):
+        new = super().__new__(cls, input_array, axis=axis, **kwargs)
         return new
 
     def __array_finalize__(self, obj):
@@ -150,7 +150,21 @@ class LateralProfile(Profile):
     def center(self, level=0.5):
         return 0.5 * (self.x_at_y(level) + self.x_at_y(level, reverse=True))
 
-    def mirror(self):
+    def mirror(self, m=0):
+        """
+        Provides mirror image of a profile with given Y axis (y=m).
+        Domain of profile might be changed due to this operation.
+
+        Use mirror() method to get values of mirrored profile:
+        >>> lp = LateralProfile([[-1, 1], [0, -1], [1, 0]])
+        >>> lp.mirror()
+        >>> print(lp.y)
+        [ 0 -1  1]
+
+        :param m: Y value for mirror image.
+        """
+        self.x = 2*m - self.x
+        self.x = self.x[::-1]
         self.y = self.y[::-1]
 
     def symmetrize(self):
@@ -183,11 +197,30 @@ class DepthProfile(Profile):
 
 
 def main():
-    p = Profile([[1, 0], [2, 1], [3, 0]])
+    print('\nProfile')
+    p = Profile([[1, 0], [2, 1], [3, 0]], first='one', second='two', third='three')
     print("X:", p.x)
     print("Y:", p.y)
-    for x in (-1, 0, 0.5, 1, 1.5):
-        print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
+    print("meta:", p.metadata)
+    print(p)
+
+    print('\nLateralProfile')
+    lp = LateralProfile([[1, 0], [2, 1], [3, 0]], example='foo', anotherex='bar')
+    print("X:", lp.x)
+    print("Y:", lp.y)
+    print("meta:", lp.metadata)
+    print(lp)
+
+    print('\nTEST:')
+    test = lp.fixed_step_domain(0.5, 2)
+    print('X:', test.x)
+    print('Y:', test.y)
+    print('M:', test.metadata)
+
+    print(test)
+
+    # for x in (-1, 0, 0.5, 1, 1.5):
+    #     print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
 
 
 if __name__ == '__main__':
