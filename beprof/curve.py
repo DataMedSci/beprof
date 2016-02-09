@@ -105,7 +105,7 @@ class Curve(np.ndarray):
             print('Error2')
             return self
         y = np.interp(domain, self.x, self.y)
-        obj = Curve(np.stack((domain, y), axis=1))
+        obj = Curve(np.stack((domain, y), axis=1), **self.__dict__)
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -170,17 +170,19 @@ def main():
 
     print("X:", c.x)
     print("Y:", c.y)
-    new = c.change_domain([1, 2, 3, 5, 6, 7, 9])
+    new = k.change_domain([1, 2, 3, 5, 6, 7, 9])
     print("X:", new.x)
     print("Y:", new.y)
+    print('M:', new.metadata)
 
     print('\n', '*'*30,'\nfixed_step_domain:')
 
-    print("X:", c.x)
-    print("Y:", c.y)
-    test = c.rebinned(0.7, -1)
+    print("X:", k.x)
+    print("Y:", k.y)
+    test = k.rebinned(0.7, -1)
     print("X:", test.x)
     print("Y:", test.y)
+    print('M:', test.metadata)
 
 if __name__ == '__main__':
     main()
