@@ -15,8 +15,10 @@ class Profile(Curve):
         return new
 
     def __array_finalize__(self, obj):
+        # print("Here I am in Profile.__array_finalize__ obj: ", type(obj))
         if obj is None:
             return
+        self.metadata = getattr(obj, 'metadata', None)
 
     def x_at_y(self, y, reverse=False):
         """
@@ -131,8 +133,10 @@ class LateralProfile(Profile):
         return new
 
     def __array_finalize__(self, obj):
+        # print("Here I am in LateralProfile.__array_finalize__ obj: ", type(obj))
         if obj is None:
             return
+        self.metadata = getattr(obj, 'metadata', None)
 
     def left_penumbra(self, upper=0.9, lower=0.1):
         return self.x_at_y(upper) - self.x_at_y(lower)
@@ -214,6 +218,14 @@ def main():
 
     # for x in (-1, 0, 0.5, 1, 1.5):
     #     print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
+
+    print("\nFuther testing:\n")
+    t2 = test[2:4, :]
+    print(t2)
+
+    print("\n last example:\n")
+    pp = test.view(Profile)
+    print(pp)
 
 
 if __name__ == '__main__':
