@@ -53,6 +53,7 @@ class Curve(np.ndarray):
     def __array_finalize__(self, obj):
         if obj is None:
             return
+        self.metadata = getattr(obj, 'metadata', None)
 
     @property
     def x(self):
@@ -105,7 +106,7 @@ class Curve(np.ndarray):
             print('Error2')
             return self
         y = np.interp(domain, self.x, self.y)
-        obj = Curve(np.stack((domain, y), axis=1))
+        obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -143,6 +144,35 @@ class Curve(np.ndarray):
         domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
         return self.change_domain(domain)
 
+    def subtract(self, curve2, defval=0, newobj=True):
+
+        # domain1 = [a1, b1]
+        # domain2 = [a2, b2]
+        a1, b1 = np.min(self.x), np.max(self.x)
+        a2, b2 = np.min(curve2.x), np.max(curve2.x)
+
+        # first: if the user doesn't want to create a new object in memory, 2 possible options:
+        if not newobj:
+            if a2 >= a1 and b2 <= b1:
+                # if the orginal domain includes c2 domain, subtraction can be done as follows:
+                # as the output domain is gonna be self.x, the subtracted values should be
+                # interpolated c2 values for every point that is in self.x and in section [a2, b2]
+                # and defval for the others. Values to subtract can be calculated using np.interp:
+
+                y = np.interp(self.x, curve2.x, curve2.y, left=defval, right=defval)
+                # print('y: ', y, type(y))
+                # print('Y: ', self.y, type(self.y))
+                self.y =  self.y - y
+                return
+            else:
+                # if the orginal domain doesn't include c2 domain there is nothing that can be done
+                print('Error, can not subtract without creating new object')
+                return
+
+        # since the program is here, that means newobj is True
+        # what means the method is not going to modify self but create new curve object instead
+        # working on this part currently. . . 
+
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
               "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
@@ -152,11 +182,6 @@ class Curve(np.ndarray):
 
 
 def main():
-    c = Curve([[0, 0], [5, 5], [10, 0]])
-    print("X:", c.x)
-    print("Y:", c.y)
-    for x in (0.5, 1, 1.5, 2.0, 4.5):
-        print("x=", x, "y=", c.y_at_x(x))
 
     print('\n', '*'*30, 'Metadata testing\n')
 
@@ -164,23 +189,31 @@ def main():
     print('X:', k.x)
     print('Y:', k.y)
     print('M:', k.metadata)
-    print(k)
 
-    print('\n', '*'*30,'\nchange_domain:')
+    print('\n__str__:\n', k)
+    print('Futher tests:\n')
 
-    print("X:", c.x)
-    print("Y:", c.y)
-    new = c.change_domain([1, 2, 3, 5, 6, 7, 9])
-    print("X:", new.x)
-    print("Y:", new.y)
+    k2 = k.view(np.ndarray)
+    print(k2)
 
-    print('\n', '*'*30,'\nfixed_step_domain:')
+    k3 = k[1:2,:]
+    print(k3)
 
-    print("X:", c.x)
-    print("Y:", c.y)
-    test = c.rebinned(0.7, -1)
-    print("X:", test.x)
-    print("Y:", test.y)
+    print('\nSubtract method :\n')
+
+    c = Curve([[0.0, 0], [5, 5], [10, 0]])
+    print('c: \n', c)
+    d = Curve([[0.0, 0], [5, 5], [9, 1]])
+    print('d: \n', d)
+
+    c.subtract(d, newobj=False)
+    print('c-d: \n', c)
+    print('*********')
+    print('X:', c.x)
+    print('Y:', c.y)
+
+
+
 
 if __name__ == '__main__':
     main()
