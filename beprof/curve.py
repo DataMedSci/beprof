@@ -43,7 +43,6 @@ class Curve(np.ndarray):
     """
 
     def __new__(cls, input_array, **meta):
-        # print("Here I am in Curve.__new__, cls:", cls)
         obj = np.asarray(input_array).view(cls)
         if meta is None:
             obj.metadata = {}
