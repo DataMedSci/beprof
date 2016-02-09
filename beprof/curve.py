@@ -45,7 +45,6 @@ class Curve(np.ndarray):
     def __new__(cls, input_array, **meta):
         # print("Here I am in Curve.__new__, cls:", cls)
         obj = np.asarray(input_array).view(cls)
-        # print("MOVING ON Curve.__new__")
         if meta is None:
             obj.metadata = {}
         else:
@@ -56,6 +55,11 @@ class Curve(np.ndarray):
         if obj is None: # what generally means the object was created using explicit constructor
             return
         self.metadata = getattr(obj, 'metadata', {})
+        # print("Here I am in Curve.__array_finalize__ obj: ", type(obj))
+        if obj is None: # what generally means the object was created using explicit constructor
+            return
+        self.metadata = getattr(obj, 'metadata', None)
+
 
     @property
     def x(self):
@@ -189,6 +193,13 @@ def main():
     print("X:", test.x)
     print("Y:", test.y)
     print('M:', test.metadata)
+
+
+    k2 = k.view(np.ndarray)
+    print(k2)
+
+    k3 = k[1:2,:]
+    print(k3)
 
 
 if __name__ == '__main__':
