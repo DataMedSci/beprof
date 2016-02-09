@@ -105,7 +105,7 @@ class Curve(np.ndarray):
             print('Error2')
             return self
         y = np.interp(domain, self.x, self.y)
-        obj = Curve(np.stack((domain, y), axis=1), **self.__dict__)
+        obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
