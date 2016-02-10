@@ -148,77 +148,19 @@ class Curve(np.ndarray):
     def evaluate_at_x(self, arg, defval=0):
         y = np.interp(arg, self.x, self.y, left=defval, right=defval)
         return y
-        
-    def subtract(self, curve2, defval=0, newobj=True, domain='keep'):
+
+    def subtract(self, curve2, newobj=False,):
         '''
+        Method that calculates difference between 2 curves (or subclasses of curves). Domain of self must be in
+        domain of curve2 what means min(self.x) >= min(curve2.x) and max(self.x) <= max(curve2.x)
+        Might modify self, and can return the result or None
 
-        :param curve2: An object with which the difference will be computed
-        :param defval: default value for points of curves that are out of domains intersection
-        :param newobj: If True, a new object will be created. Else method will try to modify self
-        :param domain: 'keep' if you want to keep the orginal domain of self,
-                       'extend' if you want to add points form curve2 to the new domain
-        :return:       new object of type type(self) if newobj is True, modified self otherwise
+        :param curve2: second object to calculate difference
+        :param newobj: if True method is cretaing new object instead of modifying self
+        :return: None if newobj is False (but will modify self)
+                 Or type(self) object containing the result
         '''
-
-
-        # WILL BE CHANGED !!!
-
-        # domain1 = [a1, b1]
-        # domain2 = [a2, b2]
-        a1, b1 = np.min(self.x), np.max(self.x)
-        a2, b2 = np.min(curve2.x), np.max(curve2.x)
-
-        # first: if the user doesn't want to create a new object in memory, 2 possible options:
-        if not newobj:
-            if a2 >= a1 and b2 <= b1:
-                # if the orginal domain includes c2 domain, subtraction can be done as follows:
-                # as the output domain is gonna be self.x, the subtracted values should be
-                # interpolated c2 values for every point that is in self.x and in section [a2, b2]
-                # and defval for the others. Values to subtract can be calculated using np.interp:
-
-                y = np.interp(self.x, curve2.x, curve2.y, left=defval, right=defval)
-                # print('y: ', y, type(y))
-                # print('Y: ', self.y, type(self.y))
-                self.y =  self.y - y
-                return
-            else:
-                # if the orginal domain doesn't include c2 domain there is nothing that can be done
-                print('Error, can not subtract without creating new object')
-                return
-
-        # since the program is here, that means newobj is True
-        # what means the method is not going to modify self but create new curve object instead
-        #
-        # the first thing: what should be the domain of a new object?
-        # User can set domain parameter to:
-        # 'keep' - new object domain is self.x
-        # 'extend' - new object domain is sum of sets self.x, c2.x,
-        #  and values of c2.y in self.x-c2.x and self.x in c2.x - self.x are defval
-
-        # anyway, there are 3 main possibilities:
-        # 1) domains are disjoint when a2>b1 or a1>b2
-        if a2 > b1 or a1 > b2:
-            #if user decides to keep the orignal domain, the new object should be as follows:
-            if domain == 'keep':
-                obj = copy.deepcopy(self)
-                obj.y = obj.y - defval
-                return obj
-            # could be else here but there might be more possibilities in the future
-            # if user wants to extend the domain, new domain is a union.
-            if domain == 'extend':
-                tmp1 = np.array(self.y) - defval        # new values for self.x are correspoding self.y-defval
-                tmp2 = defval - np.array(curve2.y)          # new values for c2.x are corresponding defval - c2.y
-                if a2 > b1:     # here we have ------a1||||||b1-----a2|||||b2------>
-                    newX = np.concatenate((self.x, curve2.x))        # new X is just an union
-                    newY = np.concatenate((tmp1, tmp2))    # into one list
-                else:           # mirrored, just a minor change
-                    newX = np.concatenate((curv2.x, self.x))        # new X is just an union
-                    newY = np.concatenate((tmp2, tmp1))             # into one list
-
-                print('newX: ', newX)
-                print('newY: ', newY)
-                obj = Curve(np.stack((newX, newY), axis=1), **self.__dict__['metadata'])
-                return obj
+        #todo
 
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
