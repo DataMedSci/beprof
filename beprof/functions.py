@@ -1,5 +1,5 @@
-import curve
-import profile
+import beprof.curve
+import beprof.profile
 import numpy as np
 
 def subtract(curve1, curve2, defval=0):
