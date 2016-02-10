@@ -138,7 +138,6 @@ class LateralProfile(Profile):
             return
         self.metadata = getattr(obj, 'metadata', {})
 
-
     def left_penumbra(self, upper=0.9, lower=0.1):
         return self.x_at_y(upper) - self.x_at_y(lower)
 
