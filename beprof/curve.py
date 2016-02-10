@@ -51,8 +51,9 @@ class Curve(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None:
+        if obj is None: # what generally means the object was created using explicit constructor
             return
+        self.metadata = getattr(obj, 'metadata', {})
 
     @property
     def x(self):
@@ -168,14 +169,11 @@ def main():
 
     print('\n', '*'*30,'\nchange_domain:')
 
-    print("X:", c.x)
-    print("Y:", c.y)
-    new = k.change_domain([1, 2, 3, 5, 6, 7, 9])
-    print("X:", new.x)
-    print("Y:", new.y)
-    print('M:', new.metadata)
+    k2 = k.view(np.ndarray)
+    print(k2)
 
-    print('\n', '*'*30,'\nfixed_step_domain:')
+    k3 = k[1:2,:]
+    print(k3)
 
     print("X:", k.x)
     print("Y:", k.y)
