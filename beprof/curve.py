@@ -5,7 +5,9 @@ from scipy.interpolate import interp1d
 from scipy import signal
 import math
 import copy
+import logging
 
+logging.basicConfig(level=logging.ERROR)
 
 class Axis(IntEnum):
     """
@@ -43,6 +45,7 @@ class Curve(np.ndarray):
     """
 
     def __new__(cls, input_array, **meta):
+        logging.info('Creating Curve object')
         obj = np.asarray(input_array).view(cls)
         if meta is None:
             obj.metadata = {}
@@ -95,15 +98,18 @@ class Curve(np.ndarray):
         :param domain: set of points representing new domain. Might be a list or np.array
         :return: new Curve object with domain set by 'domain' parameter
         '''
-
+        logging.info('Inside change_domain() method')
         # check if new domain includes in the orginal domain
-        if np.max(domain) > np.max(self.x):
-            # separate issue created to provide logging package
-            print('Error1')
+        try:
+            if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
+                logging.error('in change_domain: the old domain does not include the new one')
+                raise IndexError
+        except IndexError as ie:
+            # bad idea for big domains, better print ie probably ?
+            print('Old domain: ', self.x)
+            print('New domain: ', domain)
             return self
-        if np.min(domain) < np.min(self.x):
-            print('Error2')
-            return self
+
         y = np.interp(domain, self.x, self.y)
         obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
@@ -123,6 +129,7 @@ class Curve(np.ndarray):
         :param fixp: fixed point one of the points in new domain
         :return: new Curve object with domain specified by step and fixp parameters
         '''
+        logging.info('Inside rebinned() method')
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
@@ -152,6 +159,7 @@ class Curve(np.ndarray):
 
 
 def main():
+    logging.info('Inside main() function')
     c = Curve([[0, 0], [5, 5], [10, 0]])
     print("X:", c.x)
     print("Y:", c.y)
