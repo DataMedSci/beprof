@@ -51,7 +51,7 @@ class Curve(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None:
+        if obj is None: 
             return
         self.metadata = getattr(obj, 'metadata', None)
 
@@ -144,7 +144,7 @@ class Curve(np.ndarray):
         domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
         return self.change_domain(domain)
 
-    def subtract(self, curve2, defval=0, newobj=True):
+    def subtract(self, curve2, defval=0, newobj=True, domain='keep'):
 
         # domain1 = [a1, b1]
         # domain2 = [a2, b2]
@@ -171,7 +171,40 @@ class Curve(np.ndarray):
 
         # since the program is here, that means newobj is True
         # what means the method is not going to modify self but create new curve object instead
-        # working on this part currently. . . 
+        #
+        # the first thing: what should be the domain of a new object?
+        # User can set domain parameter to:
+        # 'keep' - new object domain is self.x
+        # 'extend' - new object domain is sum of sets self.x, c2.x,
+        #  and values of c2.y in self.x-c2.x and self.x in c2.x - self.x are defval
+
+        # anyway, there are 3 main possibilities:
+        # 1) domains are disjoint when a2>b1 or a1>b2
+        if a2 > b1 or a1 > b2:
+            #if user decides to keep the orignal domain, the new object should be as follows:
+            if domain == 'keep':
+                obj = copy.deepcopy(self)
+                obj.y = obj.y - defval
+                return obj
+            # could be else here but there might be more possibilities in the future
+            # if user wants to extend the domain, new domain is a union.
+            if domain == 'extend':
+                tmp1 = np.array(self.y) - defval        # new values for self.x are correspoding self.y-defval
+                tmp2 = defval - np.array(curve2.y)          # new values for c2.x are corresponding defval - c2.y
+                if a2 > b1:     # here we have ------a1||||||b1-----a2|||||b2------>
+                    newX = np.concatenate((self.x, curve2.x))        # new X is just an union
+                    newY = np.concatenate((tmp1, tmp2))    # into one list
+                else:           # mirrored, just a minor change
+                    newX = np.concatenate((curv2.x, self.x))        # new X is just an union
+                    newY = np.concatenate((tmp2, tmp1))             # into one list
+
+                print('newX: ', newX)
+                print('newY: ', newY)
+                obj = Curve(np.stack((newX, newY), axis=1), **self.__dict__['metadata'])
+                return obj
+
+
+
 
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
@@ -183,27 +216,11 @@ class Curve(np.ndarray):
 
 def main():
 
-    print('\n', '*'*30, 'Metadata testing\n')
-
-    k = Curve([[0, 1], [1, 2], [2, 3], [4, 0]], meta1='example 1', meta2='example 2')
-    print('X:', k.x)
-    print('Y:', k.y)
-    print('M:', k.metadata)
-
-    print('\n__str__:\n', k)
-    print('Futher tests:\n')
-
-    k2 = k.view(np.ndarray)
-    print(k2)
-
-    k3 = k[1:2,:]
-    print(k3)
-
     print('\nSubtract method :\n')
 
     c = Curve([[0.0, 0], [5, 5], [10, 0]])
     print('c: \n', c)
-    d = Curve([[0.0, 0], [5, 5], [9, 1]])
+    d = Curve([[0.0, 1], [5, 1], [10, 1]])
     print('d: \n', d)
 
     c.subtract(d, newobj=False)
@@ -212,8 +229,25 @@ def main():
     print('X:', c.x)
     print('Y:', c.y)
 
+    print('Newobj creation #1\n\n')
+    a = Curve([[0, 0], [1, 1], [2, 2], [3, 1]], meta='data')
+    b = Curve([[4, 0], [5, 1], [6, 2], [7, 1]])
 
+    print('\na: \n')
+    print('X: ', a.x)
+    print('Y: ', a.y)
+    print('M: ', a.metadata)
 
+    print('\nb: \n')
+    print('X: ', b.x)
+    print('Y: ', b.y)
+    print('M: ', b.metadata)
+
+    diff = a.subtract(b, domain='extend', defval=1)
+    print('\n diff: \n')
+    print('X: ', diff.x)
+    print('Y: ', diff.y)
+    print('M: ', diff.metadata)
 
 if __name__ == '__main__':
     main()
