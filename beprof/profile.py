@@ -18,7 +18,7 @@ class Profile(Curve):
         # print("Here I am in Profile.__array_finalize__ obj: ", type(obj))
         if obj is None:
             return
-        self.metadata = getattr(obj, 'metadata', None)
+        self.metadata = getattr(obj, 'metadata', {})
 
     def x_at_y(self, y, reverse=False):
         """
@@ -136,7 +136,7 @@ class LateralProfile(Profile):
         # print("Here I am in LateralProfile.__array_finalize__ obj: ", type(obj))
         if obj is None:
             return
-        self.metadata = getattr(obj, 'metadata', None)
+        self.metadata = getattr(obj, 'metadata', {})
 
     def left_penumbra(self, upper=0.9, lower=0.1):
         return self.x_at_y(upper) - self.x_at_y(lower)
