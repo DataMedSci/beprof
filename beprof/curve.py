@@ -5,6 +5,7 @@ from scipy.interpolate import interp1d
 from scipy import signal
 import math
 import copy
+import beprof.functions
 
 
 class Axis(IntEnum):
@@ -51,7 +52,7 @@ class Curve(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None: 
+        if obj is None:
             return
         self.metadata = getattr(obj, 'metadata', None)
 
@@ -106,7 +107,7 @@ class Curve(np.ndarray):
             print('Error2')
             return self
         y = np.interp(domain, self.x, self.y)
-        obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
+        obj = Curve(np.stack((domain, y), axis=1))
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -144,7 +145,23 @@ class Curve(np.ndarray):
         domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
         return self.change_domain(domain)
 
+    def evaluate_at_x(self, arg, defval=0):
+        y = np.interp(arg, self.x, self.y, left=defval, right=defval)
+        return y
+        
     def subtract(self, curve2, defval=0, newobj=True, domain='keep'):
+        '''
+
+        :param curve2: An object with which the difference will be computed
+        :param defval: default value for points of curves that are out of domains intersection
+        :param newobj: If True, a new object will be created. Else method will try to modify self
+        :param domain: 'keep' if you want to keep the orginal domain of self,
+                       'extend' if you want to add points form curve2 to the new domain
+        :return:       new object of type type(self) if newobj is True, modified self otherwise
+        '''
+
+
+        # WILL BE CHANGED !!!
 
         # domain1 = [a1, b1]
         # domain2 = [a2, b2]
@@ -203,9 +220,6 @@ class Curve(np.ndarray):
                 obj = Curve(np.stack((newX, newY), axis=1), **self.__dict__['metadata'])
                 return obj
 
-
-
-
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
               "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
@@ -230,24 +244,27 @@ def main():
     print('Y:', c.y)
 
     print('Newobj creation #1\n\n')
-    a = Curve([[0, 0], [1, 1], [2, 2], [3, 1]], meta='data')
-    b = Curve([[4, 0], [5, 1], [6, 2], [7, 1]])
+    a = Curve([[0, 0], [1, 1], [2, 2], [3, 1]])
+    b = Curve([[0.5, 1], [1.5, 1], [2, 1], [2.5, 1]])
 
     print('\na: \n')
     print('X: ', a.x)
     print('Y: ', a.y)
-    print('M: ', a.metadata)
+
 
     print('\nb: \n')
     print('X: ', b.x)
     print('Y: ', b.y)
-    print('M: ', b.metadata)
 
-    diff = a.subtract(b, domain='extend', defval=1)
+
+    diff = functions.subtract(a, b)
     print('\n diff: \n')
     print('X: ', diff.x)
     print('Y: ', diff.y)
-    print('M: ', diff.metadata)
+
+    # print(diff.evaluate_at_x([-1, 0, 1, 1.5, 2, 3, 4]))
+
+
 
 if __name__ == '__main__':
     main()
