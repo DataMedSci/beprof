@@ -56,7 +56,7 @@ class Curve(np.ndarray):
         # print("Here I am in Curve.__array_finalize__ obj: ", type(obj))
         if obj is None: # what generally means the object was created using explicit constructor
             return
-        self.metadata = getattr(obj, 'metadata', None)
+        self.metadata = getattr(obj, 'metadata', {})
 
     @property
     def x(self):
