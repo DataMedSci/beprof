@@ -152,6 +152,15 @@ class Curve(np.ndarray):
         Returns Y value at arg of self. Arg can be a scalar, but also might be np.array or other iterable
         (like list). If domain of self is not wide enought to interpolate the value of Y, method will return
         defval for those arugments instead.
+
+        Check the interpolation when arg in domain of self:
+        >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([1, 2 ,3])
+        [ 1.  2.  3.]
+        
+        Check if behavior of the method is correct when arg partly outside the domain:
+        >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([-1, 1, 2 ,3, 5], 100)
+        [ 100.    1.    2.    3.  100.]
+
         :param arg: x-value to calculate Y (may be an array or list as well)
         :param defval: default value to return if can't interpolate value at arg
         :return: np.array of Y-values at arg. If arg is a scalar, will return scalar as well
@@ -164,6 +173,18 @@ class Curve(np.ndarray):
         Method that calculates difference between 2 curves (or subclasses of curves). Domain of self must be in
         domain of curve2 what means min(self.x) >= min(curve2.x) and max(self.x) <= max(curve2.x)
         Might modify self, and can return the result or None
+
+        Use subtract as -= operator, check whether returned value is None:
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]))
+        None
+
+        Use subtract again but return a new object this time. Check if it works OK.
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]), newobj=True).y
+        [-1.  0.  1.  0.]
+
+        Try using wrong inputs to create new object, and check whether it is None as expected:
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[1, -1], [2, -1]]), newobj=True)
+        None
 
         :param curve2: second object to calculate difference
         :param newobj: if True method is creating new object instead of modifying self
@@ -184,11 +205,8 @@ class Curve(np.ndarray):
         # if one want to create and return a new object rather then modify self
         if newobj:
             return functions.subtract(self, curve2.change_domain(self.x))
-        # important comment about the line above. Need to modify change_domain to be more
-        # universal - for now it can only return a Curve. Same trick as in functions.subtract
-        # is needed here so that change_domain can obj type of any subclass of curve as well
         values = curve2.evaluate_at_x(self.x)
-        self.y -= values
+        self.y = self.y - values
         return None
 
 
