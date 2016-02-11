@@ -1,5 +1,6 @@
 from beprof.curve import Curve
 import numpy as np
+import logging
 
 __author__ = 'grzanka'
 
@@ -10,8 +11,9 @@ class Profile(Curve):
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
     """
 
-    def __new__(cls, input_array, axis=None, **kwargs):
-        new = super().__new__(cls, input_array, **kwargs)
+    def __new__(cls, input_array, axis=None, **meta):
+        logging.info('Creating Profile object, metadata is: %s', meta)
+        new = super().__new__(cls, input_array, **meta)
         if axis is None:
             new.axis = getattr(input_array,'axis',None)
         else:
@@ -58,7 +60,7 @@ class Profile(Curve):
         :param reverse: boolean value - direction of lookup
         :return: x value corresponding to given y or NaN if not found
         """
-
+        logging.info('Running %s.y_at_x(y=%s, reverse=%s)', self.__class__, y, reverse)
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
         if reverse:
@@ -132,8 +134,9 @@ class Profile(Curve):
 
 
 class LateralProfile(Profile):
-    def __new__(cls, input_array, axis=None, background=None, **kwargs):
-        new = super().__new__(cls, input_array, axis=axis, **kwargs)
+    def __new__(cls, input_array, axis=None, background=None, **meta):
+        logging.info('Creating LateralProfile object, metadata is: %s', meta)
+        new = super().__new__(cls, input_array, axis=axis, **meta)
         return new
 
     def __array_finalize__(self, obj):
@@ -212,15 +215,15 @@ def main():
     print(lp)
 
     print('\nTEST:')
-    test = lp.fixed_step_domain(0.5, 2)
+    test = lp.rebinned(0.5, 2)
     print('X:', test.x)
     print('Y:', test.y)
     print('M:', test.metadata)
 
     print(test)
 
-    # for x in (-1, 0, 0.5, 1, 1.5):
-    #     print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
+    for x in (-1, 0, 0.5, 1, 1.5):
+        print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
 
 
 if __name__ == '__main__':
