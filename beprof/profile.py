@@ -1,5 +1,6 @@
 from beprof.curve import Curve
 import numpy as np
+import beprof.functions
 
 __author__ = 'grzanka'
 
@@ -195,37 +196,28 @@ class DepthProfile(Profile):
 
 def main():
     print('\nProfile')
-    p = Profile([[1, 0], [2, 1], [3, 0]], first='one', second='two', third='three')
+    p = Profile([[0, 0], [1, 1], [2, 2], [3, 1]], some='exapmlary', meta='data')
     print("X:", p.x)
     print("Y:", p.y)
-    print("meta:", p.metadata)
-    print(p)
+    print('M: ', p.metadata)
 
-    print('\nLateralProfile')
-    lp = LateralProfile([[1, 0], [2, 1], [3, 0]], example='foo', anotherex='bar')
-    print("X:", lp.x)
-    print("Y:", lp.y)
-    print("meta:", lp.metadata)
-    print(lp)
+    p2 = Profile([[1.5, 1], [2.5, 1], [3.5, 2], [4, 1]])
+    print("X:", p2.x)
+    print("Y:", p2.y)
+    print('M: ', p2.metadata)
 
-    print('\nTEST:')
-    test = lp.rebinned(0.5, 2)
-    print('X:', test.x)
-    print('Y:', test.y)
-    print('M:', test.metadata)
+    b = Curve([[0.5, 1], [1.5, 1], [2, 1], [2.5, 1]], negative='one')
 
-    print(test)
+    print('\na: \n')
+    print('X: ', b.x)
+    print('Y: ', b.y)
+    print('M: ', b.metadata)
 
-    # for x in (-1, 0, 0.5, 1, 1.5):
-    #     print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
-
-    print("\nFuther testing:\n")
-    t2 = test[2:4, :]
-    print(t2)
-
-    print("\n last example:\n")
-    pp = test.view(Profile)
-    print(pp)
+    diff = functions.subtract(p, b)
+    print('type(diff): ', type(diff))
+    print("X:", diff.x)
+    print("Y:", diff.y)
+    print('M: ', diff.metadata)
 
 
 if __name__ == '__main__':
