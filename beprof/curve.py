@@ -168,7 +168,7 @@ class Curve(np.ndarray):
         y = np.interp(arg, self.x, self.y, left=defval, right=defval)
         return y
 
-    def subtract(self, curve2, newobj=False,):
+    def subtract(self, curve2, newobj=False):
         '''
         Method that calculates difference between 2 curves (or subclasses of curves). Domain of self must be in
         domain of curve2 what means min(self.x) >= min(curve2.x) and max(self.x) <= max(curve2.x)
