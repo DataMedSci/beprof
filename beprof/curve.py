@@ -188,7 +188,7 @@ class Curve(np.ndarray):
         # universal - for now it can only return a Curve. Same trick as in functions.subtract
         # is needed here so that change_domain can obj type of any subclass of curve as well
         values = curve2.evaluate_at_x(self.x)
-        self.y = self.y - values
+        self.y -= values
         return None
 
 
