@@ -52,10 +52,9 @@ class Curve(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None: # what generally means the object was created using explicit constructor
+        if obj is None:
             return
         self.metadata = getattr(obj, 'metadata', {})
-
 
     @property
     def x(self):
@@ -147,6 +146,14 @@ class Curve(np.ndarray):
         return self.change_domain(domain)
 
     def evaluate_at_x(self, arg, defval=0):
+        '''
+        Returns Y value at arg of self. Arg can be a scalar, but also might be np.array or other iterable
+        (like list). If domain of self is not wide enought to interpolate the value of Y, method will return
+        defval for those arugments instead.
+        :param arg: x-value to calculate Y (may be an array or list as well)
+        :param defval: default value to return if can't interpolate value at arg
+        :return: np.array of Y-values at arg. If arg is a scalar, will return scalar as well
+        '''
         y = np.interp(arg, self.x, self.y, left=defval, right=defval)
         return y
 
@@ -172,6 +179,7 @@ class Curve(np.ndarray):
 
 
 def main():
+
     print('\nSubtract method :\n')
 
     c = Curve([[0.0, 0], [5, 5], [10, 0]])
@@ -186,25 +194,26 @@ def main():
     print('Y:', c.y)
 
     print('Newobj creation #1\n\n')
-    a = Curve([[0, 0], [1, 1], [2, 2], [3, 1]])
-    b = Curve([[0.5, 1], [1.5, 1], [2, 1], [2.5, 1]])
+    a = Curve([[0, 0], [1, 1], [2, 2], [3, 1]], positive='example')
+    b = Curve([[0.5, 1], [1.5, 1], [2, 1], [2.5, 1]], negative='one')
 
     print('\na: \n')
     print('X: ', a.x)
     print('Y: ', a.y)
-
+    print('M: ', a.metadata)
 
     print('\nb: \n')
     print('X: ', b.x)
     print('Y: ', b.y)
-
+    print('M: ', b.metadata)
 
     diff = functions.subtract(a, b)
     print('\n diff: \n')
     print('X: ', diff.x)
     print('Y: ', diff.y)
-
+    print('M: ', diff.metadata)
     # print(diff.evaluate_at_x([-1, 0, 1, 1.5, 2, 3, 4]))
+
 
 if __name__ == '__main__':
     main()
