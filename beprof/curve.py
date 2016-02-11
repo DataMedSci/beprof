@@ -54,11 +54,8 @@ class Curve(np.ndarray):
     def __array_finalize__(self, obj):
         if obj is None: # what generally means the object was created using explicit constructor
             return
-<<<<<<< HEAD
-        self.metadata = getattr(obj, 'metadata', None)
-=======
         self.metadata = getattr(obj, 'metadata', {})
->>>>>>> grzanka-master
+
 
     @property
     def x(self):
@@ -175,8 +172,6 @@ class Curve(np.ndarray):
 
 
 def main():
-<<<<<<< HEAD
-
     print('\nSubtract method :\n')
 
     c = Curve([[0.0, 0], [5, 5], [10, 0]])
@@ -210,38 +205,6 @@ def main():
     print('Y: ', diff.y)
 
     # print(diff.evaluate_at_x([-1, 0, 1, 1.5, 2, 3, 4]))
-
-
-=======
-    c = Curve([[0, 0], [5, 5], [10, 0]])
-    print("X:", c.x)
-    print("Y:", c.y)
-    for x in (0.5, 1, 1.5, 2.0, 4.5):
-        print("x=", x, "y=", c.y_at_x(x))
-
-    print('\n', '*'*30, 'Metadata testing\n')
-
-    k = Curve([[0, 1], [1, 2], [2, 3], [4, 0]], meta1='example 1', meta2='example 2')
-    print('X:', k.x)
-    print('Y:', k.y)
-    print('M:', k.metadata)
-    print(k)
-
-    print('\n', '*'*30,'\nchange_domain:')
-
-    k2 = k.view(np.ndarray)
-    print(k2)
-
-    k3 = k[1:2,:]
-    print(k3)
-
-    print("X:", k.x)
-    print("Y:", k.y)
-    test = k.rebinned(0.7, -1)
-    print("X:", test.x)
-    print("Y:", test.y)
-    print('M:', test.metadata)
->>>>>>> grzanka-master
 
 if __name__ == '__main__':
     main()
