@@ -7,7 +7,7 @@ import math
 import copy
 import logging
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 
 class Axis(IntEnum):
     """
@@ -45,7 +45,7 @@ class Curve(np.ndarray):
     """
 
     def __new__(cls, input_array, **meta):
-        logging.info('Creating Curve object')
+        logging.info('Creating Curve object, metadata is: %s', meta)
         obj = np.asarray(input_array).view(cls)
         if meta is None:
             obj.metadata = {}
@@ -98,16 +98,17 @@ class Curve(np.ndarray):
         :param domain: set of points representing new domain. Might be a list or np.array
         :return: new Curve object with domain set by 'domain' parameter
         '''
-        logging.info('Inside change_domain() method')
+        logging.info('Running %s.change_domain() with new domain range:'
+                     ' [%s, %s]', self.__class__, np.min(domain), np.max(domain))
         # check if new domain includes in the orginal domain
         try:
             if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
-                logging.error('in change_domain: the old domain does not include the new one')
                 raise IndexError
         except IndexError as ie:
-            # bad idea for big domains, better print ie probably ?
-            print('Old domain: ', self.x)
-            print('New domain: ', domain)
+            logging.error('in change_domain: the old domain does not include the new one\n'
+                          'Old domain range: [%s, %s]\n'
+                          'New domain range: [%s, %s]',
+                          np.min(self.x), np.max(self.x), np.min(domain), np.max(domain))
             return self
 
         y = np.interp(domain, self.x, self.y)
@@ -129,7 +130,7 @@ class Curve(np.ndarray):
         :param fixp: fixed point one of the points in new domain
         :return: new Curve object with domain specified by step and fixp parameters
         '''
-        logging.info('Inside rebinned() method')
+        logging.info('Running %s.rebinned(step=%s, fixp=%s)',self.__class__, step, fixp)
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
@@ -159,7 +160,6 @@ class Curve(np.ndarray):
 
 
 def main():
-    logging.info('Inside main() function')
     c = Curve([[0, 0], [5, 5], [10, 0]])
     print("X:", c.x)
     print("Y:", c.y)
@@ -178,7 +178,7 @@ def main():
 
     print("X:", c.x)
     print("Y:", c.y)
-    new = k.change_domain([1, 2, 3, 5, 6, 7, 9])
+    new = k.change_domain([1, 2, 3, 5, 6, 7, 9, 1000])
     print("X:", new.x)
     print("Y:", new.y)
     print('M:', new.metadata)
