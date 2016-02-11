@@ -108,6 +108,8 @@ class Curve(np.ndarray):
             return self
         y = np.interp(domain, self.x, self.y)
         obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
+        # as mentioned below, should be as in the line below instead
+        # obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -164,11 +166,32 @@ class Curve(np.ndarray):
         Might modify self, and can return the result or None
 
         :param curve2: second object to calculate difference
-        :param newobj: if True method is cretaing new object instead of modifying self
+        :param newobj: if True method is creating new object instead of modifying self
         :return: None if newobj is False (but will modify self)
                  Or type(self) object containing the result
         '''
-        #todo
+        # domain1 = [a1, b1]
+        # domain2 = [a2, b2]
+        a1, b1 = np.min(self.x), np.max(self.x)
+        a2, b2 = np.min(curve2.x), np.max(curve2.x)
+
+        # check whether domains condition is satisfied
+        if a2 > a1 or b2 < b1:
+            # will be logging error here and an exeption, but
+            # there is a separate issue. For now just print
+            print('Error - curve2 domain does not include self domain')
+            return None
+        # if one want to create and return a new object rather then modify self
+        if newobj:
+            return functions.subtract(self, curve2.change_domain(self.x))
+        # important comment about the line above. Need to modify change_domain to be more
+        # universal - for now it can only return a Curve. Same trick as in functions.subtract
+        # is needed here so that change_domain can obj type of any subclass of curve as well
+        values = curve2.evaluate_at_x(self.x)
+        self.y = self.y - values
+        return None
+
+
 
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
@@ -214,6 +237,23 @@ def main():
     print('M: ', diff.metadata)
     # print(diff.evaluate_at_x([-1, 0, 1, 1.5, 2, 3, 4]))
 
+    dif2 = b.subtract(a, True)
+    print('\n dif2: \n')
+    print('X: ', dif2.x)
+    print('Y: ', dif2.y)
+    print('M: ', dif2.metadata)
+
+    print('\n b should be as before:\n')
+    print('X: ', b.x)
+    print('Y: ', b.y)
+    print('M: ', b.metadata)
+
+    print('\nNow calling b.subtract(a) what should change b so that is looks like dif2')
+    b.subtract(a)
+    print('\nb: \n')
+    print('X: ', b.x)
+    print('Y: ', b.y)
+    print('M: ', b.metadata)
 
 if __name__ == '__main__':
     main()
