@@ -12,7 +12,7 @@ class Profile(Curve):
     """
 
     def __new__(cls, input_array, axis=None, **meta):
-        logging.info('Creating Profile object, metadata is: %s', meta)
+        logging.info('Creating Profile object, metadata is: {0}'.format(meta))
         new = super().__new__(cls, input_array, **meta)
         if axis is None:
             new.axis = getattr(input_array,'axis',None)
@@ -60,7 +60,7 @@ class Profile(Curve):
         :param reverse: boolean value - direction of lookup
         :return: x value corresponding to given y or NaN if not found
         """
-        logging.info('Running %s.y_at_x(y=%s, reverse=%s)', self.__class__, y, reverse)
+        logging.info('Running {0}.y_at_x(y={1}, reverse={2})'.format(self.__class__, y, reverse))
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
         if reverse:
@@ -127,6 +127,7 @@ class Profile(Curve):
         self.y /= ave
 
     def __str__(self):
+        logging.info('Running {0}.__str__'.format(self.__class__))
         ret = super().__str__()
         ret += "\n FWHM = {:2.3f}".format(self.fwhm)
         ret += " " + str(self.axis)
@@ -135,7 +136,7 @@ class Profile(Curve):
 
 class LateralProfile(Profile):
     def __new__(cls, input_array, axis=None, background=None, **meta):
-        logging.info('Creating LateralProfile object, metadata is: %s', meta)
+        logging.info('Creating LateralProfile object, metadata is: {0}'.format(meta))
         new = super().__new__(cls, input_array, axis=axis, **meta)
         return new
 
