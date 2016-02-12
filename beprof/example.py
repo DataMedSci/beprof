@@ -9,5 +9,3 @@ x = np.arange(0, 1000)
 
 example = Curve(np.stack((x, y), axis=1))
 print(example)
-
-
