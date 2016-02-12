@@ -42,6 +42,12 @@ class Curve(np.ndarray):
         2) When object (obj) alrady exists, one can use dictionary methods
            to add a field to obj.metadata dict.
 
+    Raises:
+        IndexError: this can happen when user is trying to create new Curve object
+                    but uses incorrect array of points to initialise it.
+                    Input array should be 2D or 3D (shape: (X, 2) or (X, 3)).
+        ValueError: in change domain function: when the old domain does not include 
+                    the new one.
     """
 
     def __new__(cls, input_array, **meta):
@@ -115,7 +121,10 @@ class Curve(np.ndarray):
                           'New domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
                                                                 np.min(domain), np.max(domain))
                           )
-            raise IndexError('The old domain does not include the new one')
+            raise ValueError('The old domain does not include the new one!\n'
+                             'Old domain range: [{0}, {1}]\n'
+                             'New domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
+                                                                np.min(domain), np.max(domain))')
 
         y = np.interp(domain, self.x, self.y)
         obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
