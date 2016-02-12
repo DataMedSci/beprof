@@ -45,7 +45,8 @@ class Curve(np.ndarray):
     """
 
     def __new__(cls, input_array, **meta):
-        logging.info('Creating Curve object, metadata is: %s', meta)
+        shape = np.shape(input_array)
+        logging.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
         obj = np.asarray(input_array).view(cls)
         if meta is None:
             obj.metadata = {}
@@ -98,18 +99,17 @@ class Curve(np.ndarray):
         :param domain: set of points representing new domain. Might be a list or np.array
         :return: new Curve object with domain set by 'domain' parameter
         '''
-        logging.info('Running %s.change_domain() with new domain range:'
-                     ' [%s, %s]', self.__class__, np.min(domain), np.max(domain))
+        logging.info('Running {0}.change_domain() with new domain range:'
+                     ' [{1}, {2}]'.format(self.__class__, np.min(domain), np.max(domain)))
         # check if new domain includes in the orginal domain
-        try:
-            if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
-                raise IndexError
-        except IndexError as ie:
+
+        if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
             logging.error('in change_domain: the old domain does not include the new one\n'
-                          'Old domain range: [%s, %s]\n'
-                          'New domain range: [%s, %s]',
-                          np.min(self.x), np.max(self.x), np.min(domain), np.max(domain))
-            return self
+                          'Old domain range: [{0}, {1}]\n'
+                          'New domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
+                                                                np.min(domain), np.max(domain))
+                          )
+            raise IndexError('The old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
         obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
@@ -130,7 +130,7 @@ class Curve(np.ndarray):
         :param fixp: fixed point one of the points in new domain
         :return: new Curve object with domain specified by step and fixp parameters
         '''
-        logging.info('Running %s.rebinned(step=%s, fixp=%s)',self.__class__, step, fixp)
+        logging.info('Running {0}.rebinned(step={1}, fixp={2})'.format(self.__class__, step, fixp))
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
@@ -152,6 +152,7 @@ class Curve(np.ndarray):
         return self.change_domain(domain)
 
     def __str__(self):
+        logging.info('Running {0}.__str__'.format(self.__class__))
         ret = "shape: {}".format(self.shape) + \
               "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
               "\nY : [{:4.6f},{:4.6f}]".format(min(self.y), max(self.y)) + \
@@ -178,7 +179,7 @@ def main():
 
     print("X:", c.x)
     print("Y:", c.y)
-    new = k.change_domain([1, 2, 3, 5, 6, 7, 9, 1000])
+    new = k.change_domain([1, 2, 3])
     print("X:", new.x)
     print("Y:", new.y)
     print('M:', new.metadata)
