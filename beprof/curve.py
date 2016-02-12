@@ -47,6 +47,12 @@ class Curve(np.ndarray):
     def __new__(cls, input_array, **meta):
         shape = np.shape(input_array)
         logging.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
+        if shape[1] != 2 and shape[1] != 3:
+            logging.error('Crearing Curve object failed. Input array must be an 2D or 3D array\n'
+                         'np.shape(input_array_[1] must be either 2 or 3.')
+            raise IndexError('Invalid format of input_array - '
+                             'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
+
         obj = np.asarray(input_array).view(cls)
         if meta is None:
             obj.metadata = {}
@@ -169,7 +175,7 @@ def main():
 
     print('\n', '*'*30, 'Metadata testing\n')
 
-    k = Curve([[0, 1], [1, 2], [2, 3], [4, 0]], meta1='example 1', meta2='example 2')
+    k = Curve([[0, 1, 3, 5], [1, 2, 2, 1], [2, 3, 1 ,2], [4, 0, 2, 1]], meta1='example 1', meta2='example 2')
     print('X:', k.x)
     print('Y:', k.y)
     print('M:', k.metadata)
