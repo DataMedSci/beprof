@@ -13,6 +13,7 @@ class Profile(Curve):
 
     def __new__(cls, input_array, axis=None, **meta):
         logging.info('Creating Profile object, metadata is: {0}'.format(meta))
+        # input_array shape control provided in Curve class
         new = super().__new__(cls, input_array, **meta)
         if axis is None:
             new.axis = getattr(input_array,'axis',None)
@@ -120,9 +121,11 @@ class Profile(Curve):
         :param dt:
         :return:
         """
+        logging.info('Running {0}.normalize(dt={1})'.format(self.__class__, dt))
         try:
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
+            logging.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
             raise Exception("Scaling factor is " + str(ave)) from e
         self.y /= ave
 
@@ -137,6 +140,7 @@ class Profile(Curve):
 class LateralProfile(Profile):
     def __new__(cls, input_array, axis=None, background=None, **meta):
         logging.info('Creating LateralProfile object, metadata is: {0}'.format(meta))
+        # input_array shape control provided in Curve class
         new = super().__new__(cls, input_array, axis=axis, **meta)
         return new
 
@@ -177,6 +181,7 @@ class LateralProfile(Profile):
         self.y /= 2.0
 
     def __str__(self):
+        logging.info('Running {0}.__str__'.format(self.__class__))
         ret = super().__str__() + "\n"
         ret += "Center = {:2.3f}".format(self.center()) + \
                " Penumbra = [{:2.3f},{:2.3f}]".format(self.left_penumbra(), self.right_penumbra())
