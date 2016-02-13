@@ -46,7 +46,7 @@ class Curve(np.ndarray):
         IndexError: this can happen when user is trying to create new Curve object
                     but uses incorrect array of points to initialise it.
                     Input array should be 2D or 3D (shape: (X, 2) or (X, 3)).
-        ValueError: in change domain function: when the old domain does not include 
+        ValueError: in change domain function: when the old domain does not include
                     the new one.
     """
 
@@ -116,15 +116,11 @@ class Curve(np.ndarray):
         # check if new domain includes in the orginal domain
 
         if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
-            logging.error('in change_domain: the old domain does not include the new one\n'
-                          'Old domain range: [{0}, {1}]\n'
-                          'New domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
+            logging.error('Old domain range: [{0}, {1}] does not include '
+                          'new domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
                                                                 np.min(domain), np.max(domain))
                           )
-            raise ValueError('The old domain does not include the new one!\n'
-                             'Old domain range: [{0}, {1}]\n'
-                             'New domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
-                                                                np.min(domain), np.max(domain))')
+            raise ValueError('in change_domain(): the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
         obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
@@ -184,7 +180,7 @@ def main():
 
     print('\n', '*'*30, 'Metadata testing\n')
 
-    k = Curve([[0, 1, 3, 5], [1, 2, 2, 1], [2, 3, 1 ,2], [4, 0, 2, 1]], meta1='example 1', meta2='example 2')
+    k = Curve([[0, 1], [1, 2], [2, 3], [4, 0]], meta1='example 1', meta2='example 2')
     print('X:', k.x)
     print('Y:', k.y)
     print('M:', k.metadata)
@@ -194,7 +190,7 @@ def main():
 
     print("X:", c.x)
     print("Y:", c.y)
-    new = k.change_domain([1, 2, 3])
+    new = k.change_domain([1, 2, 3, 10])
     print("X:", new.x)
     print("Y:", new.y)
     print('M:', new.metadata)
