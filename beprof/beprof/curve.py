@@ -43,9 +43,7 @@ class Curve(np.ndarray):
     """
 
     def __new__(cls, input_array, **meta):
-        # print("Here I am in Curve.__new__, cls:", cls)
         obj = np.asarray(input_array).view(cls)
-        # print("MOVING ON Curve.__new__")
         if meta is None:
             obj.metadata = {}
         else:
@@ -53,7 +51,6 @@ class Curve(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        # print("Here I am in Curve.__array_finalize__ obj: ", type(obj))
         if obj is None: # what generally means the object was created using explicit constructor
             return
         self.metadata = getattr(obj, 'metadata', {})
@@ -147,35 +144,6 @@ class Curve(np.ndarray):
         domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
         return self.change_domain(domain)
 
-    def subtract(self, curve2, defval=0, newobj=True):
-
-        # domain1 = [a1, b1]
-        # domain2 = [a2, b2]
-        a1, b1 = np.min(self.x), np.max(self.x)
-        a2, b2 = np.min(curve2.x), np.max(curve2.x)
-
-        # first: if the user doesn't want to create a new object in memory, 2 possible options:
-        if not newobj:
-            if a2 >= a1 and b2 <= b1:
-                # if the orginal domain includes c2 domain, subtraction can be done as follows:
-                # as the output domain is gonna be self.x, the subtracted values should be
-                # interpolated c2 values for every point that is in self.x and in section [a2, b2]
-                # and defval for the others. Values to subtract can be calculated using np.interp:
-
-                y = np.interp(self.x, curve2.x, curve2.y, left=defval, right=defval)
-                # print('y: ', y, type(y))
-                # print('Y: ', self.y, type(self.y))
-                self.y =  self.y - y
-                return
-            else:
-                # if the orginal domain doesn't include c2 domain there is nothing that can be done
-                print('Error, can not subtract without creating new object')
-                return
-
-        # since the program is here, that means newobj is True
-        # what means the method is not going to modify self but create new curve object instead
-        # working on this part currently. . .
-
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
               "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
@@ -186,6 +154,12 @@ class Curve(np.ndarray):
 
 def main():
 
+    c = Curve([[0, 0], [5, 5], [10, 0]])
+    print("X:", c.x)
+    print("Y:", c.y)
+    for x in (0.5, 1, 1.5, 2.0, 4.5):
+        print("x=", x, "y=", c.y_at_x(x))
+
     print('\n', '*'*30, 'Metadata testing\n')
 
     k = Curve([[0, 1], [1, 2], [2, 3], [4, 0]], meta1='example 1', meta2='example 2')
@@ -193,8 +167,13 @@ def main():
     print('Y:', k.y)
     print('M:', k.metadata)
 
+
     print('\n__str__:\n', k)
     print('Futher tests:\n')
+
+    print(k)
+
+    print('\n', '*'*30,'\nchange_domain:')
 
     k2 = k.view(np.ndarray)
     print(k2)
@@ -216,7 +195,12 @@ def main():
     print('Y:', c.y)
 
 
-
+    print("X:", k.x)
+    print("Y:", k.y)
+    test = k.rebinned(0.7, -1)
+    print("X:", test.x)
+    print("Y:", test.y)
+    print('M:', test.metadata)
 
 if __name__ == '__main__':
     main()
