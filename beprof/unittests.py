@@ -13,6 +13,19 @@ lpr = LateralProfile([[0, 0], [1, 2]])
 
 class TestCurveMethods(unittest.TestCase):
 
+    def test_metadata_1(self):
+        # check if everything was OK with constructing object with metadata
+        self.assertEqual(cur.metadata['arg1'], 'first')
+        self.assertEqual(cur.metadata['arg2'], 'second')
+        # check if object after change_domain still has metadata
+        obj = cur.change_domain([0, 1, 2.5, 5])
+        self.assertEqual(obj.metadata['arg1'], 'first')
+        self.assertEqual(obj.metadata['arg2'], 'second')
+        # try creating new obj with slicing and check metadata
+        obj = cur[2:5]
+        self.assertEqual(obj.metadata['arg1'], 'first')
+        self.assertEqual(obj.metadata['arg2'], 'second')
+
     def test_y_at_x(self):
         # return value of X from domain
         self.assertEqual(cur.y_at_x(0), 0)
