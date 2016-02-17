@@ -11,6 +11,7 @@ class Profile(Curve):
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
     """
 
+<<<<<<< HEAD
     def __new__(cls, input_array, axis=None, **meta):
         logging.info('Creating Profile object, metadata is: {0}'.format(meta))
         # input_array shape control provided in Curve class
@@ -19,12 +20,17 @@ class Profile(Curve):
             new.axis = getattr(input_array,'axis',None)
         else:
             new.axis = axis
+=======
+    def __new__(cls, input_array, **kwargs):
+        new = super().__new__(cls, input_array, **kwargs)
+>>>>>>> bcdae8cdcaa6a29186731842b238ac252b29900e
         return new
 
     def __array_finalize__(self, obj):
+        # print("Here I am in Profile.__array_finalize__ obj: ", type(obj))
         if obj is None:
             return
-        self.axis = getattr(obj, 'axis', None)
+        self.metadata = getattr(obj, 'metadata', {})
 
     def x_at_y(self, y, reverse=False):
         """
@@ -133,21 +139,26 @@ class Profile(Curve):
         logging.info('Running {0}.__str__'.format(self.__class__))
         ret = super().__str__()
         ret += "\n FWHM = {:2.3f}".format(self.fwhm)
-        ret += " " + str(self.axis)
         return ret
 
 
 class LateralProfile(Profile):
+<<<<<<< HEAD
     def __new__(cls, input_array, axis=None, background=None, **meta):
         logging.info('Creating LateralProfile object, metadata is: {0}'.format(meta))
         # input_array shape control provided in Curve class
         new = super().__new__(cls, input_array, axis=axis, **meta)
+=======
+    def __new__(cls, input_array, **kwargs):
+        new = super().__new__(cls, input_array, **kwargs)
+>>>>>>> bcdae8cdcaa6a29186731842b238ac252b29900e
         return new
 
     def __array_finalize__(self, obj):
+        # print("Here I am in LateralProfile.__array_finalize__ obj: ", type(obj))
         if obj is None:
             return
-        self.axis = getattr(obj, 'axis', None)
+        self.metadata = getattr(obj, 'metadata', {})
 
     def left_penumbra(self, upper=0.9, lower=0.1):
         return self.x_at_y(upper) - self.x_at_y(lower)
@@ -230,6 +241,14 @@ def main():
 
     for x in (-1, 0, 0.5, 1, 1.5):
         print("x=", x, "y=", p.x_at_y(x), "rev", p.x_at_y(x, reverse=True))
+
+    print("\nFuther testing:\n")
+    t2 = test[2:4, :]
+    print(t2)
+
+    print("\n last example:\n")
+    pp = test.view(Profile)
+    print(pp)
 
 
 if __name__ == '__main__':
