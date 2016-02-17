@@ -53,7 +53,6 @@ class Curve(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        # print("Here I am in Curve.__array_finalize__ obj: ", type(obj))
         if obj is None: # what generally means the object was created using explicit constructor
             return
         self.metadata = getattr(obj, 'metadata', {})
@@ -178,7 +177,18 @@ def main():
     k3 = k[1:2,:]
     print(k3)
 
+    k2 = k.view(np.ndarray)
+    print(k2)
 
+    k3 = k[1:2,:]
+    print(k3)
+
+    print("X:", k.x)
+    print("Y:", k.y)
+    test = k.rebinned(0.7, -1)
+    print("X:", test.x)
+    print("Y:", test.y)
+    print('M:', test.metadata)
 
 
 if __name__ == '__main__':
