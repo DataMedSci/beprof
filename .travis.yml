@@ -1,10 +1,11 @@
 language: python
 python:
     - "3.4"
+sudo: 'required'
 
 install:
-    - pip install scipy
-    - pip install numpy
+    - apt-get install python-scipy
+    - apt-get install python-numpy
     - cd beprof
     - python setup.py install
 
