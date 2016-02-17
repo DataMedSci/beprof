@@ -3,7 +3,8 @@ python:
     - "3.4"
 
 install:
-    pip install requirements.txt
+    pip install scipy
+    pip install numpy
     cd beprof
     python setup.py install
 
