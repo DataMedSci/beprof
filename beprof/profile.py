@@ -1,6 +1,6 @@
 from beprof.curve import Curve
 import numpy as np
-import beprof.functions
+from beprof import functions as f
 
 __author__ = 'grzanka'
 
@@ -213,7 +213,7 @@ def main():
     print('Y: ', b.y)
     print('M: ', b.metadata)
 
-    diff = functions.subtract(p, b)
+    diff = f.subtract(p, b)
     print('type(diff): ', type(diff))
     print("X:", diff.x)
     print("Y:", diff.y)
