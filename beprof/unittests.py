@@ -18,20 +18,54 @@ lpr = LateralProfile([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4], [6, 4], [7
             )
 
 
-class TestCurveMethods(unittest.TestCase):
+class TestMetadata(unittest.TestCase):
 
     def test_metadata_1(self):
         # check if everything was OK with constructing object with metadata
         self.assertEqual(cur.metadata['arg1'], 'first')
         self.assertEqual(cur.metadata['arg2'], 'second')
+        self.assertEqual(pro.metadata['profile1'], 'first_prof')
+        self.assertEqual(pro.metadata['profile2'], 'second_prof')
+        self.assertEqual(lpr.metadata['lprof1'], 'first_lp')
+        self.assertEqual(lpr.metadata['lprof2'], 'second_lp')
+
+    def test_metadata_2(self):
         # check if object after change_domain still has metadata
         obj = cur.change_domain([0, 1, 2.5, 5])
         self.assertEqual(obj.metadata['arg1'], 'first')
         self.assertEqual(obj.metadata['arg2'], 'second')
+
+        obj = pro.change_domain([0, 1, 2.5, 5])
+        self.assertEqual(obj.metadata['profile1'], 'first_prof')
+        self.assertEqual(obj.metadata['profile2'], 'second_prof')
+
+        obj = lpr.change_domain([0, 1, 2.5, 5])
+        self.assertEqual(obj.metadata['lprof1'], 'first_lp')
+        self.assertEqual(obj.metadata['lprof2'], 'second_lp')
+
+    def test_metadata_3(self):
         # try creating new obj with slicing and check metadata
         obj = cur[2:5]
         self.assertEqual(obj.metadata['arg1'], 'first')
         self.assertEqual(obj.metadata['arg2'], 'second')
+
+        obj = pro[2:5]
+        self.assertEqual(obj.metadata['profile1'], 'first_prof')
+        self.assertEqual(obj.metadata['profile2'], 'second_prof')
+
+        obj = lpr[2:5]
+        self.assertEqual(obj.metadata['lprof1'], 'first_lp')
+        self.assertEqual(obj.metadata['lprof2'], 'second_lp')
+
+    def test_metadata_4(self):
+        # try get non existing metadata
+        with self.assertRaises(KeyError):
+            pro.metadata['example']
+            obj.metadata['non-existing']
+            lpr.metadata['foo']
+
+
+class TestCurveMethods(unittest.TestCase):
 
     def test_y_at_x(self):
         # return value of X from domain
@@ -43,36 +77,24 @@ class TestCurveMethods(unittest.TestCase):
 
     def test_change_domain(self):
         # new domain inside current domain
-        self.assertEqual(list(cur.change_domain([2, 3, 4]).x), [2, 3 ,4])
-        self.assertEqual(list(cur.change_domain([2, 3, 4]).y), [2, 2 ,3])
+        self.assertTrue(np.array_equal(cur.change_domain([2, 3, 4]).x, [2, 3 ,4]))
+        self.assertTrue(np.array_equal(cur.change_domain([2, 3, 4]).y, [2, 2 ,3]))
 
         # new domain's range not inside current
-        self.assertEqual(list(cur.change_domain([-1, 4]).x), list(cur.x))
-        self.assertEqual(list(cur.change_domain([0, 11]).x), list(cur.x))
+        self.assertTrue(np.array_equal(cur.change_domain([-1, 4]).x, cur.x))
+        self.assertTrue(np.array_equal(cur.change_domain([0, 11]).x, cur.x))
 
     def test_rebinned(self):
-        # different combinations
-        self.assertEqual(list(cur.rebinned(step=1, fixp=0.5).x),
-                         [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5]
-                         )
-class TestProfileMethods(unittest.TestCase):
+        # rebinning curve
+        self.assertTrue(np.array_equal(cur.rebinned(step=1, fixp=0.5).x,
+                                        [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5])
+                        )
+        self.assertTrue(np.allclose(cur.rebinned(step=1, fixp=0.5).y,
+                                        [0.5, 1.5, 2, 2.5, 3.5, 4, 3.5, 2.5, 1.5, 0.5])
+                        )
 
-    def test_metadata_1(self):
-        # check if everything was OK with constructing object with metadata
-        self.assertEqual(pro.metadata['profile1'], 'first_prof')
-        self.assertEqual(pro.metadata['profile2'], 'second_prof')
-        # check if object after change_domain still has metadata
-        obj = pro.change_domain([0, 1, 2.5, 5])
-        self.assertEqual(obj.metadata['profile1'], 'first_prof')
-        self.assertEqual(obj.metadata['profile2'], 'second_prof')
-        # try creating new obj with slicing and check metadata
-        obj = pro[2:5]
-        self.assertEqual(obj.metadata['profile1'], 'first_prof')
-        self.assertEqual(obj.metadata['profile2'], 'second_prof')
-        # try get non existing metadata
-        with self.assertRaises(KeyError):
-            pro.metadata['example']
-            obj.metadata['non-existing']
+
+class TestProfileMethods(unittest.TestCase):
 
     def test_x_at_y(self):
         self.assertEqual(pro.x_at_y(1), 1)
@@ -87,11 +109,11 @@ class TestProfileMethods(unittest.TestCase):
         orgy = copy.deepcopy(lpr.y)
         lpr.mirror()
         lpr.mirror()
-        self.assertEqual(list(lpr.x), list(orgx))
-        self.assertEqual(list(lpr.y), list(orgy))
+        self.assertTrue(np.array_equal(lpr.x, orgx))
+        self.assertTrue(np.array_equal(lpr.y, orgy))
         # simple example
         lpr.mirror(m=4)
-        self.assertEqual(list(lpr.y), list(orgy[::-1]))
+        self.assertTrue(np.array_equal(lpr.y, orgy[::-1]))
 
 class TestTypes(unittest.TestCase):
 
@@ -107,6 +129,7 @@ class TestTypes(unittest.TestCase):
         pass
 
 class TestExceptions(unittest.TestCase):
+    # using what has been done in logging package would provide more test examples
     def test_exceptions(self):
         # todo
         pass
