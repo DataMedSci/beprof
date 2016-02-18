@@ -107,9 +107,7 @@ class Curve(np.ndarray):
             print('Error2')
             return self
         y = np.interp(domain, self.x, self.y)
-        obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
-        # as mentioned below, should be as in the line below instead
-        # obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
+        obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -156,7 +154,7 @@ class Curve(np.ndarray):
         Check the interpolation when arg in domain of self:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([1, 2 ,3])
         [ 1.  2.  3.]
-        
+
         Check if behavior of the method is correct when arg partly outside the domain:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([-1, 1, 2 ,3, 5], 100)
         [ 100.    1.    2.    3.  100.]
