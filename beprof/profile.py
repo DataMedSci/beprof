@@ -11,7 +11,6 @@ class Profile(Curve):
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
     """
 
-<<<<<<< HEAD
     def __new__(cls, input_array, axis=None, **meta):
         logging.info('Creating Profile object, metadata is: {0}'.format(meta))
         # input_array shape control provided in Curve class
@@ -20,11 +19,6 @@ class Profile(Curve):
             new.axis = getattr(input_array,'axis',None)
         else:
             new.axis = axis
-=======
-    def __new__(cls, input_array, **kwargs):
-        new = super().__new__(cls, input_array, **kwargs)
->>>>>>> bcdae8cdcaa6a29186731842b238ac252b29900e
-        return new
 
     def __array_finalize__(self, obj):
         # print("Here I am in Profile.__array_finalize__ obj: ", type(obj))
@@ -143,15 +137,11 @@ class Profile(Curve):
 
 
 class LateralProfile(Profile):
-<<<<<<< HEAD
+    
     def __new__(cls, input_array, axis=None, background=None, **meta):
         logging.info('Creating LateralProfile object, metadata is: {0}'.format(meta))
         # input_array shape control provided in Curve class
         new = super().__new__(cls, input_array, axis=axis, **meta)
-=======
-    def __new__(cls, input_array, **kwargs):
-        new = super().__new__(cls, input_array, **kwargs)
->>>>>>> bcdae8cdcaa6a29186731842b238ac252b29900e
         return new
 
     def __array_finalize__(self, obj):
