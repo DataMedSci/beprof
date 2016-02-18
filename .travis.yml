@@ -1,11 +1,11 @@
 language: python
 python:
     - "3.4"
-sudo: 'required'
 
 install:
-    - apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
+    - pip install -r requirements.txt
     - cd beprof
     - python setup.py install
+
 
 script: python unittests.py
