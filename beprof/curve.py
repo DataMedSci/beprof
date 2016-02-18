@@ -189,17 +189,16 @@ def main():
 
     print('\n', '*'*30,'\nchange_domain:')
 
-<<<<<<< HEAD
     print("X:", c.x)
     print("Y:", c.y)
     new = k.change_domain([1, 2, 3, 10])
     print("X:", new.x)
     print("Y:", new.y)
     print('M:', new.metadata)
-=======
+
     k2 = k.view(np.ndarray)
     print(k2)
->>>>>>> bcdae8cdcaa6a29186731842b238ac252b29900e
+
 
     k3 = k[1:2,:]
     print(k3)
