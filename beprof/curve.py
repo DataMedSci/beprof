@@ -207,8 +207,6 @@ class Curve(np.ndarray):
         self.y = self.y - values
         return None
 
-
-
     def __str__(self):
         ret = "shape: {}".format(self.shape) + \
               "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
