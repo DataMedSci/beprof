@@ -28,7 +28,7 @@ From this GIT repository, using <br>
 (where `@master` refers to the name of a branch)<br>
 
 * manually
-Providing that you have already install necessery packages<br>
+Providing that you have already installed necessery packages<br>
 ```
 git clone https://github.com/grzanka/beprof.git
 cd beprof
