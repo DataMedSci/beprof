@@ -185,9 +185,15 @@ def main():
     print('X:', k.x)
     print('Y:', k.y)
     print('M:', k.metadata)
-    print(k)
 
-    print('\n', '*'*30,'\nchange_domain:')
+    print('\n__str__:\n', k)
+    print('Futher tests:\n')
+
+    k2 = k.view(np.ndarray)
+    print(k2)
+
+    k3 = k[1:2,:]
+    print(k3)
 
     print("X:", c.x)
     print("Y:", c.y)
@@ -209,6 +215,14 @@ def main():
     print("X:", test.x)
     print("Y:", test.y)
     print('M:', test.metadata)
+
+
+    k2 = k.view(np.ndarray)
+    print(k2)
+
+    k3 = k[1:2,:]
+    print(k3)
+
 
 if __name__ == '__main__':
     main()
