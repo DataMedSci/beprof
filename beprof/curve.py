@@ -5,7 +5,7 @@ from scipy.interpolate import interp1d
 from scipy import signal
 import math
 import copy
-from beprof import functions as f
+from beprof import functions
 
 
 class Axis(IntEnum):
@@ -202,7 +202,7 @@ class Curve(np.ndarray):
             return None
         # if one want to create and return a new object rather then modify self
         if newobj:
-            return f.subtract(self, curve2.change_domain(self.x))
+            return functions.subtract(self, curve2.change_domain(self.x))
         values = curve2.evaluate_at_x(self.x)
         self.y = self.y - values
         return None
@@ -244,7 +244,7 @@ def main():
     print('Y: ', b.y)
     print('M: ', b.metadata)
 
-    diff = f.subtract(a, b)
+    diff = functions.subtract(a, b)
     print('\n diff: \n')
     print('X: ', diff.x)
     print('Y: ', diff.y)
