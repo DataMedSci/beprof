@@ -1,11 +1,11 @@
-from beprof import curve as c
-from beprof import functions as f
+from beprof import curve
+from beprof import functions
 import numpy as np
 
 __author__ = 'grzanka'
 
 
-class Profile(c.Curve):
+class Profile(curve.Curve):
     """
     General profile characterized by rising and falling edge
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
@@ -206,14 +206,14 @@ def main():
     print("Y:", p2.y)
     print('M: ', p2.metadata)
 
-    b = c.Curve([[0.5, 1], [1.5, 1], [2, 1], [2.5, 1]], negative='one')
+    b = curve.Curve([[0.5, 1], [1.5, 1], [2, 1], [2.5, 1]], negative='one')
 
     print('\na: \n')
     print('X: ', b.x)
     print('Y: ', b.y)
     print('M: ', b.metadata)
 
-    diff = f.subtract(p, b)
+    diff = functions.subtract(p, b)
     print('type(diff): ', type(diff))
     print("X:", diff.x)
     print("Y:", diff.y)
