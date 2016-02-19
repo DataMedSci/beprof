@@ -5,7 +5,9 @@ from scipy.interpolate import interp1d
 from scipy import signal
 import math
 import copy
+import logging
 
+logging.basicConfig(level=logging.ERROR)
 
 class Axis(IntEnum):
     """
@@ -40,9 +42,23 @@ class Curve(np.ndarray):
         2) When object (obj) alrady exists, one can use dictionary methods
            to add a field to obj.metadata dict.
 
+    Raises:
+        IndexError: this can happen when user is trying to create new Curve object
+                    but uses incorrect array of points to initialise it.
+                    Input array should be 2D or 3D (shape: (X, 2) or (X, 3)).
+        ValueError: in change domain function: when the old domain does not include
+                    the new one.
     """
 
     def __new__(cls, input_array, **meta):
+        shape = np.shape(input_array)
+        logging.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
+        if shape[1] != 2 and shape[1] != 3:
+            logging.error('Crearing Curve object failed. Input array must be an 2D or 3D array\n'
+                         'np.shape(input_array_[1] must be either 2 or 3.')
+            raise IndexError('Invalid format of input_array - '
+                             'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
+
         obj = np.asarray(input_array).view(cls)
         if meta is None:
             obj.metadata = {}
@@ -96,15 +112,17 @@ class Curve(np.ndarray):
         :param domain: set of points representing new domain. Might be a list or np.array
         :return: new Curve object with domain set by 'domain' parameter
         '''
-
+        logging.info('Running {0}.change_domain() with new domain range:'
+                     ' [{1}, {2}]'.format(self.__class__, np.min(domain), np.max(domain)))
         # check if new domain includes in the orginal domain
-        if np.max(domain) > np.max(self.x):
-            # separate issue created to provide logging package
-            print('Error1')
-            return self
-        if np.min(domain) < np.min(self.x):
-            print('Error2')
-            return self
+
+        if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
+            logging.error('Old domain range: [{0}, {1}] does not include '
+                          'new domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
+                                                                np.min(domain), np.max(domain))
+                          )
+            raise ValueError('in change_domain(): the old domain does not include the new one')
+
         y = np.interp(domain, self.x, self.y)
         obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
@@ -124,6 +142,7 @@ class Curve(np.ndarray):
         :param fixp: fixed point one of the points in new domain
         :return: new Curve object with domain specified by step and fixp parameters
         '''
+        logging.info('Running {0}.rebinned(step={1}, fixp={2})'.format(self.__class__, step, fixp))
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
@@ -145,6 +164,7 @@ class Curve(np.ndarray):
         return self.change_domain(domain)
 
     def __str__(self):
+        logging.info('Running {0}.__str__'.format(self.__class__))
         ret = "shape: {}".format(self.shape) + \
               "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
               "\nY : [{:4.6f},{:4.6f}]".format(min(self.y), max(self.y)) + \
@@ -169,8 +189,16 @@ def main():
 
     print('\n', '*'*30,'\nchange_domain:')
 
+    print("X:", c.x)
+    print("Y:", c.y)
+    new = k.change_domain([1, 2, 3, 10])
+    print("X:", new.x)
+    print("Y:", new.y)
+    print('M:', new.metadata)
+
     k2 = k.view(np.ndarray)
     print(k2)
+
 
     k3 = k[1:2,:]
     print(k3)
