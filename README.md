@@ -18,7 +18,7 @@ stable version is ready it will be pushed to PyPi repo.<br><br>
 
 As you may see in requirements.txt file beprof uses both numpy and scipy.<br>
 To make installing them possible, you might need to download some packages<br>
-which you can do (on UNIX) with:
+which you can do (on Linux) with:
 `~$ sudo apt-get install -y gfortran libopenblas-dev liblapack-dev`
 
 For now, installation can be done: 
