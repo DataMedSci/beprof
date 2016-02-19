@@ -34,7 +34,7 @@ from beprof import curve  #imports curve module
 from beprof import profile  #imports profile module
 ```
 
-Once you import necessery modules, you can use them to work with i.e. profiles:<br>
+Once you import necessary modules, you can use them to work with i.e. profiles:<br>
 
 ```
 from beprof import profile
