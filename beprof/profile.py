@@ -1,6 +1,7 @@
 from beprof import curve
 from beprof import functions
 import numpy as np
+import logging
 
 __author__ = 'grzanka'
 
@@ -11,9 +12,14 @@ class Profile(curve.Curve):
     Might be depth profile (along Z axis) or lateral profile (X or Y scan)
     """
 
-    def __new__(cls, input_array, **kwargs):
-        new = super().__new__(cls, input_array, **kwargs)
-        return new
+    def __new__(cls, input_array, axis=None, **meta):
+        logging.info('Creating Profile object, metadata is: {0}'.format(meta))
+        # input_array shape control provided in Curve class
+        new = super().__new__(cls, input_array, **meta)
+        if axis is None:
+            new.axis = getattr(input_array,'axis',None)
+        else:
+            new.axis = axis
 
     def __array_finalize__(self, obj):
         # print("Here I am in Profile.__array_finalize__ obj: ", type(obj))
@@ -56,7 +62,7 @@ class Profile(curve.Curve):
         :param reverse: boolean value - direction of lookup
         :return: x value corresponding to given y or NaN if not found
         """
-
+        logging.info('Running {0}.y_at_x(y={1}, reverse={2})'.format(self.__class__, y, reverse))
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
         if reverse:
@@ -116,21 +122,27 @@ class Profile(curve.Curve):
         :param dt:
         :return:
         """
+        logging.info('Running {0}.normalize(dt={1})'.format(self.__class__, dt))
         try:
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
+            logging.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
             raise Exception("Scaling factor is " + str(ave)) from e
         self.y /= ave
 
     def __str__(self):
+        logging.info('Running {0}.__str__'.format(self.__class__))
         ret = super().__str__()
         ret += "\n FWHM = {:2.3f}".format(self.fwhm)
         return ret
 
 
 class LateralProfile(Profile):
-    def __new__(cls, input_array, **kwargs):
-        new = super().__new__(cls, input_array, **kwargs)
+    
+    def __new__(cls, input_array, axis=None, background=None, **meta):
+        logging.info('Creating LateralProfile object, metadata is: {0}'.format(meta))
+        # input_array shape control provided in Curve class
+        new = super().__new__(cls, input_array, axis=axis, **meta)
         return new
 
     def __array_finalize__(self, obj):
@@ -171,6 +183,7 @@ class LateralProfile(Profile):
         self.y /= 2.0
 
     def __str__(self):
+        logging.info('Running {0}.__str__'.format(self.__class__))
         ret = super().__str__() + "\n"
         ret += "Center = {:2.3f}".format(self.center()) + \
                " Penumbra = [{:2.3f},{:2.3f}]".format(self.left_penumbra(), self.right_penumbra())
