@@ -1,4 +1,5 @@
-# beprof
+# beprof 
+[![Build Status](https://travis-ci.org/matkrak/beprof.svg?branch=travis)](https://travis-ci.org/matkrak/beprof)<br>
 Beam Profile Analysing Tools
 
 Library provides methods to work with Beam Profiles which are sets of points <br>
@@ -14,10 +15,25 @@ This module is dedicated for Python 3.x users
 Current version (0.1.0) is not available on PyPi, although once a <br>
 stable version is ready it will be pushed to PyPi repo.<br><br>
 
-For now, installation can be done from this GIT repository, using <br>
-`~$ pip3 install git+https://github.com/grzanka/beprof.git@master` <br>
 
-(where `@master` refers to the name of a branch)
+As you may see in requirements.txt file beprof uses both numpy and scipy.<br>
+To make installing them possible, you might need to download some packages<br>
+which you can do (on Linux) with:
+`~$ sudo apt-get install -y gfortran libopenblas-dev liblapack-dev`
+
+For now, installation can be done: 
+* via pip
+From this GIT repository, using <br>
+`~$ pip3 install git+https://github.com/grzanka/beprof.git@master` <br>
+(where `@master` refers to the name of a branch)<br>
+
+* manually
+Providing that you have already installed necessery packages<br>
+```
+git clone https://github.com/grzanka/beprof.git
+cd beprof
+python setup.py install
+```
 
 To unistall, simply use:<br>
 
