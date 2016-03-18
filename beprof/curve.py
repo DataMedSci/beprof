@@ -5,7 +5,9 @@ from scipy.interpolate import interp1d
 from scipy import signal
 import math
 import copy
+from beprof import functions
 import logging
+
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -67,7 +69,7 @@ class Curve(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None: # what generally means the object was created using explicit constructor
+        if obj is None:
             return
         self.metadata = getattr(obj, 'metadata', {})
 
@@ -124,7 +126,7 @@ class Curve(np.ndarray):
             raise ValueError('in change_domain(): the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
-        obj = Curve(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
+        obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -163,6 +165,68 @@ class Curve(np.ndarray):
         domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
         return self.change_domain(domain)
 
+    def evaluate_at_x(self, arg, defval=0):
+        '''
+        Returns Y value at arg of self. Arg can be a scalar, but also might be np.array or other iterable
+        (like list). If domain of self is not wide enought to interpolate the value of Y, method will return
+        defval for those arugments instead.
+
+        Check the interpolation when arg in domain of self:
+        >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([1, 2 ,3])
+        [ 1.  2.  3.]
+
+        Check if behavior of the method is correct when arg partly outside the domain:
+        >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([-1, 1, 2 ,3, 5], 100)
+        [ 100.    1.    2.    3.  100.]
+
+        :param arg: x-value to calculate Y (may be an array or list as well)
+        :param defval: default value to return if can't interpolate value at arg
+        :return: np.array of Y-values at arg. If arg is a scalar, will return scalar as well
+        '''
+        y = np.interp(arg, self.x, self.y, left=defval, right=defval)
+        return y
+
+    def subtract(self, curve2, newobj=False):
+        '''
+        Method that calculates difference between 2 curves (or subclasses of curves). Domain of self must be in
+        domain of curve2 what means min(self.x) >= min(curve2.x) and max(self.x) <= max(curve2.x)
+        Might modify self, and can return the result or None
+
+        Use subtract as -= operator, check whether returned value is None:
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]))
+        None
+
+        Use subtract again but return a new object this time. Check if it works OK.
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]), newobj=True).y
+        [-1.  0.  1.  0.]
+
+        Try using wrong inputs to create new object, and check whether it is None as expected:
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[1, -1], [2, -1]]), newobj=True)
+        None
+
+        :param curve2: second object to calculate difference
+        :param newobj: if True method is creating new object instead of modifying self
+        :return: None if newobj is False (but will modify self)
+                 Or type(self) object containing the result
+        '''
+        # domain1 = [a1, b1]
+        # domain2 = [a2, b2]
+        a1, b1 = np.min(self.x), np.max(self.x)
+        a2, b2 = np.min(curve2.x), np.max(curve2.x)
+
+        # check whether domains condition is satisfied
+        if a2 > a1 or b2 < b1:
+            # will be logging error here and an exeption, but
+            # there is a separate issue. For now just print
+            print('Error - curve2 domain does not include self domain')
+            return None
+        # if one want to create and return a new object rather then modify self
+        if newobj:
+            return functions.subtract(self, curve2.change_domain(self.x))
+        values = curve2.evaluate_at_x(self.x)
+        self.y = self.y - values
+        return None
+
     def __str__(self):
         logging.info('Running {0}.__str__'.format(self.__class__))
         ret = "shape: {}".format(self.shape) + \
@@ -173,55 +237,58 @@ class Curve(np.ndarray):
 
 
 def main():
-    c = Curve([[0, 0], [5, 5], [10, 0]])
-    print("X:", c.x)
-    print("Y:", c.y)
-    for x in (0.5, 1, 1.5, 2.0, 4.5):
-        print("x=", x, "y=", c.y_at_x(x))
 
-    print('\n', '*'*30, 'Metadata testing\n')
+    print('\nSubtract method :\n')
 
-    k = Curve([[0, 1], [1, 2], [2, 3], [4, 0]], meta1='example 1', meta2='example 2')
-    print('X:', k.x)
-    print('Y:', k.y)
-    print('M:', k.metadata)
+    c = Curve([[0.0, 0], [5, 5], [10, 0]])
+    print('c: \n', c)
+    d = Curve([[0.0, 1], [5, 1], [10, 1]])
+    print('d: \n', d)
 
-    print('\n__str__:\n', k)
-    print('Futher tests:\n')
+    c.subtract(d, newobj=False)
+    print('c-d: \n', c)
+    print('*********')
+    print('X:', c.x)
+    print('Y:', c.y)
 
-    k2 = k.view(np.ndarray)
-    print(k2)
+    print('Newobj creation #1\n\n')
+    a = Curve([[0, 0], [1, 1], [2, 2], [3, 1]], positive='example')
+    b = Curve([[0.5, 1], [1.5, 1], [2, 1], [2.5, 1]], negative='one')
 
-    k3 = k[1:2,:]
-    print(k3)
+    print('\na: \n')
+    print('X: ', a.x)
+    print('Y: ', a.y)
+    print('M: ', a.metadata)
 
-    print("X:", c.x)
-    print("Y:", c.y)
-    new = k.change_domain([1, 2, 3, 10])
-    print("X:", new.x)
-    print("Y:", new.y)
-    print('M:', new.metadata)
+    print('\nb: \n')
+    print('X: ', b.x)
+    print('Y: ', b.y)
+    print('M: ', b.metadata)
 
-    k2 = k.view(np.ndarray)
-    print(k2)
+    diff = functions.subtract(a, b)
+    print('\n diff: \n')
+    print('X: ', diff.x)
+    print('Y: ', diff.y)
+    print('M: ', diff.metadata)
+    # print(diff.evaluate_at_x([-1, 0, 1, 1.5, 2, 3, 4]))
 
+    dif2 = b.subtract(a, True)
+    print('\n dif2: \n')
+    print('X: ', dif2.x)
+    print('Y: ', dif2.y)
+    print('M: ', dif2.metadata)
 
-    k3 = k[1:2,:]
-    print(k3)
+    print('\n b should be as before:\n')
+    print('X: ', b.x)
+    print('Y: ', b.y)
+    print('M: ', b.metadata)
 
-    print("X:", k.x)
-    print("Y:", k.y)
-    test = k.rebinned(0.7, -1)
-    print("X:", test.x)
-    print("Y:", test.y)
-    print('M:', test.metadata)
-
-
-    k2 = k.view(np.ndarray)
-    print(k2)
-
-    k3 = k[1:2,:]
-    print(k3)
+    print('\nNow calling b.subtract(a) what should change b so that is looks like dif2')
+    b.subtract(a)
+    print('\nb: \n')
+    print('X: ', b.x)
+    print('Y: ', b.y)
+    print('M: ', b.metadata)
 
 
 if __name__ == '__main__':
