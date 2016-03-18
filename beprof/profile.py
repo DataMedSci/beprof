@@ -20,6 +20,7 @@ class Profile(curve.Curve):
             new.axis = getattr(input_array,'axis',None)
         else:
             new.axis = axis
+        return new
 
     def __array_finalize__(self, obj):
         # print("Here I am in Profile.__array_finalize__ obj: ", type(obj))
@@ -210,6 +211,8 @@ class DepthProfile(Profile):
 def main():
     print('\nProfile')
     p = Profile([[0, 0], [1, 1], [2, 2], [3, 1]], some='exemplary', meta='data')
+    print(p)
+    print(type(p))
     print("X:", p.x)
     print("Y:", p.y)
     print('M: ', p.metadata)
