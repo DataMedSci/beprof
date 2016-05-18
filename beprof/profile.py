@@ -23,7 +23,6 @@ class Profile(curve.Curve):
         return new
 
     def __array_finalize__(self, obj):
-        # print("Here I am in Profile.__array_finalize__ obj: ", type(obj))
         if obj is None:
             return
         self.metadata = getattr(obj, 'metadata', {})
@@ -119,7 +118,7 @@ class Profile(curve.Curve):
 
     def normalize(self, dt):
         """
-        Normalize to 1 over [-dt,+dt] area
+        Normalize to 1 over [-dt, +dt] area
         :param dt:
         :return:
         """
