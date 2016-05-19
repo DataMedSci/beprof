@@ -1,15 +1,14 @@
 from enum import IntEnum
 import numpy as np
 import scipy
-from scipy.interpolate import interp1d
 from scipy import signal
 import math
 import copy
 from beprof import functions
 import logging
 
-
 logging.basicConfig(level=logging.ERROR)
+
 
 class Axis(IntEnum):
     """
@@ -21,9 +20,9 @@ class Axis(IntEnum):
     xy = 4
 
 
-class DataSerie(np.ndarray):
+class DataSet(np.ndarray):
     """
-    1-D data serie, used in type casting for X and Y component of Curve
+    1-D data set, used in type casting for X and Y component of Curve
     """
     pass
 
@@ -37,11 +36,11 @@ class Curve(np.ndarray):
 
     Extra metadata can be added to Curve object and is stored in a dictionary.
     This data can be basically anything: date of measurement, string describing
-    gathered data, extra informations etc.
+    gathered data, extra information etc.
 
     One can add metadata to Curve object in 2 ways:
         1) When creating object, using extra arguments (**kwargs)
-        2) When object (obj) alrady exists, one can use dictionary methods
+        2) When object (obj) already exists, one can use dictionary methods
            to add a field to obj.metadata dict.
 
     Raises:
@@ -56,8 +55,8 @@ class Curve(np.ndarray):
         shape = np.shape(input_array)
         logging.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
         if shape[1] != 2 and shape[1] != 3:
-            logging.error('Crearing Curve object failed. Input array must be an 2D or 3D array\n'
-                         'np.shape(input_array_[1] must be either 2 or 3.')
+            logging.error('Creating Curve object failed. Input array must be an 2D or 3D array\n'
+                          'np.shape(input_array_[1] must be either 2 or 3.')
             raise IndexError('Invalid format of input_array - '
                              'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
 
@@ -75,7 +74,7 @@ class Curve(np.ndarray):
 
     @property
     def x(self):
-        return self[:, 0].view(DataSerie)
+        return self[:, 0].view(DataSet)
 
     @x.setter
     def x(self, value):
@@ -83,7 +82,7 @@ class Curve(np.ndarray):
 
     @property
     def y(self):
-        return self[:, 1].view(DataSerie)
+        return self[:, 1].view(DataSet)
 
     @y.setter
     def y(self, value):
@@ -101,10 +100,10 @@ class Curve(np.ndarray):
         return np.interp(x, self.x, self.y, left=np.nan, right=np.nan)
 
     def change_domain(self, domain):
-        '''
+        """
         Creating new Curve object in memory with domain passed as a parameter.
-        New domain must include in the orignal domain.
-        Copies values from orginal curve and uses interpolation to calculate
+        New domain must include in the original domain.
+        Copies values from original curve and uses interpolation to calculate
         values for new points in domain.
 
         Calculate y - values of example curve with changed domain:
@@ -113,11 +112,11 @@ class Curve(np.ndarray):
 
         :param domain: set of points representing new domain. Might be a list or np.array
         :return: new Curve object with domain set by 'domain' parameter
-        '''
+        """
         logging.info('Running {0}.change_domain() with new domain range:'
                      ' [{1}, {2}]'.format(self.__class__, np.min(domain), np.max(domain)))
-        # check if new domain includes in the orginal domain
 
+        # check if new domain includes in the original domain
         if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
             logging.error('Old domain range: [{0}, {1}] does not include '
                           'new domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
@@ -130,28 +129,27 @@ class Curve(np.ndarray):
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
-        '''
+        """
         Provides effective way to compute new domain basing on step and fixp parameters.
         Then using change_domain() method to create new object with calculated domain and returns it.
 
-        fixp doesn't have to be inside orginal domain.
+        fixp doesn't have to be inside original domain.
 
         Return domain of a new curve specified by fixp=0 and step=1 and another Curve object:
-        >>> print(Curve([[0,0], [5, 5], [10, 0]]).rebinned(1,0).x)
+        >>> print(Curve([[0,0], [5, 5], [10, 0]]).rebinned(1, 0).x)
         [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.]
 
         :param step: step size of new domain
         :param fixp: fixed point one of the points in new domain
         :return: new Curve object with domain specified by step and fixp parameters
-        '''
+        """
         logging.info('Running {0}.rebinned(step={1}, fixp={2})'.format(self.__class__, step, fixp))
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
 
-        # depending on position of fixp with respect to the orginal domain
-        # may be 1 of 3 cases:
-
+        # depending on position of fixp with respect to the original domain
+        # 3 cases may occur:
         if fixp < a:
             count_start = math.ceil(count_start)
             count_stop = math.floor(count_stop)
@@ -162,66 +160,65 @@ class Curve(np.ndarray):
             count_start = -count_start
             count_stop = count_stop
 
-        domain = [fixp + n * step for n in range(int(count_start), int(count_stop)+1)]
+        domain = [fixp + n * step for n in range(int(count_start), int(count_stop) + 1)]
         return self.change_domain(domain)
 
-    def evaluate_at_x(self, arg, defval=0):
-        '''
+    def evaluate_at_x(self, arg, def_val=0):
+        """
         Returns Y value at arg of self. Arg can be a scalar, but also might be np.array or other iterable
-        (like list). If domain of self is not wide enought to interpolate the value of Y, method will return
-        defval for those arugments instead.
+        (like list). If domain of self is not wide enough to interpolate the value of Y, method will return
+        def_val for those arguments instead.
 
         Check the interpolation when arg in domain of self:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([1, 2 ,3])
-        [ 1.  2.  3.]
+        array([ 1.,  2.,  3.])
 
         Check if behavior of the method is correct when arg partly outside the domain:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([-1, 1, 2 ,3, 5], 100)
-        [ 100.    1.    2.    3.  100.]
+        array([ 100.,    1.,    2.,    3.,  100.])
 
         :param arg: x-value to calculate Y (may be an array or list as well)
-        :param defval: default value to return if can't interpolate value at arg
+        :param def_val: default value to return if can't interpolate value at arg
         :return: np.array of Y-values at arg. If arg is a scalar, will return scalar as well
-        '''
-        y = np.interp(arg, self.x, self.y, left=defval, right=defval)
+        """
+        y = np.interp(arg, self.x, self.y, left=def_val, right=def_val)
         return y
 
-    def subtract(self, curve2, newobj=False):
-        '''
+    def subtract(self, curve2, new_obj=False):
+        """
         Method that calculates difference between 2 curves (or subclasses of curves). Domain of self must be in
         domain of curve2 what means min(self.x) >= min(curve2.x) and max(self.x) <= max(curve2.x)
         Might modify self, and can return the result or None
 
         Use subtract as -= operator, check whether returned value is None:
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]))
-        None
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]])) is None
+        True
 
-        Use subtract again but return a new object this time. Check if it works OK.
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]), newobj=True).y
-        [-1.  0.  1.  0.]
+        Use subtract again but return a new object this time. Check if it works.
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]), new_obj=True).y
+        DataSet([-1.,  0.,  1.,  0.])
 
-        Try using wrong inputs to create new object, and check whether it is None as expected:
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[1, -1], [2, -1]]), newobj=True)
-        None
+        Try using wrong inputs to create a new object, and check whether it is None as expected:
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[1, -1], [2, -1]]), new_obj=True) is None
+        True
 
         :param curve2: second object to calculate difference
-        :param newobj: if True method is creating new object instead of modifying self
-        :return: None if newobj is False (but will modify self)
+        :param new_obj: if True, method is creating new object instead of modifying self
+        :return: None if new_obj is False (but will modify self)
                  Or type(self) object containing the result
-        '''
+        """
         # domain1 = [a1, b1]
         # domain2 = [a2, b2]
         a1, b1 = np.min(self.x), np.max(self.x)
         a2, b2 = np.min(curve2.x), np.max(curve2.x)
 
-        # check whether domains condition is satisfied
+        # check whether domain condition is satisfied
         if a2 > a1 or b2 < b1:
-            # will be logging error here and an exeption, but
-            # there is a separate issue. For now just print
-            print('Error - curve2 domain does not include self domain')
+            logging.error('curve2 domain does not include self domain')
+            # todo: raise exception
             return None
-        # if one want to create and return a new object rather then modify self
-        if newobj:
+        # if we want to create and return a new object rather then modify existing one
+        if new_obj:
             return functions.subtract(self, curve2.change_domain(self.x))
         values = curve2.evaluate_at_x(self.x)
         self.y = self.y - values
@@ -237,7 +234,6 @@ class Curve(np.ndarray):
 
 
 def main():
-
     print('\nSubtract method :\n')
 
     c = Curve([[0.0, 0], [5, 5], [10, 0]])
@@ -245,7 +241,7 @@ def main():
     d = Curve([[0.0, 1], [5, 1], [10, 1]])
     print('d: \n', d)
 
-    c.subtract(d, newobj=False)
+    c.subtract(d, new_obj=False)
     print('c-d: \n', c)
     print('*********')
     print('X:', c.x)
