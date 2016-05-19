@@ -171,11 +171,11 @@ class Curve(np.ndarray):
 
         Check the interpolation when arg in domain of self:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([1, 2 ,3])
-        [ 1.  2.  3.]
+        array([ 1.,  2.,  3.])
 
         Check if behavior of the method is correct when arg partly outside the domain:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([-1, 1, 2 ,3, 5], 100)
-        [ 100.    1.    2.    3.  100.]
+        array([ 100.,    1.,    2.,    3.,  100.])
 
         :param arg: x-value to calculate Y (may be an array or list as well)
         :param def_val: default value to return if can't interpolate value at arg
@@ -191,16 +191,16 @@ class Curve(np.ndarray):
         Might modify self, and can return the result or None
 
         Use subtract as -= operator, check whether returned value is None:
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]))
-        None
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]])) is None
+        True
 
         Use subtract again but return a new object this time. Check if it works.
         >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]), new_obj=True).y
-        [-1.  0.  1.  0.]
+        DataSet([-1.,  0.,  1.,  0.])
 
         Try using wrong inputs to create a new object, and check whether it is None as expected:
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[1, -1], [2, -1]]), new_obj=True)
-        None
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[1, -1], [2, -1]]), new_obj=True) is None
+        True
 
         :param curve2: second object to calculate difference
         :param new_obj: if True, method is creating new object instead of modifying self
