@@ -7,7 +7,7 @@ setup(
     packages=['beprof'],
     version='0.1.0',
     description='Beam profile analysing tool',
-    author=['Leszek Grzanka', 'Mateusz Krakowski'],
+    author=['Leszek Grzanka', 'Mateusz Krakowski', 'ant6'],
     author_email='grzanka@agh.edu.pl',
     url='https://github.com/grzanka/beprof',
     keywords=["beam", "profile"],
