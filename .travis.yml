@@ -1,0 +1,87 @@
+language: python
+
+matrix:
+    include:
+        - os: linux
+          python: 2.7
+          env: TOXENV=py27
+        - os: linux
+          python: 3.3
+          env: TOXENV=py32 VENVVER="<14.0.0" PIPVER="<8.0.0"
+        - os: linux
+          python: 3.3
+          env: TOXENV=py33
+        - os: linux
+          python: 3.4
+          env: TOXENV=py34
+        - os: linux
+          python: 3.5
+          env: TOXENV=py35 DOCKER=1
+        - os: linux
+          python: 3.5-dev
+          env: TOXENV=py35
+        - os: linux
+          python: nightly
+          env: TOXENV=py36
+        - os: linux
+          python: 3.4
+          env: TOXENV=docs
+        - os: linux
+          python: 2.7
+          env: TOXENV=pep8
+        - os: linux
+          python: 3.4
+          env: TOXENV=py3pep8
+        - os: linux
+          python: 3.4
+          env: TOXENV=packaging
+        - os: osx
+          language: generic
+          env: TOXENV=py35
+        - os: osx
+          language: generic
+          env: TOXENV=py34
+        - os: osx
+          language: generic
+          env: TOXENV=py33
+        - os: osx
+          language: generic
+          env: TOXENV=py32 VENVVER="<14.0.0" PIPVER="<8.0.0"
+        - os: osx
+          language: generic
+          env: TOXENV=py27
+    allow_failures:
+        - python: 3.4
+          env:
+            - TOXENV=cov
+            #  Code Climate secured token, you need to update it to your own if you want to use it
+            - secure: "TO_BE_REPLACED"
+
+# travis-ci runs by default on ancient Ubuntu 12.04 (precise)
+# following options will give us Ubuntu 14.04 (trusty)
+sudo: required
+dist: trusty
+
+# docker will be used to simulate:
+#  - installation of python and necessary libraries on virgin system (as root)
+#  - installation of python application via pip (as user)
+#  - testing of a package by user: cmd line and tests
+services:
+  - docker
+
+install:
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then bash ./.travis/install_linux.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash ./.travis/install_osx.sh ; fi
+
+before_script:
+# last commit message
+  - COM_MSG=`git log -1 --pretty=%B`
+  - echo $COM_MSG
+
+script:
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then tox --notest && tox -- -n 8 ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash ./.travis/run_osx.sh ; fi
+
+notifications:
+  email:
+    - grzanka@agh.edu.pl
