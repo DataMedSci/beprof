@@ -12,9 +12,11 @@ class TestCurve(TestCase):
         self.post.rescale(1)
         self.assertEqual(list(self.pre.x), list(self.post.x))
         self.assertEqual(list(self.pre.y), list(self.post.y))
-    #
-    # def test_smooth(self):
-    #     self.fail()
+
+    def test_smooth_with_window_one(self):
+        self.post.smooth(window=1)
+        self.assertEqual(list(self.pre.x), list(self.post.x))
+        self.assertEqual(list(self.pre.y), list(self.post.y))
     #
     # def test_y_at_x(self):
     #     self.fail()
