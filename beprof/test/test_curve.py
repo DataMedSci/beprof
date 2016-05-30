@@ -10,8 +10,8 @@ class TestCurve(TestCase):
 
     def test_rescale_by_one(self):
         self.post.rescale(1)
-        self.assertListEqual(list(self.pre.x), list(self.post.x))
-        self.assertListEqual(list(self.pre.y), list(self.post.y))
+        self.assertEqual(list(self.pre.x), list(self.post.x))
+        self.assertEqual(list(self.pre.y), list(self.post.y))
     #
     # def test_smooth(self):
     #     self.fail()
