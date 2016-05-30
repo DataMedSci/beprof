@@ -1,0 +1,19 @@
+  include *.rst
+  include *.txt
+  include *.py
+  include LICENSE
+  include requirements.txt
+  recursive-include docs *.py
+  recursive-include docs *.rst
+  recursive-include beprof *.py
+  recursive-include tests *.py
+  include versioneer.py
+  include beprof/_version.py
+
+  exclude .gitkeep
+  exclude .gitconfig
+  exclude tox.ini
+  exclude .travis.yml
+  exclude appveyor.yml
+  prune .travis
+
