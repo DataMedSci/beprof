@@ -24,7 +24,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - |travis| |appveyor|
+      - |travis| |appveyor| |requires| |codeclimate|
     * - package
       - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
 
@@ -39,6 +39,14 @@ Overview
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/grzanka/beprof?branch=master&svg=true
     :alt: Appveyor Build Status
     :target: https://ci.appveyor.com/project/grzanka/beprof
+
+.. |requires| image:: https://requires.io/github/grzanka/beprof/requirements.svg?branch=master
+    :alt: Requirements Status
+    :target: https://requires.io/github/grzanka/beprof/requirements/?branch=master
+
+.. |codeclimate| image:: https://codeclimate.com/github/grzanka/beprof/badges/issue_count.svg
+   :target: https://codeclimate.com/github/grzanka/beprof
+   :alt: Issue Count
 
 .. |version| image:: https://img.shields.io/pypi/v/beprof.svg?style=flat
     :alt: PyPI Package latest release
