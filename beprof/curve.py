@@ -1,4 +1,3 @@
-from enum import IntEnum
 import numpy as np
 import scipy
 from scipy import signal
@@ -8,16 +7,6 @@ from beprof import functions
 import logging
 
 logging.basicConfig(level=logging.ERROR)
-
-
-class Axis(IntEnum):
-    """
-    Axis direction (X,Y,Z). For averaged data, combination can be used, i.e. XY.
-    """
-    x = 1
-    y = 2
-    z = 3
-    xy = 4
 
 
 class DataSet(np.ndarray):
