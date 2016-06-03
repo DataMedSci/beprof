@@ -3,6 +3,7 @@
   include *.py
   include LICENSE
   include requirements.txt
+  include tests/requirements-test.txt
   recursive-include docs *.py
   recursive-include docs *.rst
   recursive-include beprof *.py
@@ -16,4 +17,5 @@
   exclude .travis.yml
   exclude appveyor.yml
   prune .travis
+  prune install_deps.sh
 

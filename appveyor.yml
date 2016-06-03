@@ -4,10 +4,12 @@
 
 environment:
   matrix:
-    - PYTHON: "C:\\Python27"
+    - platform: x86
+      PYTHON: "C:\\Python27"
       TOX_ENV: "py27"
 
-    - PYTHON: "C:\\Python27-x64"
+    - platform: x64
+      PYTHON: "C:\\Python27-x64"
       TOX_ENV: "py27"
 
 #  temporarily disabled as Appveyor seems to have broken config of Python 3.3
@@ -17,28 +19,36 @@ environment:
 #    - PYTHON: "C:\\Python33-x64"
 #      TOX_ENV: "py33"
 
-    - PYTHON: "C:\\Python34"
+    - platform: x86
+      PYTHON: "C:\\Python34"
       TOX_ENV: "py34"
 
-    - PYTHON: "C:\\Python34-x64"
+    - platform: x64
+      PYTHON: "C:\\Python34-x64"
       TOX_ENV: "py34"
 
-    - PYTHON: "C:\\Python35"
+    - platform: x86
+      PYTHON: "C:\\Python35"
       TOX_ENV: "py35"
 
-    - PYTHON: "C:\\Python35-x64"
+    - platform: x64
+      PYTHON: "C:\\Python35-x64"
       TOX_ENV: "py35"
 
-    - PYTHON: "C:\\Python34-x64"
+    - platform: x64
+      PYTHON: "C:\\Python34-x64"
       TOX_ENV: "docs"
 
-    - PYTHON: "C:\\Python34-x64"
+    - platform: x64
+      PYTHON: "C:\\Python34-x64"
       TOX_ENV: "packaging"
 
-    - PYTHON: "C:\\Python27-x64"
+    - platform: x64
+      PYTHON: "C:\\Python27-x64"
       TOX_ENV: "py3pep8"
 
-    - PYTHON: "C:\\Python34-x64"
+    - platform: x64
+      PYTHON: "C:\\Python34-x64"
       TOX_ENV: "pep8"
 
 # until we fix code of example project, lets allow failure here
@@ -51,15 +61,17 @@ environment:
 init:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
   - "git config --system http.sslcainfo \"C:\\Program Files\\Git\\mingw64\\ssl\\certs\\ca-bundle.crt\""
-  - "%PYTHON%/python -V"
+  - python -V
   - "%PYTHON%/python -c \"import struct;print(8 * struct.calcsize(\'P\'))\""
 
 install:
-  - "%PYTHON%/Scripts/easy_install -U pip"
-  - "%PYTHON%/Scripts/pip install tox"
-  - "%PYTHON%/Scripts/pip install wheel"
+  - easy_install -U pip
+  - pip install -r tests/requirements-test.txt
+
+before_test:
+  - python %PYTHON%/Scripts/versioneer install
 
 build: false
 
 test_script:
-  - "%PYTHON%/Scripts/tox -e %TOX_ENV%"
+  - tox -e %TOX_ENV%

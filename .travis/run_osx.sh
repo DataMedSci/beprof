@@ -15,7 +15,7 @@ then
     tox -- -n 8
 
 else
-    pyenv exec tox --notest
+    pyenv exec tox --notest -e $TOXENV
     pyenv exec tox -- -n 8
 fi
 
