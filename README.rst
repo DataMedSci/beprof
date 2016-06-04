@@ -5,8 +5,8 @@ beprof
 .. image:: https://img.shields.io/pypi/v/beprof.svg
         :target: https://pypi.python.org/pypi/beprof
 
-.. image:: https://img.shields.io/travis/grzanka/beprof.svg
-        :target: https://travis-ci.org/grzanka/beprof
+.. image:: https://img.shields.io/travis/DataMedSci/beprof.svg
+        :target: https://travis-ci.org/DataMedSci/beprof
 
 .. image:: https://readthedocs.org/projects/beprof/badge/?version=latest
         :target: https://readthedocs.org/projects/beprof/?badge=latest
@@ -32,20 +32,20 @@ Overview
     :target: https://readthedocs.org/projects/beprof
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/grzanka/beprof.svg?branch=master
+.. |travis| image:: https://travis-ci.org/DataMedSci/beprof.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/grzanka/beprof
+    :target: https://travis-ci.org/DataMedSci/beprof
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/grzanka/beprof?branch=master&svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/DataMedSci/beprof?branch=master&svg=true
     :alt: Appveyor Build Status
-    :target: https://ci.appveyor.com/project/grzanka/beprof
+    :target: https://ci.appveyor.com/project/DataMedSci/beprof
 
-.. |requires| image:: https://requires.io/github/grzanka/beprof/requirements.svg?branch=master
+.. |requires| image:: https://requires.io/github/DataMedSci/beprof/requirements.svg?branch=master
     :alt: Requirements Status
-    :target: https://requires.io/github/grzanka/beprof/requirements/?branch=master
+    :target: https://requires.io/github/DataMedSci/beprof/requirements/?branch=master
 
-.. |codeclimate| image:: https://codeclimate.com/github/grzanka/beprof/badges/issue_count.svg
-   :target: https://codeclimate.com/github/grzanka/beprof
+.. |codeclimate| image:: https://codeclimate.com/github/DataMedSci/beprof/badges/issue_count.svg
+   :target: https://codeclimate.com/github/DataMedSci/beprof
    :alt: Issue Count
 
 .. |version| image:: https://img.shields.io/pypi/v/beprof.svg?style=flat
@@ -86,7 +86,7 @@ stable version is ready it will be pushed to PyPi repo.
 
 For now, installation can be done from this GIT repository, using::
 
-    ~$ pip install git+https://github.com/grzanka/beprof.git@master`
+    ~$ pip install git+https://github.com/DataMedSci/beprof.git@master`
 
 (where `@master` refers to the name of a branch)
 
@@ -118,7 +118,7 @@ Once you import necessary modules, you can use them to work with i.e. profiles::
 
 A few examples of data you can work with using beprof can be downloaded from
 another branch of this project named `feature/examples`
-https://github.com/grzanka/beprof.git
+https://github.com/DataMedSci/beprof.git
 
 You can also use another modules as numpy or matplotlib to work with beprof::
 
