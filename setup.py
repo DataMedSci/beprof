@@ -26,7 +26,7 @@ setuptools.setup(
     name='beprof',
     version=version,
     packages=packages,
-    url='https://github.com/grzanka/beprof',
+    url='https://github.com/DataMedSci/beprof',
     license='GPL',
     author=['Leszek Grzanka','Mateusz Krakowski', 'ant6'],
     author_email='grzanka@agh.edu.pl',
