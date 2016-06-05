@@ -24,7 +24,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - |travis| |appveyor| |requires| |codeclimate|
+      - |travis| |appveyor| |codeclimate|
     * - package
       - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
 
@@ -36,13 +36,9 @@ Overview
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/DataMedSci/beprof
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/DataMedSci/beprof?branch=master&svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/nqcdxcm8pjs9j8pg?svg=true
     :alt: Appveyor Build Status
-    :target: https://ci.appveyor.com/project/DataMedSci/beprof
-
-.. |requires| image:: https://requires.io/github/DataMedSci/beprof/requirements.svg?branch=master
-    :alt: Requirements Status
-    :target: https://requires.io/github/DataMedSci/beprof/requirements/?branch=master
+    :target: https://ci.appveyor.com/project/grzanka/beprof-j6tr6
 
 .. |codeclimate| image:: https://codeclimate.com/github/DataMedSci/beprof/badges/issue_count.svg
    :target: https://codeclimate.com/github/DataMedSci/beprof
