@@ -36,9 +36,9 @@ Overview
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/DataMedSci/beprof
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/nqcdxcm8pjs9j8pg?svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/y06jw47ir3gvvgta?svg=true
     :alt: Appveyor Build Status
-    :target: https://ci.appveyor.com/project/grzanka/beprof-j6tr6
+    :target: https://ci.appveyor.com/project/grzanka/beprof
 
 .. |codeclimate| image:: https://codeclimate.com/github/DataMedSci/beprof/badges/issue_count.svg
    :target: https://codeclimate.com/github/DataMedSci/beprof
