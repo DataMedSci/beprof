@@ -74,25 +74,29 @@ Beam Profile Analysing Tools
 
 Library provides methods to work with Beam Profiles which are sets of points
 (might be 2-D or 3-D also with extra metadata) sorted by one of coordinates.
-
+cd
 beprof is based on nparray class from numpy, and it provides
 numerous tools for different computations and data analysis.
 
 Installation
 ============
 
-Current version (0.1.0) is not available on PyPi, although once a
-stable version is ready it will be pushed to PyPi repo.
+Current version available on testing PyPi server, although once a
+stable version is ready it will be pushed to official PyPi repo.
+
+To install latest (unstable) version, type::
+
+    pip install -i https://testpypi.python.org/pypi beprof --user
 
 For now, installation can be done from this GIT repository, using::
 
-    ~$ pip install git+https://github.com/DataMedSci/beprof.git@master`
+    pip install git+https://github.com/DataMedSci/beprof.git@master`
 
 (where `@master` refers to the name of a branch)
 
 To unistall, simply use::
 
-    ~$ pip uninstall beprof
+    pip uninstall beprof
 
 Documentation
 =============
