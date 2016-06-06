@@ -8,9 +8,9 @@ environment:
       PYTHON: "C:\\Python27"
       TOX_ENV: "py27"
 
-    - platform: x64
-      PYTHON: "C:\\Python27-x64"
-      TOX_ENV: "py27"
+#    - platform: x64
+#      PYTHON: "C:\\Python27-x64"
+#      TOX_ENV: "py27"
 
 #  temporarily disabled as Appveyor seems to have broken config of Python 3.3
 #    - PYTHON: "C:\\Python33"
@@ -19,37 +19,37 @@ environment:
 #    - PYTHON: "C:\\Python33-x64"
 #      TOX_ENV: "py33"
 
-    - platform: x86
-      PYTHON: "C:\\Python34"
-      TOX_ENV: "py34"
-
-    - platform: x64
-      PYTHON: "C:\\Python34-x64"
-      TOX_ENV: "py34"
-
-    - platform: x86
-      PYTHON: "C:\\Python35"
-      TOX_ENV: "py35"
-
-    - platform: x64
-      PYTHON: "C:\\Python35-x64"
-      TOX_ENV: "py35"
-
-    - platform: x64
-      PYTHON: "C:\\Python34-x64"
-      TOX_ENV: "docs"
-
-    - platform: x64
-      PYTHON: "C:\\Python34-x64"
-      TOX_ENV: "packaging"
-
-    - platform: x64
-      PYTHON: "C:\\Python27-x64"
-      TOX_ENV: "py3pep8"
-
-    - platform: x64
-      PYTHON: "C:\\Python34-x64"
-      TOX_ENV: "pep8"
+#    - platform: x86
+#      PYTHON: "C:\\Python34"
+#      TOX_ENV: "py34"
+#
+#    - platform: x64
+#      PYTHON: "C:\\Python34-x64"
+#      TOX_ENV: "py34"
+#
+#    - platform: x86
+#      PYTHON: "C:\\Python35"
+#      TOX_ENV: "py35"
+#
+#    - platform: x64
+#      PYTHON: "C:\\Python35-x64"
+#      TOX_ENV: "py35"
+#
+#    - platform: x64
+#      PYTHON: "C:\\Python34-x64"
+#      TOX_ENV: "docs"
+#
+#    - platform: x64
+#      PYTHON: "C:\\Python34-x64"
+#      TOX_ENV: "packaging"
+#
+#    - platform: x64
+#      PYTHON: "C:\\Python27-x64"
+#      TOX_ENV: "py3pep8"
+#
+#    - platform: x64
+#      PYTHON: "C:\\Python34-x64"
+#      TOX_ENV: "pep8"
 
 # until we fix code of example project, lets allow failure here
 #matrix:

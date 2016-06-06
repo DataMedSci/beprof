@@ -1,6 +1,4 @@
 import setuptools
-import sys
-import setuptools
 from pkg_resources import parse_version
 try:
     import versioneer

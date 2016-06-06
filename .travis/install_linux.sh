@@ -26,5 +26,3 @@ else
   pip install --upgrade versioneer
 fi
 pip install -r requirements.txt
-
-#versioneer install
