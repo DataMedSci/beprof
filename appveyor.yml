@@ -1,4 +1,7 @@
-# based on https://github.com/audreyr/cookiecutter/blob/master/appveyor.yml
+# based on ideas from:
+# - https://github.com/audreyr/cookiecutter/blob/master/appveyor.yml
+# - http://tjelvarolsson.com/blog/how-to-continuously-test-your-python-code-on-windows-using-appveyor/
+# - http://timcera.bitbucket.org/posts/appveyor_finally.html
 
 # validation page for appveyor config: https://ci.appveyor.com/tools/validate-yaml
 
@@ -12,12 +15,12 @@ environment:
       PYTHON: "C:\\Python34"
       PYTHON_VERSION: "3.4"
 
-
 # until we fix code of example project, lets allow failure here
 #matrix:
 #  allow_failures:
-#      - TOX_ENV: "py27"
-#      - TOX_ENV: "py33"
+#    - platform: x86
+#      PYTHON: "C:\\Python27"
+#      PYTHON_VERSION: "2.7"
 
 
 init:
@@ -27,17 +30,14 @@ init:
   - "%PYTHON%/python -c \"import struct;print(8 * struct.calcsize(\'P\'))\""
 
 install:
-  - set PATH=C:\Miniconda\Scripts
-  - ps: If ($env:Platform -Match "x64") {$env:PATH="C:\Miniconda-x64\Scripts"}
+  - set MINICONDAPATH=C:\Miniconda
+  - ps: If ($env:Platform -Match "x64") {$env:MINICONDAPATH="C:\Miniconda-x64"}
+  - set PATH=%MINICONDAPATH%\Scripts;%PATH%
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-
-# create and activate Conda virtualenv
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
   - activate python%PYTHON_VERSION%
   - python -V
-
-# install dependencies
   - conda install -q --name python%PYTHON_VERSION% setuptools wheel numpy scipy
   - pip install -r tests/requirements-test.txt
   - pip install -r requirements.txt
@@ -45,9 +45,13 @@ install:
 before_test:
   - python -c "import numpy as np;print(np.version.version)"
   - python -c "import scipy as sp;print(sp.version.version)"
-  - python c:\miniconda\envs\python%PYTHON_VERSION%\scripts\versioneer install
+  - python %MINICONDAPATH%\envs\python%PYTHON_VERSION%\scripts\versioneer install
 
 build: false
+
+after_test:
+  # This step builds your wheels.
+  - python setup.py bdist_wheel
 
 test_script:
   - py.test
