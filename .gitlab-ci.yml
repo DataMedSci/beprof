@@ -1,0 +1,43 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build_a:
+  stage: build
+  script:
+    - pwd && ls
+    - python3 -V
+
+test_a:
+  stage: test
+  script:
+    - pwd && ls
+    - python3 -V
+  dependencies:
+    - build_a
+
+test_b:
+  stage: test
+  script:
+    - pwd && ls
+    - python3 -V
+  dependencies:
+    - build_a
+
+test_c:
+  stage: test
+  script:
+    - pwd && ls
+    - python3 -V
+  dependencies:
+    - build_a
+
+
+deploy_a:
+  stage: deploy
+  script:
+    - pwd && ls
+    - python3 -V
+  dependencies:
+    - test_a
