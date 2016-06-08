@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# onehundredseven documentation build configuration file, created by
-# sphinx-quickstart on Thu May 12 12:19:05 2016.
+# beprof documentation build configuration file, created by
+# sphinx-quickstart
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -146,7 +146,7 @@ html_theme = 'default'
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
-#html_title = 'onehundredseven v'
+#html_title = 'beprof v'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None

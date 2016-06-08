@@ -90,9 +90,7 @@ To install latest (unstable) version, type::
 
 For now, installation can be done from this GIT repository, using::
 
-    pip install git+https://github.com/DataMedSci/beprof.git@master`
-
-(where `@master` refers to the name of a branch)
+    pip install git+https://github.com/DataMedSci/beprof.git
 
 To unistall, simply use::
 
