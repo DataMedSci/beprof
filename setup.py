@@ -12,11 +12,44 @@ def pip_command_output(pip_args):
     output = mystdout.getvalue()
     mystdout.truncate(0)
     sys.stdout = old_stdout
-    print("result", pip_args, len(output), output)
     return output
 
 
+def setup_versioneer():
+    try:
+        # assume versioneer.py was generated using "versioneer install" command
+        import versioneer
+        versioneer.get_version()
+    except ImportError:
+        # it looks versioneer.py is missing
+        # lets assume that versioneer package is installed
+        # and versioneer binary is present in $PATH
+        import subprocess
+        try:
+            # call versioneer install to generate versioneer.py
+            subprocess.check_output(["versioneer", "install"])
+        except IOError:
+            # it looks versioneer is missing from $PATH
+            # probably versioneer is installed in some user directory
+
+            # query pip for list of files in versioneer package
+            output = pip_command_output(["show", "-f", "versioneer"])
+
+            # now we parse the results
+            main_path = [x[len("Location: "):] for x in output.split('\n')
+                         if x.startswith("Location")][0]
+            bin_path = [x[len("  "):] for x in output.split('\n')
+                        if x.endswith("/versioneer")][0]
+
+            # exe_path is absolute path to versioneer binary
+            import os
+            exe_path = os.path.join(main_path, bin_path)
+            # call versioneer install to generate versioneer.py
+            subprocess.check_output([exe_path, "install"])
+
+
 def get_version():
+    setup_versioneer()
     import versioneer
     version = versioneer.get_version()
     parsed_version = parse_version(version)
@@ -25,42 +58,12 @@ def get_version():
         version += str(int(time.time()))
     return version
 
+
 def get_cmdclass():
+    setup_versioneer()
     import versioneer
     return versioneer.get_cmdclass()
 
-try:
-    # assume versioneer.py was generated using "versioneer install" command
-    import versioneer
-except ImportError:
-    # it looks versioneer.py is missing
-    # lets assume that versioneer package is installed
-    # and versioneer binary is present in $PATH
-    import subprocess
-    try:
-        # call versioneer install to generate versioneer.py
-        subprocess.call(["versioneer", "install"])
-    except IOError:
-        # it looks versioneer is missing from $PATH
-        # probably versioneer is installed in some user directory
-
-        # query pip for list of files in versioneer package
-        output = pip_command_output(["show", "-f", "versioneer"])
-
-        # now we parse the results
-        main_path = [x[len("Location: "):] for x in output.split('\n')
-                     if x.startswith("Location")][0]
-        bin_path = [x[len("  "):] for x in output.split('\n')
-                    if x.endswith("/versioneer")][0]
-
-        # exe_path is absolute path to versioneer binary
-        import os
-        exe_path = os.path.join(main_path, bin_path)
-        # call versioneer install to generate versioneer.py
-        subprocess.call([exe_path, "install"])
-
-
-packages = ['beprof']
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -68,7 +71,7 @@ with open('README.rst') as readme_file:
 setuptools.setup(
     name='beprof',
     version=get_version(),
-    packages=packages,
+    packages=['beprof'],
     url='https://github.com/DataMedSci/beprof',
     license='GPL',
     author=['Leszek Grzanka', 'Mateusz Krakowski', 'ant6'],
