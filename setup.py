@@ -25,6 +25,10 @@ def get_version():
         version += str(int(time.time()))
     return version
 
+def get_cmdclass():
+    import versioneer
+    return versioneer.get_cmdclass()
+
 try:
     # assume versioneer.py was generated using "versioneer install" command
     import versioneer
@@ -98,6 +102,5 @@ setuptools.setup(
         'numpy>=1.10.4',
         'scipy>=0.16.0',
     ],
-    cmdclass=versioneer.get_cmdclass(),
-
+    cmdclass=get_cmdclass()
 )
