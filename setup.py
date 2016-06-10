@@ -16,6 +16,15 @@ def pip_command_output(pip_args):
     return output
 
 
+def get_version():
+    import versioneer
+    version = versioneer.get_version()
+    parsed_version = parse_version(version)
+    if '*@' in parsed_version[1]:
+        import time
+        version += str(int(time.time()))
+    return version
+
 try:
     # assume versioneer.py was generated using "versioneer install" command
     import versioneer
@@ -46,13 +55,6 @@ except ImportError:
         # call versioneer install to generate versioneer.py
         subprocess.call([exe_path, "install"])
 
-        import versioneer
-
-version = versioneer.get_version()
-parsed_version = parse_version(version)
-if '*@' in parsed_version[1]:
-    import time
-    version += str(int(time.time()))
 
 packages = ['beprof']
 
@@ -61,7 +63,7 @@ with open('README.rst') as readme_file:
 
 setuptools.setup(
     name='beprof',
-    version=version,
+    version=get_version(),
     packages=packages,
     url='https://github.com/DataMedSci/beprof',
     license='GPL',
