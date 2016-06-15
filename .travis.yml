@@ -47,9 +47,6 @@ matrix:
             - PYPIUSER=grzanka
             #  pypi secured password (PYPIPASS variable)
             - secure: "G5IIKLmPW//dxMYhNmum6yBLR8BzhrfIjFjMKy2ivKKkIO0wrrooMj3erzN2jqo9+P8bpWd2BsB900uatwXSWolB/aSAGLCqcpM16wYaE9JCcK/PKnHornKU0Ciig54+Lmk+/buikuomRYDdEOIA2okJMivAPTHbEefI2uGqB4cXE7OHBIkXuZ+pksZGkw3H7R9Vr2HII3IiN/91IyRYPSZTlzYW1RrDnDAQOnKyI6pctr6cFy0SKyjJyvW+0Et1jE1fzgX0JE/5zYBSmK7FNoq76NORY06jRvh7IrhJjZqi9VQyc02s73nlsneIhQvRFoYN82+xO9yIMIl9VDOYYrSQFSMO7G0/RMTVCWpCGW46MWNvP8wZ/+jbDUEy4A4YOdiZuO4EgTGigVwZo+9aG7vTQVu9vxTpiR1OojDYv5kClh0xevWW6vfxS2naH+YcqREShzB7qAOcuIm+zGe4bF3mD9h9XHnjTAL6gjpsFDO1dtqF2S/ol3Hw2nWDmT7Mh8bPv4wQZhWSCOzx7v5lZ8ZHb6gnlDHyN9gytIlIueypbQSmnjBYvmrsDju0gQwSOA5GBmv1Wm22bBFcuQ8Wb814LGiCaLNkLZ+yPK7QUaMp4iIMkRlkCEjQSXVspU17h5TsCG6afIUvJwMJFAk5ifgG23hO4OzIard5DcQ/uDo="
-            - PYPITESTUSER=LeszekGrzanka
-            #  pypitest secured password (PYPITESTPASS variable)
-            - secure: "KLlzG+lbH+G0xs38rrqx6qIQjPZvrL+BPmw28MqryxS9JrjM7SRtsTyD13+6aQcbjVlOp9gqswQPKmbztWQqstOLnWu8AlpfIsadHLJ72Q67Ld2RP32KaRrNX2iMaebGxuPr8Zak+5+Gkq86mmeFTtPdPuNSV4+II+rmE/Q+jxAaqZ945XfvCHGPMMJuo2RHmN4ACuKjuB81VZx4LMLocsyHYH36hsPwzg+ECK1fbPMyd7ooRo4MkS8C6Mq2ZThCqP9i6XSyPnjxfLUWONkUvCXTdblG1Qe/pbO8quYjIWALXnvUsVDP8/6nQ/rm08AEkCG5Faf20/mTTBiI82V/TZvAjf0AwKKF1tXqjIaTAraVOih2xb046zJoqkwekNcZ6yAvPKXOZFdg34l/dxLWi8o2k25OcUbvhCvKHJI/d0wNBw2VowJx0GOrxisZYD3bgjdJlxw/1OGF24/Bj6JE9FpxkFQcNOx9J4UfwcmB2RDJMrXBlvcnIDJMsdyEzueDn4GsYNmZZfwnJUCAkUcO8e+1oQh5hGEiu8ICV/mZ84rmiBXoyiDPWfhf40quRnFDya4xudpK2YTRUJ8EoCCEXUPt8PFwvRd/dUpx3ldq3i/sCtkIytJvnyXeCUaGclgW+3PYfd0cmmqLWjS8Flkc6eOVdkGgq4Sak43OFYAeaWY="
             #  Code Climate secured token (CODECLIMATE_REPO_TOKEN variable)
             - secure: "UzByLKDLbYN9kU7UvIt/CmyHTBMVqMMR0XSj9J4KyXdW0wtFZU+ZG7pm5SoMcW/S/b2KoYINZrYqA7OGad+gc3EYlYfN2Y8+gI2bo9q+tHfxGojim2YqTxHsOS2I41QoxEtQF+5SW2p1HKj/tHz4x/U/lNGHRtdhcDmB8W3gWAnRnGXztk96hmdJzVxx5aY3/2x/p3Psgl2PI+DIpmhvi1EqKrN5+YLiNlGoNVesfbZL0os9iNwKWoo0xFqsIntUvfw1SFYTFQhorUxVtF8iVJKsWaFS4P7BJ8QSTcwG+WgNG2faBOfEcUoM5OIIIHN0rYRodL2DNgx5u+JWbBIP97hwMtets58c+3vKKHsoobxgwa6xSYdQHibkbcZn/LuifzmmyLpqFqWqQt8v83VLb6+cgOPqFAaHJlNs9eHTTaEJ7NSfB9U4XdEaCX1KfZBbCIj/3Kz5KlPp+Lt7TIDCD7DbKI1fStoy5VSBarj32ZRztIX/D5vNj4DgTMKfJfZV5bIdwXdoMgISIR+l/RlGWfcteXVb6/w2HC+m3eZWHdPpLeuHvlA/4VxXmAwpum2MOUcrZYNnuQPFGDEdh8KLQ4WExtLH7RySxO64UI59hEqOeTSM1A2/SaLwi/AxhUOAxw5DinimIm7zEn8ZjxoCz0mkg9TLOZ6gh2Frt1yCro4="
         - os: osx
@@ -93,11 +90,9 @@ script:
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then travis_wait bash ./.travis/run_osx.sh ; fi
 
 after_success:
-  # deploy to both servers: test and normal
-  - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_OS_NAME == "linux" ]] && [[ $TOXENV == "packaging" ]]; then bash .travis/deploy_package.sh pypitest ; fi
   # send coverage data
-  - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_OS_NAME == "linux" ]] && [[ $TOXENV == "packaging" ]]; then bash .travis/send_coverage.sh pypitest ; fi
-  # deploy to normal if tag is present
+  - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_OS_NAME == "linux" ]] && [[ $TOXENV == "packaging" ]]; then bash .travis/send_coverage.sh ; fi
+  # deploy to normal pypi server if tag is present
   - if [[ $TRAVIS_TAG != "" ]] && [[ $TOXENV == "packaging" ]]; then bash .travis/deploy_package.sh pypi ; fi
 
 notifications:
