@@ -50,12 +50,11 @@ def setup_versioneer():
 
 def clean_cache():
     import importlib
-    try: # Python ver < 3.3
-      vermod = importlib.import_module("versioneer")
-      globals()["versioneer"] = vermod
+    try:  # Python ver < 3.3
+        vermod = importlib.import_module("versioneer")
+        globals()["versioneer"] = vermod
     except ImportError:
-      importlib.invalidate_caches()
-
+        importlib.invalidate_caches()
 
 
 def get_version():
