@@ -84,10 +84,6 @@ Installation
 Current version available on testing PyPi server, although once a
 stable version is ready it will be pushed to official PyPi repo.
 
-To install latest (unstable) version, type::
-
-    pip install -i https://testpypi.python.org/pypi beprof --user
-
 For now, installation can be done from this GIT repository, using::
 
     pip install versioneer
