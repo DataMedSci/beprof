@@ -1,6 +1,5 @@
 import numpy as np
 import scipy
-from scipy import signal
 import math
 import copy
 from beprof import functions
@@ -33,21 +32,24 @@ class Curve(np.ndarray):
            to add a field to obj.metadata dict.
 
     Raises:
-        IndexError: this can happen when user is trying to create new Curve object
-                    but uses incorrect array of points to initialise it.
+        IndexError: this can happen when user is trying to create new Curve
+                    object but uses incorrect array of points to initialise it.
                     Input array should be 2D or 3D (shape: (X, 2) or (X, 3)).
-        ValueError: in change domain function: when the old domain does not include
-                    the new one.
+        ValueError: in change domain function: when the old domain
+                    does not include the new one.
     """
 
     def __new__(cls, input_array, **meta):
         shape = np.shape(input_array)
-        logging.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
+        logging.info('Creating Curve object of shape {0} metadata is: {1}'
+                     .format(shape, meta))
         if shape[1] != 2 and shape[1] != 3:
-            logging.error('Creating Curve object failed. Input array must be an 2D or 3D array\n'
+            logging.error('Creating Curve object failed.'
+                          'Input array must be an 2D or 3D array\n'
                           'np.shape(input_array_[1] must be either 2 or 3.')
             raise IndexError('Invalid format of input_array - '
-                             'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
+                             'shape is {0}, must be (X, 2) or (X, 3)'
+                             .format(shape))
 
         obj = np.asarray(input_array).view(cls)
         if meta is None:
@@ -96,43 +98,54 @@ class Curve(np.ndarray):
         values for new points in domain.
 
         Calculate y - values of example curve with changed domain:
-        >>> print(Curve([[0,0], [5, 5], [10, 0]]).change_domain([1, 2, 8, 9]).y)
+        >>> print(Curve([[0,0], [5, 5], [10, 0]])\
+            .change_domain([1, 2, 8, 9]).y)
         [ 1.  2.  2.  1.]
 
-        :param domain: set of points representing new domain. Might be a list or np.array
+        :param domain: set of points representing new domain.
+            Might be a list or np.array.
         :return: new Curve object with domain set by 'domain' parameter
         """
         logging.info('Running {0}.change_domain() with new domain range:'
-                     ' [{1}, {2}]'.format(self.__class__, np.min(domain), np.max(domain)))
+                     ' [{1}, {2}]'
+                     .format(self.__class__, np.min(domain), np.max(domain))
+                     )
 
         # check if new domain includes in the original domain
         if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
             logging.error('Old domain range: [{0}, {1}] does not include '
-                          'new domain range: [{2}, {3}]'.format(np.min(self.x), np.max(self.x),
-                                                                np.min(domain), np.max(domain))
+                          'new domain range: [{2}, {3}]'
+                          .format(np.min(self.x), np.max(self.x),
+                                  np.min(domain), np.max(domain))
                           )
-            raise ValueError('in change_domain(): the old domain does not include the new one')
+            raise ValueError('in change_domain():'
+                             'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
-        obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
+        obj = self.__class__(np.stack((domain, y), axis=1),
+                             **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
         """
-        Provides effective way to compute new domain basing on step and fixp parameters.
-        Then using change_domain() method to create new object with calculated domain and returns it.
+        Provides effective way to compute new domain basing on
+        step and fixp parameters. Then using change_domain() method
+        to create new object with calculated domain and returns it.
 
         fixp doesn't have to be inside original domain.
 
-        Return domain of a new curve specified by fixp=0 and step=1 and another Curve object:
+        Return domain of a new curve specified by
+        fixp=0 and step=1 and another Curve object:
         >>> print(Curve([[0,0], [5, 5], [10, 0]]).rebinned(1, 0).x)
         [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.]
 
         :param step: step size of new domain
         :param fixp: fixed point one of the points in new domain
-        :return: new Curve object with domain specified by step and fixp parameters
+        :return: new Curve object with domain specified by
+            step and fixp parameters
         """
-        logging.info('Running {0}.rebinned(step={1}, fixp={2})'.format(self.__class__, step, fixp))
+        logging.info('Running {0}.rebinned(step={1}, fixp={2})'
+                     .format(self.__class__, step, fixp))
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
@@ -149,52 +162,65 @@ class Curve(np.ndarray):
             count_start = -count_start
             count_stop = count_stop
 
-        domain = [fixp + n * step for n in range(int(count_start), int(count_stop) + 1)]
+        domain = [fixp + n * step for n in range(int(count_start),
+                                                 int(count_stop) + 1)]
         return self.change_domain(domain)
 
     def evaluate_at_x(self, arg, def_val=0):
         """
-        Returns Y value at arg of self. Arg can be a scalar, but also might be np.array or other iterable
-        (like list). If domain of self is not wide enough to interpolate the value of Y, method will return
+        Returns Y value at arg of self. Arg can be a scalar,
+        but also might be np.array or other iterable
+        (like list). If domain of self is not wide enough to
+        interpolate the value of Y, method will return
         def_val for those arguments instead.
 
         Check the interpolation when arg in domain of self:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([1, 2 ,3])
         array([ 1.,  2.,  3.])
 
-        Check if behavior of the method is correct when arg partly outside the domain:
-        >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([-1, 1, 2 ,3, 5], 100)
+        Check if behavior of the method is correct when arg
+        id partly outside the domain:
+        >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x(\
+            [-1, 1, 2 ,3, 5], 100)
         array([ 100.,    1.,    2.,    3.,  100.])
 
         :param arg: x-value to calculate Y (may be an array or list as well)
-        :param def_val: default value to return if can't interpolate value at arg
-        :return: np.array of Y-values at arg. If arg is a scalar, will return scalar as well
+        :param def_val: default value to return if can't interpolate at arg
+        :return: np.array of Y-values at arg. If arg is a scalar,
+            will return scalar as well
         """
         y = np.interp(arg, self.x, self.y, left=def_val, right=def_val)
         return y
 
     def subtract(self, curve2, new_obj=False):
         """
-        Method that calculates difference between 2 curves (or subclasses of curves). Domain of self must be in
-        domain of curve2 what means min(self.x) >= min(curve2.x) and max(self.x) <= max(curve2.x)
+        Method that calculates difference between 2 curves
+        (or subclasses of curves). Domain of self must be in
+        domain of curve2 what means min(self.x) >= min(curve2.x)
+        and max(self.x) <= max(curve2.x).
         Might modify self, and can return the result or None
 
         Use subtract as -= operator, check whether returned value is None:
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]])) is None
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(\
+            Curve([[-1, 1], [5, 1]])) is None
         True
 
-        Use subtract again but return a new object this time. Check if it works.
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[-1, 1], [5, 1]]), new_obj=True).y
+        Use subtract again but return a new object this time.
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(\
+            Curve([[-1, 1], [5, 1]]), new_obj=True).y
         DataSet([-1.,  0.,  1.,  0.])
 
-        Try using wrong inputs to create a new object, and check whether it is None as expected:
-        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(Curve([[1, -1], [2, -1]]), new_obj=True) is None
+        Try using wrong inputs to create a new object,
+        and check whether it is None as expected:
+        >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(\
+            Curve([[1, -1], [2, -1]]), new_obj=True) is None
         True
 
         :param curve2: second object to calculate difference
-        :param new_obj: if True, method is creating new object instead of modifying self
+        :param new_obj: if True, method is creating new object
+            instead of modifying self
         :return: None if new_obj is False (but will modify self)
-                 Or type(self) object containing the result
+            or type(self) object containing the result
         """
         # domain1 = [a1, b1]
         # domain2 = [a2, b2]
@@ -206,7 +232,8 @@ class Curve(np.ndarray):
             logging.error('curve2 domain does not include self domain')
             # todo: raise exception
             return None
-        # if we want to create and return a new object rather then modify existing one
+        # if we want to create and return a new object
+        # rather then modify existing one
         if new_obj:
             return functions.subtract(self, curve2.change_domain(self.x))
         values = curve2.evaluate_at_x(self.x)
@@ -268,7 +295,8 @@ def main():
     print('Y: ', b.y)
     print('M: ', b.metadata)
 
-    print('\nNow calling b.subtract(a) what should change b so that is looks like dif2')
+    print('\nNow calling b.subtract(a) what should change b'
+          'so that is looks like dif2')
     b.subtract(a)
     print('\nb: \n')
     print('X: ', b.x)

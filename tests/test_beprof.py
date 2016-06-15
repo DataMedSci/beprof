@@ -1,7 +1,4 @@
 import unittest
-import os
-
-from beprof import profile
 
 
 class TestFunMethod(unittest.TestCase):
