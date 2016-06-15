@@ -28,7 +28,7 @@ def setup_versioneer():
         try:
             # call versioneer install to generate versioneer.py
             subprocess.check_output(["versioneer", "install"])
-        except IOError:
+        except OSError:
             # it looks versioneer is missing from $PATH
             # probably versioneer is installed in some user directory
 
