@@ -48,8 +48,14 @@ def setup_versioneer():
             subprocess.check_output([exe_path, "install"])
 
 
+def clean_cache():
+    import importlib
+    importlib.invalidate_caches()
+
+
 def get_version():
     setup_versioneer()
+    clean_cache()
     import versioneer
     version = versioneer.get_version()
     parsed_version = parse_version(version)
@@ -61,6 +67,7 @@ def get_version():
 
 def get_cmdclass():
     setup_versioneer()
+    clean_cache()
     import versioneer
     return versioneer.get_cmdclass()
 
