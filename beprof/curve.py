@@ -1,5 +1,4 @@
 import numpy as np
-from scipy import signal
 import math
 import copy
 from beprof import functions
@@ -83,7 +82,7 @@ class Curve(np.ndarray):
         self.y /= factor
 
     def smooth(self, window=3):
-        self.y = signal.medfilt(self.y, window)
+        self.y = functions.medfilt(self.y, window)
 
     def y_at_x(self, x):
         if x == self.x[0]:
