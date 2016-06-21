@@ -114,7 +114,6 @@ setuptools.setup(
     ],
     install_requires=[
         'numpy>=1.10.4',
-        'scipy>=0.16.0',
     ],
     cmdclass=get_cmdclass()
 )

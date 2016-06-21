@@ -11,8 +11,8 @@ set -o pipefail # Return value of a pipeline as the value of the last command to
 apt_install() {
     PYTHON_VERSION=$1
     apt-get -q update
-    PYTHON2_CMD="apt-get install -y libblas-dev liblapack-dev gfortran"
-    PYTHON3_CMD="apt-get install -y libblas-dev liblapack-dev gfortran"
+    PYTHON2_CMD="apt-get install -y TODO"
+    PYTHON3_CMD="apt-get install -y TODO"
     choose_python_version "$PYTHON_VERSION" "$PYTHON2_CMD" "$PYTHON3_CMD"
 }
 
@@ -101,7 +101,7 @@ case "$OSTYPE" in
     ;;
   linux-gnu*) # Debian
     echo "Linux-gnu: $OSTYPE"
-    apt_install $PYTHON_VERSION
+#    apt_install $PYTHON_VERSION
 #    os_type
 #    lsb_release -si
 #    lsb_release -sr
