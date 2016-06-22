@@ -24,7 +24,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - |travis| |appveyor| |requires| |codeclimate|
+      - |travis| |appveyor| |requires| |codeclimate| |quantifiedcode|
     * - package
       - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
 
@@ -48,6 +48,10 @@ Overview
     :target: https://codeclimate.com/github/DataMedSci/beprof
     :alt: Issue Count
 
+.. |quantifiedcode| image:: https://www.quantifiedcode.com/api/v1/project/d8c6bb41bcac4638a108c81994ba3846/badge.svg
+    :target: https://www.quantifiedcode.com/app/project/d8c6bb41bcac4638a108c81994ba3846
+    :alt: Code issues
+
 .. |version| image:: https://img.shields.io/pypi/v/beprof.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/beprof
@@ -69,6 +73,8 @@ Overview
     :target: https://pypi.python.org/pypi/beprof
 
 .. end-badges
+
+Overv.io issue board: https://overv.io/DataMedSci/beprof/
 
 Beam Profile Analysing Tools
 
