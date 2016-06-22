@@ -92,7 +92,7 @@ stable version is ready it will be pushed to official PyPi repo.
 
 For now, installation can be done from this GIT repository, using::
 
-    pip install versioneer
+    pip install setuptools versioneer
     pip install git+https://github.com/DataMedSci/beprof.git
 
 To unistall, simply use::
