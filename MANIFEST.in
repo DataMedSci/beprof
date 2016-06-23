@@ -10,6 +10,7 @@
   recursive-include tests *.py
   include versioneer.py
   include beprof/_version.py
+  include wercker.yml
 
   exclude .gitkeep
   exclude .gitconfig
