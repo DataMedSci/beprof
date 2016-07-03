@@ -114,3 +114,7 @@ Tips
 To run a subset of tests::
 
     $ python -m unittest tests.beprof
+
+
+Some classes have main methods which can be used for testing. To run them either use PyCharm right click on __main__ or
+use PYTHONPATH=. hack.

@@ -107,7 +107,7 @@ https://beprof.readthedocs.io/
 Features
 --------
 
-Once you install beprof, you should be able to import is as a python module<br>
+Once you install beprof, you should be able to import is as a python module
 Using ipython the code would be i.e.::
 
     import beprof
@@ -134,6 +134,12 @@ You can also use another modules as numpy or matplotlib to work with beprof::
     print(foo.shape())
     plt.plot(foo[:,0], foo[:,1])
     plt.show()
+
+
+Note that beprof is a library and end-users shouldn't "run it".
+If you are interested in development - have a look at CONTRIBUTING_ section.
+
+.. _CONTRIBUTING: https://github.com/DataMedSci/beprof/blob/master/CONTRIBUTING.rst
 
 Credits
 ---------
