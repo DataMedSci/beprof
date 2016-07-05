@@ -107,7 +107,7 @@ https://beprof.readthedocs.io/
 Features
 --------
 
-Once you install beprof, you should be able to import is as a python module<br>
+Once you install beprof, you should be able to import is as a python module
 Using ipython the code would be i.e.::
 
     import beprof
@@ -121,10 +121,6 @@ Once you import necessary modules, you can use them to work with i.e. profiles::
     p = profile.Profile([[0, 1], [1, -1], [2, 3], [4, 0]])
     print(p)
 
-A few examples of data you can work with using beprof can be downloaded from
-another branch of this project named `feature/examples`
-https://github.com/DataMedSci/beprof.git
-
 You can also use another modules as numpy or matplotlib to work with beprof::
 
     #assuming you already defined p as above
@@ -134,6 +130,14 @@ You can also use another modules as numpy or matplotlib to work with beprof::
     print(foo.shape())
     plt.plot(foo[:,0], foo[:,1])
     plt.show()
+
+
+Note that beprof is a library and end-users shouldn't "run it".
+It is also strongly discouraged to use *git clone* to download code.
+Git is only for developers, end-users should use pip installation.
+If you are interested in development - have a look at CONTRIBUTING_ section.
+
+.. _CONTRIBUTING: https://github.com/DataMedSci/beprof/blob/master/CONTRIBUTING.rst
 
 Credits
 ---------
