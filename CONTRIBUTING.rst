@@ -116,5 +116,16 @@ To run a subset of tests::
     $ python -m unittest tests.beprof
 
 
-Some classes have main methods which can be used for testing. To run them either use PyCharm right click on __main__ or
-use PYTHONPATH=. hack.
+Some classes have main methods which can be used for testing. To run them either use
+PyCharm right click on __main__ or something like this::
+
+    $ PYTHONPATH=. python beprof/curve.py
+
+Note - it only applies when you are trying to run the code after downloading it
+to local disk e.g. via git.
+
+Another example may be running code this way::
+
+    $ python -m beprof.curve
+
+from source directory.
