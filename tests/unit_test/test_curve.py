@@ -5,10 +5,12 @@ from beprof.curve import Curve
 
 
 class TestCurveInit(unittest.TestCase):
+    """
+    Testing Curve initialization and .x .y
+    """
     def test_list_init(self):
         simple_lists = [[-12, 1], [-1, 7], [0, 3], [3, 17]]
         c = Curve(simple_lists)
-        print(list(c.x))
         assert list(c.x) == [e[0] for e in simple_lists]
         assert list(c.y) == [e[1] for e in simple_lists]
 
@@ -41,6 +43,7 @@ class TestCurveInit(unittest.TestCase):
 
 class TestCurveRescale(unittest.TestCase):
     def setUp(self):
+        # two the same Curves - one for modification, one for comparison
         self.pre = Curve([[0.0, 0], [5, 5], [10, 10]])
         self.post = Curve([[0.0, 0], [5, 5], [10, 10]])
 
@@ -65,6 +68,7 @@ class TestCurveRescale(unittest.TestCase):
 
 class TestCurveSmooth(unittest.TestCase):
     def setUp(self):
+        # two the same Curves - one for modification, one for comparison
         self.pre = Curve([[0.0, 0], [5, 5], [10, 0]])
         self.post = Curve([[0.0, 0], [5, 5], [10, 0]])
 
@@ -81,13 +85,27 @@ class TestCurveSmooth(unittest.TestCase):
         with pytest.raises(ValueError):
             self.post.smooth(window=0)
 
-    #
-    # def test_y_at_x(self):
-    #     self.fail()
-    #
-    # def test_change_domain(self):
-    #     self.fail()
-    #
+
+class TestCurve(unittest.TestCase):
+    def setUp(self):
+        self.c = Curve([[0.0, 0], [5, 5], [10, 0]])
+
+    def test_y_at_x(self):
+        assert str(self.c.y_at_x(-12)) == 'nan'  # outside domain, left
+        assert self.c.y_at_x(2.5) == 2.5  # in domain
+        assert self.c.y_at_x(6.7) == 3.3
+        assert str(self.c.y_at_x(12)) == 'nan'  # outside domain, right
+
+    def test_change_domain(self):
+        assert self.c.change_domain([7]).y.tolist() == [3]  # one point
+        assert self.c.change_domain([3, 7]).y.tolist() == [3, 3]  # two point
+        assert self.c.change_domain([1, 2, 3, 4, 5, 6, 7, 8, 9]).y.tolist() == \
+               [1, 2, 3, 4, 5, 4, 3, 2, 1]  # more than was
+        with pytest.raises(ValueError):
+            # outside domain
+            self.c.change_domain([12])
+            self.c.change_domain([-12])
+
     # def test_rebinned(self):
     #     self.fail()
     #
