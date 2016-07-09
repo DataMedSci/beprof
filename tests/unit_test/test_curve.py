@@ -144,11 +144,26 @@ class TestCurve(unittest.TestCase):
             self.c.change_domain([12])
             self.c.change_domain([-12])
 
-    # def test_rebinned(self):
-    #     self.fail()
-    #
-    # def test_evaluate_at_x(self):
-    #     self.fail()
-    #
+    def test_rebinned(self):
+        new_c = self.c.rebinned(step=1)
+        assert np.array_equal(new_c.x, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        # todo: probably something wrong with fixp
+        new_c = self.c.rebinned(step=2, fixp=15)
+        assert np.array_equal(new_c.x, [1, 3, 5, 7, 9])
+        new_c = self.c.rebinned(step=2, fixp=-5)
+        assert np.array_equal(new_c.x, [1, 3, 5, 7, 9])
+
+    def test_evaluate_at_x(self):
+        # test inside and outside domain
+        assert np.array_equal(
+            self.c.evaluate_at_x([-1, 0, 1, 10, 11], def_val=37),
+            [37, 0, 1, 0, 37]
+        )
+        # test between existing points
+        assert np.array_equal(
+            self.c.evaluate_at_x([-0.333, 0.5, 0.7, 7.3], def_val=37),
+            [37, 0.5, 0.7, 2.7]
+        )
+
     # def test_subtract(self):
     #     self.fail()
