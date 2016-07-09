@@ -91,10 +91,25 @@ class TestCurveSmooth(unittest.TestCase):
     def test_smooth_with_negative_window(self):
         with self.assertRaises(ValueError):
             self.test_curve.smooth(window=-1)
-
-    def test_smooth_with_window_zero(self):
         with self.assertRaises(ValueError):
-            self.test_curve.smooth(window=0)
+            self.test_curve.smooth(window=-3)
+
+    def test_even_windows(self):
+        for i in range(0, 4, 2):
+            with self.subTest(i=i):
+                with self.assertRaises(ValueError):
+                    self.test_curve.smooth(window=i)
+
+    def test_odd_window(self):
+        self.test_curve.smooth(window=3)
+        assert np.array_equal(self.test_curve, [
+            [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0]
+        ])
+        self.test_curve = self.compare_curve.copy()
+        self.test_curve.smooth(window=5)
+        assert np.array_equal(self.test_curve, [
+            [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0]
+        ])
 
 
 class TestCurve(unittest.TestCase):
