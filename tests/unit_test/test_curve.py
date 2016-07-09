@@ -165,5 +165,19 @@ class TestCurve(unittest.TestCase):
             [37, 0.5, 0.7, 2.7]
         )
 
-    # def test_subtract(self):
-    #     self.fail()
+    def test_subtract(self):
+        # c2 has wider domain than c1
+        c1 = Curve([[-1, -1], [0, 0], [1, 5], [2, 0], [3, 0]])
+        c2 = Curve([[-2, 1], [-1, 1], [0, 1], [1, 1], [2, 1], [3, 1], [4, 1]])
+
+        # should return None and self
+        self.assertIsNone(c1.subtract(c2, new_obj=False))
+        assert np.array_equal(
+            c1,
+            [[-1, -2], [0, -1], [1, 4], [2, -1], [3, -1]]
+        )
+        # create new object and compare
+        assert np.array_equal(
+            c1.subtract(c2, new_obj=True),
+            [[-1, -3], [0, -2], [1, 3], [2, -2], [3, -2]]
+        )
