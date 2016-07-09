@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 import unittest
 from beprof.curve import Curve
 
@@ -24,9 +23,9 @@ class TestCurveInit(unittest.TestCase):
         pass
 
     def test_empty_init(self):
-        with pytest.raises(TypeError):
+        with self.assertRaises(TypeError):
             Curve()
-        with pytest.raises(IndexError):
+        with self.assertRaises(IndexError):
             Curve([])
 
     def test_one_point_init(self):
@@ -80,11 +79,11 @@ class TestCurveSmooth(unittest.TestCase):
         assert list(self.compare_curve.y) == list(self.test_curve.y)
 
     def test_smooth_with_negative_window(self):
-        with pytest.raises(ValueError):
+        with self.assertRaises(ValueError):
             self.test_curve.smooth(window=-1)
 
     def test_smooth_with_window_zero(self):
-        with pytest.raises(ValueError):
+        with self.assertRaises(ValueError):
             self.test_curve.smooth(window=0)
 
 
@@ -108,7 +107,7 @@ class TestCurve(unittest.TestCase):
         assert self.c.change_domain([1, 2, 3, 4, 5, 6, 7, 8]).y.tolist() == [
             1, 2, 3, 4, 5, 4, 3, 2
         ]  # more than was
-        with pytest.raises(ValueError):
+        with self.assertRaises(ValueError):
             # outside domain
             self.c.change_domain([12])
             self.c.change_domain([-12])
