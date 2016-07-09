@@ -95,10 +95,12 @@ class TestCurveSmooth(unittest.TestCase):
             self.test_curve.smooth(window=-3)
 
     def test_even_windows(self):
-        for i in range(0, 4, 2):
-            with self.subTest(i=i):
-                with self.assertRaises(ValueError):
-                    self.test_curve.smooth(window=i)
+        with self.assertRaises(ValueError):
+            self.test_curve.smooth(window=2)
+        with self.assertRaises(ValueError):
+            self.test_curve.smooth(window=4)
+        with self.assertRaises(ValueError):
+            self.test_curve.smooth(window=6)
 
     def test_odd_window(self):
         self.test_curve.smooth(window=3)
