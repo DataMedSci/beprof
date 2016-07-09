@@ -17,8 +17,7 @@ class TestCurveInit(unittest.TestCase):
     def test_numpy_array_init(self):
         numpy_array = np.array([[-12, 1], [-1, 7], [0, 3], [3, 17]])
         c = Curve(numpy_array)
-        assert c.x.tolist() == numpy_array[:, 0].tolist()
-        assert c.y.tolist() == numpy_array[:, 1].tolist()
+        assert np.array_equal(c, numpy_array)
 
     def test_numpy_view_init(self):
         # todo
@@ -36,71 +35,79 @@ class TestCurveInit(unittest.TestCase):
         assert c.y == 2
 
     def test_two_point_init(self):
-        c = Curve([[-1, 3], [1, 7]])
-        assert c.x.tolist() == [-1, 1]
-        assert c.y.tolist() == [3, 7]
+        array = [[-1, 3], [1, 7]]
+        c = Curve(array)
+        assert np.array_equal(c, array)
 
 
 class TestCurveRescale(unittest.TestCase):
     def setUp(self):
-        # two the same Curves - one for modification, one for comparison
-        self.pre = Curve([[0.0, 0], [5, 5], [10, 10]])
-        self.post = Curve([[0.0, 0], [5, 5], [10, 10]])
+        # two the same Curves - one for modification/testing,
+        # one for comparison (unmodified)
+        self.compare_curve = Curve([[0, 0], [5, 5], [10, 10]])
+        # todo: check the x[0] element why it cannot be int
+        self.test_curve = Curve([[0.0, 0], [5, 5], [10, 10]])
 
     def test_rescale_by_one(self):
-        self.post.rescale(factor=1)
-        assert list(self.pre.x) == list(self.post.x)
-        assert list(self.pre.y) == list(self.post.y)
+        self.test_curve.rescale(factor=1)
+        assert list(self.compare_curve.x) == list(self.test_curve.x)
+        assert list(self.compare_curve.y) == list(self.test_curve.y)
 
     def test_rescale_by_negative_one(self):
-        self.post.rescale(factor=-1)
-        assert list(self.pre.x) == list(self.post.x)
-        assert list(self.pre.y) == list(self.post.y * -1)
+        self.test_curve.rescale(factor=-1)
+        assert list(self.compare_curve.x) == list(self.test_curve.x)
+        assert list(self.compare_curve.y) == list(self.test_curve.y * -1)
 
     def test_rescale_by_zero(self):
         # post.y should contain some nans and infs
-        self.post.rescale(factor=0)
-        assert list(self.pre.x) == list(self.post.x)
-        assert list(self.pre.y) != list(self.post.y)
-        assert str(self.post.y[0]) == 'nan'
-        assert str(self.post.y[1]) == 'inf'
+        self.test_curve.rescale(factor=0)
+        assert list(self.compare_curve.x) == list(self.test_curve.x)
+        assert list(self.compare_curve.y) != list(self.test_curve.y)
+        assert np.isnan(self.test_curve.y[0])
+        assert np.isinf(self.test_curve.y[1])
 
 
 class TestCurveSmooth(unittest.TestCase):
     def setUp(self):
-        # two the same Curves - one for modification, one for comparison
-        self.pre = Curve([[0.0, 0], [5, 5], [10, 0]])
-        self.post = Curve([[0.0, 0], [5, 5], [10, 0]])
+        # two the same Curves - one for modification/testing,
+        # one for comparison (unmodified)
+        self.compare_curve = Curve([[0, 0], [5, 5], [10, 0]])
+        self.test_curve = Curve([[0, 0], [5, 5], [10, 0]])
 
     def test_smooth_with_window_one(self):
-        self.post.smooth(window=1)
-        assert list(self.pre.x) == list(self.post.x)
-        assert list(self.pre.y) == list(self.post.y)
+        self.test_curve.smooth(window=1)
+        assert list(self.compare_curve.x) == list(self.test_curve.x)
+        assert list(self.compare_curve.y) == list(self.test_curve.y)
 
     def test_smooth_with_negative_window(self):
         with pytest.raises(ValueError):
-            self.post.smooth(window=-1)
+            self.test_curve.smooth(window=-1)
 
-    def test_smooth_wtih_window_zero(self):
+    def test_smooth_with_window_zero(self):
         with pytest.raises(ValueError):
-            self.post.smooth(window=0)
+            self.test_curve.smooth(window=0)
 
 
 class TestCurve(unittest.TestCase):
     def setUp(self):
-        self.c = Curve([[0.0, 0], [5, 5], [10, 0]])
+        self.c = Curve([[0, 0], [5, 5], [10, 0]])
 
     def test_y_at_x(self):
-        assert str(self.c.y_at_x(-12)) == 'nan'  # outside domain, left
+        assert np.isnan(self.c.y_at_x(-12))  # outside domain, left
         assert self.c.y_at_x(2.5) == 2.5  # in domain
         assert self.c.y_at_x(6.7) == 3.3
-        assert str(self.c.y_at_x(12)) == 'nan'  # outside domain, right
+        assert np.isnan(self.c.y_at_x(12))  # outside domain, right
+        # test existing points in Curve
+        assert self.c.y_at_x(0) == 0
+        assert self.c.y_at_x(5) == 5
+        assert self.c.y_at_x(10) == 0
 
     def test_change_domain(self):
         assert self.c.change_domain([7]).y.tolist() == [3]  # one point
         assert self.c.change_domain([3, 7]).y.tolist() == [3, 3]  # two point
-        assert self.c.change_domain([1, 2, 3, 4, 5, 6, 7, 8, 9]).y.tolist() == \
-               [1, 2, 3, 4, 5, 4, 3, 2, 1]  # more than was
+        assert self.c.change_domain([1, 2, 3, 4, 5, 6, 7, 8]).y.tolist() == [
+            1, 2, 3, 4, 5, 4, 3, 2
+        ]  # more than was
         with pytest.raises(ValueError):
             # outside domain
             self.c.change_domain([12])
