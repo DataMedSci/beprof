@@ -1,5 +1,6 @@
 versioneer
-pytest
+# pytest v3.0 (from 19.08.2016) is no longer compatible with Python 3.2.x
+pytest<3.0 ; python_version >= '3.2' and python_version < '3.3'
 pytest-capturelog
 pytest-timeout
 pytest-xdist
