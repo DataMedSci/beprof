@@ -1,6 +1,8 @@
 versioneer
 # pytest v3.0 (from 19.08.2016) is no longer compatible with Python 3.2.x
-pytest<3.0 ; python_version >= '3.2' and python_version < '3.3'
+# Because we want to use older version of pytest for Python 3.2.x and keep requires.io 'up-to-date' status
+# a rq.filter is used. More info can be found here: https://requires.io/features/#rq-directives
+pytest<3.0 ; python_version >= '3.2' and python_version < '3.3' # rq.filter: >=2.9.2,<3.0
 pytest ; python_version < '3.0' and python_version >= '3.3' and os_name != 'nt' # py different than 3.2
 pytest-capturelog
 pytest-timeout
