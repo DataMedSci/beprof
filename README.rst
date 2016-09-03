@@ -24,7 +24,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - |travis| |appveyor| |requires| |codeclimate| |quantifiedcode|
+      - |travis| |appveyor| |requires| |codeclimate|
     * - package
       - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
 
@@ -47,10 +47,6 @@ Overview
 .. |codeclimate| image:: https://codeclimate.com/github/DataMedSci/beprof/badges/issue_count.svg
     :target: https://codeclimate.com/github/DataMedSci/beprof
     :alt: Issue Count
-
-.. |quantifiedcode| image:: https://www.quantifiedcode.com/api/v1/project/d8c6bb41bcac4638a108c81994ba3846/badge.svg
-    :target: https://www.quantifiedcode.com/app/project/d8c6bb41bcac4638a108c81994ba3846
-    :alt: Code issues
 
 .. |version| image:: https://img.shields.io/pypi/v/beprof.svg?style=flat
     :alt: PyPI Package latest release
