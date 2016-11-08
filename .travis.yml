@@ -26,6 +26,9 @@ matrix:
           python: 3.5
           env: TOXENV=py35
         - os: linux
+          python: 3.5
+          env: TOXENV=coverage
+        - os: linux
           python: 3.5-dev
           env: TOXENV=py35
         - os: linux
