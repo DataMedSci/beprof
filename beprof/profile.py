@@ -17,7 +17,9 @@ class Profile(curve.Curve):
     def __new__(cls, input_array, axis=None, **meta):
         logger.info('Creating Profile object, metadata is: {0}'.format(meta))
         # input_array shape control provided in Curve class
-        new = super().__new__(cls, input_array, **meta)
+        # todo: investigate this - non-empty super() required in python 2.7
+        # new = super().__new__(cls, input_array, **meta)
+        new = super(Profile, cls).__new__(cls, input_array, **meta)
         if axis is None:
             new.axis = getattr(input_array, 'axis', None)
         else:
@@ -148,7 +150,10 @@ class Profile(curve.Curve):
 
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))
-        ret = super().__str__()
+        # todo: investigate why super().__str__() errors in python 2.7
+        #       after change of implementation of __new__
+        ret = curve.Curve.__str__(self)
+        # ret = super(curve.Curve).__str__()
         ret += "\n FWHM = {:2.3f}".format(self.fwhm)
         return ret
 
