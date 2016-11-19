@@ -1,5 +1,7 @@
 import numpy as np
+
 import unittest
+
 from beprof.curve import Curve
 
 
@@ -44,7 +46,7 @@ class TestCurveInit(unittest.TestCase):
         # todo: we need to investigate this
         with self.assertRaises(IndexError):
             Curve(['a', 'b'])
-        self.assertEquals(Curve([['a', 'b']]).x, ['a'])
+        assert np.array_equal(Curve([['a', 'b']]).x, ['a'])
 
 
 class TestCurveRescale(unittest.TestCase):
