@@ -97,7 +97,13 @@ class TestProfile(unittest.TestCase):
             p.width('a')
 
     def test_fwhm(self):
-        pass
+        p1 = Profile([[1, 1], [2, 2], [3, 1]])
+        self.assertAlmostEquals(p1.fwhm, 2)
+        p2 = Profile([[-12, 1], [-1, 17], [0, 3], [3, 1]])
+        self.assertAlmostEquals(p2.fwhm, 6.45089, 5)
+        # should go out of range
+        p3 = Profile([[-12, 1], [-1, 7], [0, 3], [3, 17]])
+        assert np.isnan(p3.fwhm)
 
     def test_normalize(self):
         pass
