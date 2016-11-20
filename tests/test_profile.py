@@ -21,8 +21,9 @@ class TestProfileInit(unittest.TestCase):
         assert np.array_equal(p, numpy_array)
 
     def test_numpy_view_init(self):
-        # todo
-        pass
+        numpy_array = np.array([[-12, 1], [-1, 7], [0, 3], [3, 17]])
+        p = Profile(numpy_array.view())
+        assert np.array_equal(p, numpy_array)
 
     def test_empty_init(self):
         with self.assertRaises(TypeError):
