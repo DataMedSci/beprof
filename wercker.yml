@@ -1,48 +1,48 @@
-# test on python 2.7
-box: python:2.7
+test-python-2.7:
+  box: python:2.7
 
-command-timeout: 60
+  command-timeout: 60
 
-build:
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "pytest"
+  build:
+    steps:
+      # installing necessary requirements
+      - pip-install:
+          requirements_file: "requirements.txt"
+          extra_args: "-rtests/requirements-test.txt"
+          packages_list: "pytest"
 
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
+      - script:
+          name: echo python information
+          code: |
+            echo "python version $(python --version) running"
+            echo "pip version $(pip --version) running"
 
-    - script:
-        name: run pytest
-        code: python -m pytest
+      - script:
+          name: run pytest
+          code: python -m pytest
 
 
-# test on python 3.2
-box: python:3.2
+test-python-3.2:
+  box: python:3.2
 
-command-timeout: 60
+  command-timeout: 60
 
-# make a source package in standard python box
-build:
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
+  # make a source package in standard python box
+  build:
+    steps:
+      # installing necessary requirements
+      - pip-install:
+          requirements_file: "requirements.txt"
+          extra_args: "-rtests/requirements-test.txt"
+          packages_list: "wheel"
 
-    # checking python version
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
+      # checking python version
+      - script:
+          name: echo python information
+          code: |
+            echo "python version $(python --version) running"
+            echo "pip version $(pip --version) running"
 
-    - script:
-        name: run pytest
-        code: python -m pytest
+      - script:
+          name: run pytest
+          code: python -m pytest
