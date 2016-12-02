@@ -1,49 +1,43 @@
+command-timeout: 60
+
 build:
-  #test python 2.7 as default
+  # test python 2.7 as default
   box: python:2.7
+  steps:
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "pytest"
 
-  command-timeout: 60
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
 
-  build:
-    steps:
-      # installing necessary requirements
-      - pip-install:
-          requirements_file: "requirements.txt"
-          extra_args: "-rtests/requirements-test.txt"
-          packages_list: "pytest"
-
-      - script:
-          name: echo python information
-          code: |
-            echo "python version $(python --version) running"
-            echo "pip version $(pip --version) running"
-
-      - script:
-          name: run pytest
-          code: python -m pytest
-
+    - script:
+        name: run pytest
+        code: python -m pytest
 
 python32:
   box: python:3.2
 
-  command-timeout: 60
-
   # make a source package in standard python box
-  build:
-    steps:
-      # installing necessary requirements
-      - pip-install:
-          requirements_file: "requirements.txt"
-          extra_args: "-rtests/requirements-test.txt"
-          packages_list: "wheel"
+  steps:
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "wheel"
 
-      # checking python version
-      - script:
-          name: echo python information
-          code: |
-            echo "python version $(python --version) running"
-            echo "pip version $(pip --version) running"
+    # checking python version
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
 
-      - script:
-          name: run pytest
-          code: python -m pytest
+    - script:
+        name: run pytest
+        code: python -m pytest
