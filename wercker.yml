@@ -1,16 +1,3 @@
-command-timeout: 60
-
-build:
-  # will probably build here, now just echo
-  box: python:slim
-  steps:
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-
-
 test-python27:
   box: python:2.7
   steps:
