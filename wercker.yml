@@ -1,4 +1,4 @@
-#test-python-2.7
+#test python 2.7 as default
 box: python:2.7
 
 command-timeout: 60
@@ -22,7 +22,7 @@ build:
         code: python -m pytest
 
 
-test-python-3.2:
+test_python_32:
   box: python:3.2
 
   command-timeout: 60
