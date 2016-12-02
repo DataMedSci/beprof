@@ -41,3 +41,69 @@ python32:
     - script:
         name: run pytest
         code: python -m pytest
+
+python33:
+  box: python:3.3
+
+  # make a source package in standard python box
+  steps:
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "wheel"
+
+    # checking python version
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
+
+    - script:
+        name: run pytest
+        code: python -m pytest
+
+python34:
+  box: python:3.4
+
+  # make a source package in standard python box
+  steps:
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "wheel"
+
+    # checking python version
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
+
+    - script:
+        name: run pytest
+        code: python -m pytest
+
+python35:
+  box: python:3.5
+
+  # make a source package in standard python box
+  steps:
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "wheel"
+
+    # checking python version
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
+
+    - script:
+        name: run pytest
+        code: python -m pytest
