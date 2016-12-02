@@ -1,25 +1,25 @@
-test-python-2.7:
-  box: python:2.7
+#test-python-2.7
+box: python:2.7
 
-  command-timeout: 60
+command-timeout: 60
 
-  build:
-    steps:
-      # installing necessary requirements
-      - pip-install:
-          requirements_file: "requirements.txt"
-          extra_args: "-rtests/requirements-test.txt"
-          packages_list: "pytest"
+build:
+  steps:
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "pytest"
 
-      - script:
-          name: echo python information
-          code: |
-            echo "python version $(python --version) running"
-            echo "pip version $(pip --version) running"
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
 
-      - script:
-          name: run pytest
-          code: python -m pytest
+    - script:
+        name: run pytest
+        code: python -m pytest
 
 
 test-python-3.2:
