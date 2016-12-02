@@ -1,7 +1,17 @@
 command-timeout: 60
 
 build:
-  # test python 2.7 as default
+  # will probably build here, now just echo
+  box: python:slim
+  steps:
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
+
+
+test-python27:
   box: python:2.7
   steps:
     # installing necessary requirements
@@ -20,10 +30,8 @@ build:
         name: run pytest
         code: python -m pytest
 
-python32:
+test-python32:
   box: python:3.2
-
-  # make a source package in standard python box
   steps:
     # installing necessary requirements
     - pip-install:
@@ -42,7 +50,7 @@ python32:
         name: run pytest
         code: python -m pytest
 
-python33:
+test-python33:
   box: python:3.3
 
   # make a source package in standard python box
@@ -64,10 +72,8 @@ python33:
         name: run pytest
         code: python -m pytest
 
-python34:
+test-python34:
   box: python:3.4
-
-  # make a source package in standard python box
   steps:
     # installing necessary requirements
     - pip-install:
@@ -86,10 +92,8 @@ python34:
         name: run pytest
         code: python -m pytest
 
-python35:
+test-python35:
   box: python:3.5
-
-  # make a source package in standard python box
   steps:
     # installing necessary requirements
     - pip-install:
