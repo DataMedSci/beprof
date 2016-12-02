@@ -1,28 +1,29 @@
-#test python 2.7 as default
-box: python:2.7
-
-command-timeout: 60
-
 build:
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "pytest"
+  #test python 2.7 as default
+  box: python:2.7
 
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
+  command-timeout: 60
 
-    - script:
-        name: run pytest
-        code: python -m pytest
+  build:
+    steps:
+      # installing necessary requirements
+      - pip-install:
+          requirements_file: "requirements.txt"
+          extra_args: "-rtests/requirements-test.txt"
+          packages_list: "pytest"
+
+      - script:
+          name: echo python information
+          code: |
+            echo "python version $(python --version) running"
+            echo "pip version $(pip --version) running"
+
+      - script:
+          name: run pytest
+          code: python -m pytest
 
 
-test_python_32:
+python32:
   box: python:3.2
 
   command-timeout: 60
