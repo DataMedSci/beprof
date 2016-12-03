@@ -1,3 +1,43 @@
+build:
+  box: python:2.7
+  steps:
+
+    # A step that sets up the python virtual environment
+    - virtualenv:
+        name: setup virtual environment
+        install_wheel: false # Enable wheel to speed up builds (experimental)
+
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "wheel"
+
+    # checking python version
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
+
+    # running tests
+    - script:
+        name: test
+        code: |
+          tox -e py27
+
+    # making package
+    - script:
+        name: package_wheel
+        code: |
+          python setup.py bdist_wheel
+          ls -al dist/*whl
+
+    # copy binary to a location that gets passed along to next pipelines
+    - script:
+        name: copy binary
+        code: cp dist/*whl "$WERCKER_OUTPUT_DIR"
+
 test-python27:
   box: python:2.7
   steps:
