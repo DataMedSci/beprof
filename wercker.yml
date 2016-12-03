@@ -38,6 +38,34 @@ build:
         name: copy binary
         code: cp dist/*whl "$WERCKER_OUTPUT_DIR"
 
+# ----- testing wheel ------
+
+test_debian_testing_py2:
+  box: debian:testing
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip
+          python -V
+          pip -V
+
+    - script:
+        name: package_install
+        code: |
+          pip install setuptools pytest
+          pip install /pipeline/source/beprof-*.whl
+
+    - script:
+        name: run pytest
+        code: |
+          python -m pytest
+
+
+# ------- testing on python boxes -------
+
 test-python27:
   box: python:2.7
   steps:
