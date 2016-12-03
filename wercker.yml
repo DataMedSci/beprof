@@ -65,7 +65,7 @@ test_debian_testing_py2:
           echo 'running: python -c "import beprof"'
           python -c 'import beprof'
           echo 'running: python -c "from beprof.curve import Curve"'
-          python -c 'from beprof.curve import Curv'
+          python -c 'from beprof.curve import Curve'
           echo 'running: python -c "from beprof.profile import Profile"'
           python -c 'from beprof.profile import Profile'
           echo "all done"
