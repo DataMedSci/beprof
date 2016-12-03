@@ -63,11 +63,11 @@ test_debian_testing_py2:
         name: test installed package
         code: |
           echo 'running: python -c "import beprof"'
-          if [ "$(`python -c 'python -c "import beprof'`)" == " " ]; then echo "nope"; else echo "ok"; fi
+          if [ "$(`python -c 'import beprof'`)" == " " ]; then exit 1; else echo "ok"; fi
           echo 'running: python -c "from beprof.curve import Curve"'
-          if [ "$(`python -c 'from beprof.curve import Curve'`)" == " " ]; then echo "nope"; else echo "ok"; fi
+          if [ "$(`python -c 'from beprof.curve import Curv'`)" == " " ]; then exit 1; else echo "ok"; fi
           echo 'running: python -c "from beprof.profile import Profile"'
-          if [ "$(`python -c 'from beprof.profile import Profile'`)" == " " ]; then echo "nope"; else echo "ok"; fi
+          if [ "$(`python -c 'from beprof.profile import Profile'`)" == " " ]; then exit 1; else echo "ok"; fi
 
 
 # ------- testing on python boxes -------
