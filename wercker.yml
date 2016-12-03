@@ -62,8 +62,11 @@ test_debian_testing_py2:
     - script:
         name: test installed package
         code: |
+          echo 'running: python -c "import beprof"'
           echo `python -c "import beprof"`
+          echo 'running: python -c "from beprof.curve import Curve"'
           echo `python -c "from beprof.curve import Curve"`
+          echo 'running: python -c "from beprof.profile import Profile"'
           echo `python -c "from beprof.profile import Profile"`
 
 
