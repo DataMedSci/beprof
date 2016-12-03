@@ -39,6 +39,7 @@ build:
         code: cp dist/*whl "$WERCKER_OUTPUT_DIR"
 
 # ----- testing wheel ------
+# debian - testing
 
 test_debian_testing_py2:
   box: debian:testing
@@ -72,6 +73,69 @@ test_debian_testing_py2:
 
 test_debian_testing_py3:
   box: debian:testing
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python3-pip
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip3 install setuptools
+          pip3 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+# debian 8 jessie
+
+test_debian_jessie_py2:
+  box: debian:jessie
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip
+          python -V
+          pip -V
+
+    - script:
+        name: package_install
+        code: |
+          pip install setuptools
+          pip install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_debian_jessie_py3:
+  box: debian:jessie
 
   steps:
     - script:
