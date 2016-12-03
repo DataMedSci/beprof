@@ -55,13 +55,16 @@ test_debian_testing_py2:
     - script:
         name: package_install
         code: |
-          pip install setuptools pytest
+          pip install setuptools
           pip install /pipeline/source/beprof-*.whl
 
+    # some dummy tests for now"
     - script:
-        name: run pytest
+        name: test installed package
         code: |
-          python -m pytest
+          python -c "import beprof"
+          python -c "from beprof.curve import Curve"
+          python -c "from beprof.profile import Profile"
 
 
 # ------- testing on python boxes -------
