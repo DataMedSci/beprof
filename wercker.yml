@@ -168,7 +168,7 @@ test_debian_jessie_py3:
 
 # ubuntu 16.04
 
-test_ubuntu_1604_testing_py2:
+test_ubuntu_1604_py2:
   box: ubuntu:16.04
 
   steps:
@@ -198,7 +198,7 @@ test_ubuntu_1604_testing_py2:
           echo "all done"
 
 
-test_ubuntu_1604_testing_py3:
+test_ubuntu_1604_py3:
   box: ubuntu:16.04
 
   steps:
@@ -226,6 +226,51 @@ test_ubuntu_1604_testing_py3:
           echo 'running: python -c "from beprof.profile import Profile"'
           python3 -c 'from beprof.profile import Profile'
           echo "all done"
+
+# openSUSE
+
+test_opensuse_leap:
+  box: opensuse:leap
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          zypper ref
+          zypper in -n python-pip python3-pip
+          python -V
+          python3 -V
+          pip -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
 
 # ------- testing on python boxes -------
 
