@@ -191,11 +191,11 @@ test_ubuntu_1604_testing_py2:
         name: test installed package
         code: |
           echo 'running: python -c "import beprof"'
-          python3 -c 'import beprof'
+          python -c 'import beprof'
           echo 'running: python -c "from beprof.curve import Curve"'
-          python3 -c 'from beprof.curve import Curve'
+          python -c 'from beprof.curve import Curve'
           echo 'running: python -c "from beprof.profile import Profile"'
-          python3 -c 'from beprof.profile import Profile'
+          python -c 'from beprof.profile import Profile'
           echo "all done"
 
 
