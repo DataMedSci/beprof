@@ -183,7 +183,6 @@ test_ubuntu_1604_testing_py2:
     - script:
         name: package_install
         code: |
-          pip install setuptools
           pip install /pipeline/source/beprof-*.whl
 
     # some dummy tests for now
@@ -214,7 +213,6 @@ test_ubuntu_1604_testing_py3:
     - script:
         name: package_install
         code: |
-          pip3 install setuptools
           pip3 install /pipeline/source/beprof-*.whl
 
     # some dummy tests for now
