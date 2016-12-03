@@ -13,10 +13,5 @@ lsb_release -a
 
 pip install --upgrade virtualenv$VENVVER pip$PIPVER setuptools tox wheel
 
-if [[ $TOXENV == py32 ]];
-then
-  pip install git+https://github.com/grzanka/python-versioneer.git@support_python32
-else
-  pip install --upgrade versioneer
-fi
+pip install -r tests/requirements-test.txt
 pip install -r requirements.txt
