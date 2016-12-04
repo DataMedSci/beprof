@@ -341,7 +341,7 @@ test_opensuse_leap_repo:
     - script:
         name: install numpy from repo
         code: |
-          zypper in python-numpy python3-numpy
+          zypper --non-interactive in python-numpy python3-numpy
           echo "---pip2---"
           pip2 freeze
           echo "---pip3---"
@@ -396,7 +396,7 @@ test_opensuse_tumbleweed_repo:
     - script:
         name: install numpy from repo
         code: |
-          zypper in python-numpy python3-numpy
+          zypper --non-interactive in python-numpy python3-numpy
           echo "---pip2---"
           pip2 freeze
           echo "---pip3---"
