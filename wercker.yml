@@ -103,7 +103,7 @@ test_debian_testing_py3:
 
 # debian 8 jessie
 
-test_debian_jessie:
+test_debian_jessie_pip:
   box: debian:jessie
 
   steps:
@@ -152,9 +152,58 @@ test_debian_jessie:
           echo "all done"
 
 
+test_debian_jessie_repo:
+  box: debian:jessie
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+          easy_install -U pip
+          easy_install3 -U pip
+          python2 -m pip -V
+          python3 -m pip -V
+
+    - script:
+        name: package_install
+        code: |
+          python2 -m pip install --no-deps /pipeline/source/beprof-*.whl
+          python3 -m pip install --no-deps /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
 # ubuntu 16.04
 
-test_ubuntu_1604:
+test_ubuntu_1604_pip:
   box: ubuntu:16.04
 
   steps:
@@ -197,6 +246,49 @@ test_ubuntu_1604:
           python -c 'from beprof.profile import Profile'
           echo "all done"
 
+
+test_ubuntu_1604_repo:
+  box: ubuntu:16.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python -c 'from beprof.profile import Profile'
+          echo "all done"
 
 # openSUSE
 
@@ -531,24 +623,6 @@ test-python36:
         extra_args: "-rtests/requirements-test.txt"
 
     # checking python version
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-
-    - script:
-        name: run pytest
-        code: python -m pytest
-
-
-test-python37:
-  box: python:3.7
-  steps:
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-
     - script:
         name: echo python information
         code: |
