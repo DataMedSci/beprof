@@ -344,8 +344,8 @@ test_ubuntu_1404_pip:
     - script:
         name: package_install
         code: |
-          /usr/local/bin/pip2 install /pipeline/source/beprof-*.whl
-          /usr/local/bin/pip3 install /pipeline/source/beprof-*.whl
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
 
     # some dummy tests for now
     - script:
