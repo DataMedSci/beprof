@@ -248,7 +248,7 @@ test_opensuse_leap:
     - script:
         name: package_install
         code: |
-          pip install /pipeline/source/beprof-*.whl
+          pip2 install /pipeline/source/beprof-*.whl
           pip3 install /pipeline/source/beprof-*.whl
 
     # some dummy tests for now
