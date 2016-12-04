@@ -237,7 +237,7 @@ test_opensuse_leap:
         name: prerequisites
         code: |
           zypper ref
-          zypper in -n python-pip python3-pip
+          zypper --non-interactive install python-pip python3-pip
           python -V
           python3 -V
           pip -V
