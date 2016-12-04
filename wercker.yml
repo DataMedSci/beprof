@@ -503,12 +503,11 @@ test_archlinux_pip:
           python3 -c 'from beprof.profile import Profile'
           echo "all done"
 
-# ------- testing on python boxes -------
+# ------- testing new python versions -------
 
 test-python27:
   box: python:2.7
   steps:
-    # installing necessary requirements
     - pip-install:
         requirements_file: "requirements.txt"
         extra_args: "-rtests/requirements-test.txt"
@@ -524,14 +523,12 @@ test-python27:
         name: run pytest
         code: python -m pytest
 
-test-python32:
-  box: python:3.2
+test-python36:
+  box: python:3.6
   steps:
-    # installing necessary requirements
     - pip-install:
         requirements_file: "requirements.txt"
         extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
 
     # checking python version
     - script:
@@ -544,58 +541,14 @@ test-python32:
         name: run pytest
         code: python -m pytest
 
-test-python33:
-  box: python:3.3
 
-  # make a source package in standard python box
+test-python37:
+  box: python:3.7
   steps:
-    # installing necessary requirements
     - pip-install:
         requirements_file: "requirements.txt"
         extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
 
-    # checking python version
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-
-    - script:
-        name: run pytest
-        code: python -m pytest
-
-test-python34:
-  box: python:3.4
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
-
-    # checking python version
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-
-    - script:
-        name: run pytest
-        code: python -m pytest
-
-test-python35:
-  box: python:3.5
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
-
-    # checking python version
     - script:
         name: echo python information
         code: |
