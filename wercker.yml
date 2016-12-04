@@ -428,12 +428,14 @@ test_ubuntu_1204_repo:
           apt-get install -qq -y --no-install-recommends python python3 python-setuptools python3-setuptools python-numpy python3-numpy
           python2 -V
           python3 -V
+          easy_install -U pip
+          easy_install3 -U pip==7.1.2
 
     - script:
         name: package_install
         code: |
-          easy_install --no-deps /pipeline/source/beprof-*.whl
-          easy_install3 --no-deps /pipeline/source/beprof-*.whl
+          pip2 --no-deps /pipeline/source/beprof-*.whl
+          pip3 --no-deps /pipeline/source/beprof-*.whl
 
     - script:
         name: test installed package (py2)
