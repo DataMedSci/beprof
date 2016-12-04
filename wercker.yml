@@ -1,7 +1,809 @@
+build:
+  box: python:2.7
+  steps:
+
+    # A step that sets up the python virtual environment
+    - virtualenv:
+        name: setup virtual environment
+        install_wheel: false # Enable wheel to speed up builds (experimental)
+
+    # installing necessary requirements
+    - pip-install:
+        requirements_file: "requirements.txt"
+        extra_args: "-rtests/requirements-test.txt"
+        packages_list: "wheel"
+
+    # checking python version
+    - script:
+        name: echo python information
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
+
+    # running tests
+    - script:
+        name: test
+        code: |
+          tox -e py27
+
+    # making package
+    - script:
+        name: package_wheel
+        code: |
+          python setup.py bdist_wheel
+          ls -al dist/*whl
+
+    # copy binary to a location that gets passed along to next pipelines
+    - script:
+        name: copy binary
+        code: cp dist/*whl "$WERCKER_OUTPUT_DIR"
+
+# ----- testing wheel ------
+# debian - testing
+
+test_debian_testing_pip:
+  box: debian:testing
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install setuptools
+          pip3 install setuptools
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_debian_testing_repo:
+  box: debian:testing
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install setuptools
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install setuptools
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+# debian 8 jessie
+
+test_debian_jessie_pip:
+  box: debian:jessie
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+          easy_install -U pip
+          easy_install3 -U pip
+          python2 -m pip -V
+          python3 -m pip -V
+
+    - script:
+        name: package_install
+        code: |
+          python2 -m pip install /pipeline/source/beprof-*.whl
+          python3 -m pip install /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_debian_jessie_repo:
+  box: debian:jessie
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+          easy_install -U pip
+          easy_install3 -U pip
+          python2 -m pip -V
+          python3 -m pip -V
+
+    - script:
+        name: package_install
+        code: |
+          python2 -m pip install --no-deps /pipeline/source/beprof-*.whl
+          python3 -m pip install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+# debian wheezy 7
+
+test_debian_wheezy_repo:
+  box: debian:wheezy
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-numpy python3-numpy
+          python2 -V
+          pip --version
+          python3 -V
+          pip --version
+
+          easy_install -U pip
+          easy_install3 -U 'pip<8.0.0'
+          pip2 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+# ubuntu 16.04
+
+test_ubuntu_1604_pip:
+  box: ubuntu:16.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_ubuntu_1604_repo:
+  box: ubuntu:16.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+# ubuntu 14.04
+
+test_ubuntu_1404_pip:
+  box: ubuntu:14.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources
+          python2 -V
+          python3 -V
+
+          easy_install -U pip
+          easy_install3 -U pip
+          python2 -m pip -V
+          python3 -m pip -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_ubuntu_1404_repo:
+  box: ubuntu:14.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+# ubuntu 12.04
+
+test_ubuntu_1204_repo:
+  box: ubuntu:12.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python python3 python-setuptools python3-setuptools python-numpy python3-numpy
+          python2 -V
+          python3 -V
+          easy_install -U pip
+          easy_install3 -U 'pip<8.0.0'
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+# openSUSE pip install
+
+test_opensuse_leap_pip:
+  box: opensuse:leap
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          zypper ref
+          zypper --non-interactive install python python-pip python3-pip
+          python2 -V
+          python3 -V
+          pip2 install --upgrade pip
+          pip2 -V
+          pip3 install --upgrade pip
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_opensuse_tumbleweed_pip:
+  box: opensuse:tumbleweed
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          zypper ref
+          zypper --non-interactive install python python-pip python3-pip
+          python2 -V
+          python3 -V
+          pip2 install --upgrade pip
+          pip2 -V
+          pip3 install --upgrade pip
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+# testing repo install
+
+test_opensuse_leap_repo:
+  box: opensuse:leap
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          zypper ref
+          zypper --non-interactive install python python-pip python3-pip
+          python2 -V
+          python3 -V
+          pip2 install --upgrade pip
+          pip2 -V
+          pip3 install --upgrade pip
+          pip3 -V
+
+    - script:
+        name: install numpy from repo
+        code: |
+          zypper --non-interactive install python-numpy python3-numpy
+          echo "---pip2---"
+          pip2 freeze
+          echo "---pip3---"
+          pip3 freeze
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_opensuse_tumbleweed_repo:
+  box: opensuse:tumbleweed
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          zypper ref
+          zypper --non-interactive install python python-pip python3-pip
+          python2 -V
+          python3 -V
+          pip2 install --upgrade pip
+          pip2 -V
+          pip3 install --upgrade pip
+          pip3 -V
+
+    - script:
+        name: install numpy from repo
+        code: |
+          zypper --non-interactive install python-numpy python3-numpy
+          echo "---pip2---"
+          pip2 freeze
+          echo "---pip3---"
+          pip3 freeze
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+# Archlinux
+
+test_archlinux_repo:
+  box: finalduty/archlinux:latest
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          pacman --noconfirm -S python2-pip python-pip openssl
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: install numpy from repo
+        code: |
+          pacman --noconfirm -S python2-numpy python-numpy
+          echo "---pip2---"
+          pip2 freeze
+          echo "---pip3---"
+          pip3 freeze
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+test_archlinux_pip:
+  box: finalduty/archlinux:latest
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          pacman --noconfirm -S python2-pip python-pip openssl
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+# ------- testing new python versions -------
+
 test-python27:
   box: python:2.7
   steps:
-    # installing necessary requirements
     - pip-install:
         requirements_file: "requirements.txt"
         extra_args: "-rtests/requirements-test.txt"
@@ -17,76 +819,12 @@ test-python27:
         name: run pytest
         code: python -m pytest
 
-test-python32:
-  box: python:3.2
+test-python36:
+  box: python:3.6
   steps:
-    # installing necessary requirements
     - pip-install:
         requirements_file: "requirements.txt"
         extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
-
-    # checking python version
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-
-    - script:
-        name: run pytest
-        code: python -m pytest
-
-test-python33:
-  box: python:3.3
-
-  # make a source package in standard python box
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
-
-    # checking python version
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-
-    - script:
-        name: run pytest
-        code: python -m pytest
-
-test-python34:
-  box: python:3.4
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
-
-    # checking python version
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-
-    - script:
-        name: run pytest
-        code: python -m pytest
-
-test-python35:
-  box: python:3.5
-  steps:
-    # installing necessary requirements
-    - pip-install:
-        requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "wheel"
 
     # checking python version
     - script:
