@@ -434,8 +434,8 @@ test_ubuntu_1204_repo:
     - script:
         name: package_install
         code: |
-          pip2 --no-deps /pipeline/source/beprof-*.whl
-          pip3 --no-deps /pipeline/source/beprof-*.whl
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
 
     - script:
         name: test installed package (py2)
