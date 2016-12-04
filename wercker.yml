@@ -482,7 +482,8 @@ test_archlinux_pip:
           echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/core/os/x86_64/" > /etc/pacman.d/mirrorlist
           echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/extra/os/x86_64/" >> /etc/pacman.d/mirrorlist
           pacman --noconfirm -Sy archlinux-keyring
-          pacman --noconfirm -S python2 python3 python2-pip python3-pip openssl
+
+          pacman --noconfirm -S python2-pip python-pip openssl
           python2 -V
           pip2 -V
           python3 -V
