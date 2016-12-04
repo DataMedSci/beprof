@@ -240,15 +240,16 @@ test_opensuse_leap:
           zypper --non-interactive install python-pip python3-pip
           python2 -V
           python3 -V
-          pip2 install --upgrade pip
-          pip3 install --upgrade pip
+          python2 -m easy_install pip
           pip2 -V
+          pip3 install --upgrade pip
           pip3 -V
 
     - script:
         name: package_install
         code: |
           pip install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
 
     # some dummy tests for now
     - script:
