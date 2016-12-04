@@ -237,7 +237,7 @@ test_opensuse_leap:
         name: prerequisites
         code: |
           zypper ref
-          zypper --non-interactive install python-pip python3-pip python-pyOpenSSL
+          zypper --non-interactive install python python-pip python3-pip
           python2 -V
           python3 -V
           pip2 install --upgrade pip
@@ -283,7 +283,7 @@ test_opensuse_tumbleweed:
         name: prerequisites
         code: |
           zypper ref
-          zypper --non-interactive install python-pip python3-pip 'libopenssl1*' libopenssl-devel
+          zypper --non-interactive install python python-pip python3-pip
           python2 -V
           python3 -V
           pip2 install --upgrade pip
