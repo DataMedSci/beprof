@@ -334,19 +334,19 @@ test_ubuntu_1404_pip:
           apt-get update
           apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources
           python2 -V
-          python2 -m pip -V
+          /usr/local/bin/pip2 -V
           pip install --upgrade pip
-          python2 -m pip -V
+          /usr/local/bin/pip2 -V
           python3 -V
-          python3 -m pip -V
+          /usr/local/bin/pip3 -V
           pip install --upgrade pip
-          python3 -m pip -V
+          /usr/local/bin/pip3 -V
 
     - script:
         name: package_install
         code: |
-          python2 -m pip install /pipeline/source/beprof-*.whl
-          python3 -m pip install /pipeline/source/beprof-*.whl
+          /usr/local/bin/pip2 install /pipeline/source/beprof-*.whl
+          /usr/local/bin/pip3 install /pipeline/source/beprof-*.whl
 
     # some dummy tests for now
     - script:
