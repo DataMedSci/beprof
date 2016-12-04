@@ -238,9 +238,11 @@ test_opensuse_leap:
         code: |
           zypper ref
           zypper --non-interactive install python-pip python3-pip
-          python -V
+          python2 -V
           python3 -V
-          pip -V
+          pip2 install --upgrade pip
+          pip3 install --upgrade pip
+          pip2 -V
           pip3 -V
 
     - script:
@@ -253,11 +255,11 @@ test_opensuse_leap:
         name: test installed package
         code: |
           echo 'running: python -c "import beprof"'
-          python -c 'import beprof'
+          python2 -c 'import beprof'
           echo 'running: python -c "from beprof.curve import Curve"'
-          python -c 'from beprof.curve import Curve'
+          python2 -c 'from beprof.curve import Curve'
           echo 'running: python -c "from beprof.profile import Profile"'
-          python -c 'from beprof.profile import Profile'
+          python2 -c 'from beprof.profile import Profile'
           echo "all done"
 
     - script:
