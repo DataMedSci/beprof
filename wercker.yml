@@ -283,7 +283,7 @@ test_opensuse_tumbleweed:
         name: prerequisites
         code: |
           zypper ref
-          zypper --non-interactive install python-pip python3-pip python-pyOpenSSL
+          zypper --non-interactive install python-pip python3-pip python-pyOpenSSL openssl
           python2 -V
           python3 -V
           pip2 install --upgrade pip
