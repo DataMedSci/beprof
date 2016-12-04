@@ -472,6 +472,38 @@ test_archlinux_repo:
           echo "all done"
 
 
+test_archlinux_pip:
+  box: base/archlinux:latest
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/extra/os/x86_64/" >> /etc/pacman.d/mirrorlist
+          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/core/os/x86_64/" > /etc/pacman.d/mirrorlist
+          pacman --noconfirm -Sy archlinux-keyring
+          pacman --noconfirm -S python2 python2-pip openssl
+          python2 -V
+          pip2 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
 # ------- testing on python boxes -------
 
 test-python27:
