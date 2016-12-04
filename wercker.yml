@@ -63,7 +63,6 @@ test_debian_testing_pip:
           pip2 install /pipeline/source/beprof-*.whl
           pip3 install /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -109,7 +108,6 @@ test_debian_testing_repo:
           pip3 install setuptools
           pip3 install --no-deps /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -160,7 +158,6 @@ test_debian_jessie_pip:
           python2 -m pip install /pipeline/source/beprof-*.whl
           python3 -m pip install /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -249,7 +246,7 @@ test_debian_wheezy_repo:
           pip --version
 
           easy_install -U pip
-          easy_install3 -U pip==7.1.2
+          easy_install3 -U 'pip<8.0.0'
           pip2 -V
           pip3 -V
 
@@ -304,7 +301,6 @@ test_ubuntu_1604_pip:
           pip2 install /pipeline/source/beprof-*.whl
           pip3 install /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -348,7 +344,6 @@ test_ubuntu_1604_repo:
           pip2 install --no-deps /pipeline/source/beprof-*.whl
           pip3 install --no-deps /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -478,7 +473,7 @@ test_ubuntu_1204_repo:
           python2 -V
           python3 -V
           easy_install -U pip
-          easy_install3 -U pip==7.1.2
+          easy_install3 -U 'pip<8.0.0'
 
     - script:
         name: package_install
@@ -623,7 +618,7 @@ test_opensuse_leap_repo:
     - script:
         name: install numpy from repo
         code: |
-          zypper --non-interactive in python-numpy python3-numpy
+          zypper --non-interactive install python-numpy python3-numpy
           echo "---pip2---"
           pip2 freeze
           echo "---pip3---"
@@ -635,7 +630,6 @@ test_opensuse_leap_repo:
           pip2 install --no-deps /pipeline/source/beprof-*.whl
           pip3 install --no-deps /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -678,7 +672,7 @@ test_opensuse_tumbleweed_repo:
     - script:
         name: install numpy from repo
         code: |
-          zypper --non-interactive in python-numpy python3-numpy
+          zypper --non-interactive install python-numpy python3-numpy
           echo "---pip2---"
           pip2 freeze
           echo "---pip3---"
@@ -690,7 +684,6 @@ test_opensuse_tumbleweed_repo:
           pip2 install --no-deps /pipeline/source/beprof-*.whl
           pip3 install --no-deps /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -716,15 +709,12 @@ test_opensuse_tumbleweed_repo:
 # Archlinux
 
 test_archlinux_repo:
-  box: base/archlinux:latest
+  box: finalduty/archlinux:latest
 
   steps:
     - script:
         name: prerequisites
         code: |
-          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/core/os/x86_64/" > /etc/pacman.d/mirrorlist
-          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/extra/os/x86_64/" >> /etc/pacman.d/mirrorlist
-          pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -S python2-pip python-pip openssl
           python2 -V
           pip2 -V
@@ -746,7 +736,6 @@ test_archlinux_repo:
           pip2 install --no-deps /pipeline/source/beprof-*.whl
           pip3 install --no-deps /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
@@ -770,15 +759,12 @@ test_archlinux_repo:
           echo "all done"
 
 test_archlinux_pip:
-  box: base/archlinux:latest
+  box: finalduty/archlinux:latest
 
   steps:
     - script:
         name: prerequisites
         code: |
-          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/core/os/x86_64/" > /etc/pacman.d/mirrorlist
-          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/extra/os/x86_64/" >> /etc/pacman.d/mirrorlist
-          pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -S python2-pip python-pip openssl
           python2 -V
           pip2 -V
@@ -791,7 +777,6 @@ test_archlinux_pip:
           pip2 install /pipeline/source/beprof-*.whl
           pip3 install /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
     - script:
         name: test installed package (py2)
         code: |
