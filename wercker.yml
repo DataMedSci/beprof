@@ -209,7 +209,56 @@ test_debian_jessie_repo:
           python2 -m pip install --no-deps /pipeline/source/beprof-*.whl
           python3 -m pip install --no-deps /pipeline/source/beprof-*.whl
 
-    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+# debian wheezy 7
+
+test_debian_wheezy_repo:
+  box: debian:wheezy
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-numpy python3-numpy
+          python2 -V
+          pip --version
+          python3 -V
+          pip --version
+
+          easy_install -U pip
+          easy_install3 -U pip==7.1.2
+          pip2 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
     - script:
         name: test installed package (py2)
         code: |
