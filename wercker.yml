@@ -229,7 +229,7 @@ test_ubuntu_1604_py3:
 
 # openSUSE
 
-test_opensuse_leap:
+test_opensuse_leap_pip:
   box: opensuse:leap
 
   steps:
@@ -275,7 +275,7 @@ test_opensuse_leap:
           echo "all done"
 
 
-test_opensuse_tumbleweed:
+test_opensuse_tumbleweed_pip:
   box: opensuse:tumbleweed
 
   steps:
@@ -290,6 +290,117 @@ test_opensuse_tumbleweed:
           pip2 -V
           pip3 install --upgrade pip
           pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+# testing repo install
+
+test_opensuse_leap_repo:
+  box: opensuse:leap
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          zypper ref
+          zypper --non-interactive install python python-pip python3-pip
+          python2 -V
+          python3 -V
+          pip2 install --upgrade pip
+          pip2 -V
+          pip3 install --upgrade pip
+          pip3 -V
+
+    - script:
+        name: install numpy from repo
+        code: |
+          zypper in python-numpy python3-numpy
+          echo "---pip2---"
+          pip2 freeze
+          echo "---pip3---"
+          pip3 freeze
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_opensuse_tumbleweed_repo:
+  box: opensuse:tumbleweed
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          zypper ref
+          zypper --non-interactive install python python-pip python3-pip
+          python2 -V
+          python3 -V
+          pip2 install --upgrade pip
+          pip2 -V
+          pip3 install --upgrade pip
+          pip3 -V
+
+    - script:
+        name: install numpy from repo
+        code: |
+          zypper in python-numpy python3-numpy
+          echo "---pip2---"
+          pip2 freeze
+          echo "---pip3---"
+          pip3 freeze
 
     - script:
         name: package_install
