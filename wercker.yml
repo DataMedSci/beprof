@@ -87,8 +87,6 @@ test_debian_testing_pip:
           echo "all done"
 
 
-
-
 test_debian_testing_repo:
   box: debian:testing
 
@@ -164,7 +162,7 @@ test_debian_jessie_pip:
 
     # some dummy tests for now
     - script:
-        name: test installed package
+        name: test installed package (py2)
         code: |
           echo 'running: python -c "import beprof"'
           python2 -c 'import beprof'
@@ -175,7 +173,7 @@ test_debian_jessie_pip:
           echo "all done"
 
     - script:
-        name: test installed package
+        name: test installed package (py3)
         code: |
           echo 'running: python -c "import beprof"'
           python3 -c 'import beprof'
@@ -213,7 +211,7 @@ test_debian_jessie_repo:
 
     # some dummy tests for now
     - script:
-        name: test installed package
+        name: test installed package (py2)
         code: |
           echo 'running: python -c "import beprof"'
           python2 -c 'import beprof'
@@ -224,7 +222,7 @@ test_debian_jessie_repo:
           echo "all done"
 
     - script:
-        name: test installed package
+        name: test installed package (py3)
         code: |
           echo 'running: python -c "import beprof"'
           python3 -c 'import beprof'
@@ -273,11 +271,11 @@ test_ubuntu_1604_pip:
         name: test installed package (py3)
         code: |
           echo 'running: python -c "import beprof"'
-          python -c 'import beprof'
+          python3 -c 'import beprof'
           echo 'running: python -c "from beprof.curve import Curve"'
-          python -c 'from beprof.curve import Curve'
+          python3 -c 'from beprof.curve import Curve'
           echo 'running: python -c "from beprof.profile import Profile"'
-          python -c 'from beprof.profile import Profile'
+          python3 -c 'from beprof.profile import Profile'
           echo "all done"
 
 
@@ -317,12 +315,102 @@ test_ubuntu_1604_repo:
         name: test installed package (py3)
         code: |
           echo 'running: python -c "import beprof"'
-          python -c 'import beprof'
+          python3 -c 'import beprof'
           echo 'running: python -c "from beprof.curve import Curve"'
-          python -c 'from beprof.curve import Curve'
+          python3 -c 'from beprof.curve import Curve'
           echo 'running: python -c "from beprof.profile import Profile"'
-          python -c 'from beprof.profile import Profile'
+          python3 -c 'from beprof.profile import Profile'
           echo "all done"
+
+# ubuntu 14.04
+
+test_ubuntu_1404_pip:
+  box: ubuntu:14.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install /pipeline/source/beprof-*.whl
+          pip3 install /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+
+test_ubuntu_1404_repo:
+  box: ubuntu:14.04
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
 
 # openSUSE pip install
 
