@@ -334,13 +334,12 @@ test_ubuntu_1404_pip:
           apt-get update
           apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources
           python2 -V
-          /usr/local/bin/pip2 -V
-          pip install --upgrade pip
-          /usr/local/bin/pip2 -V
           python3 -V
-          /usr/local/bin/pip3 -V
-          pip install --upgrade pip
-          /usr/local/bin/pip3 -V
+
+          easy_install -U pip
+          easy_install3 -U pip
+          python2 -m pip -V
+          python3 -m pip -V
 
     - script:
         name: package_install
