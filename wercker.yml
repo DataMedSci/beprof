@@ -479,8 +479,8 @@ test_archlinux_pip:
     - script:
         name: prerequisites
         code: |
-          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/extra/os/x86_64/" >> /etc/pacman.d/mirrorlist
-          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/core/os/x86_64/" > /etc/pacman.d/mirrorlist
+          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/extra/os/x86_64/" > /etc/pacman.d/mirrorlist
+          echo "Server = ftp://ftp.icm.edu.pl/pub/Linux/dist/archlinux/core/os/x86_64/" >> /etc/pacman.d/mirrorlist
           pacman --noconfirm -Sy archlinux-keyring
           pacman --noconfirm -S python2 python2-pip openssl
           python2 -V
