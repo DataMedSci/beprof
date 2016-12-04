@@ -117,7 +117,7 @@ test_debian_jessie:
           python3 -V
           pip3 -V
 
-          easy_install2 -U pip
+          easy_install -U pip
           easy_install3 -U pip
           python2 -m pip -V
           python3 -m pip -V
@@ -162,7 +162,7 @@ test_ubuntu_1604:
         name: prerequisites
         code: |
           apt-get update
-          apt-get install -qq -y --no-install-recommends python-pip python3-pip
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-pkg-resources
           python2 -V
           pip2 -V
           python3 -V
