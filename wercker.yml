@@ -41,7 +41,7 @@ build:
 # ----- testing wheel ------
 # debian - testing
 
-test_debian_testing_py2:
+test_debian_testing_pip:
   box: debian:testing
 
   steps:
@@ -49,49 +49,34 @@ test_debian_testing_py2:
         name: prerequisites
         code: |
           apt-get update
-          apt-get install -qq -y --no-install-recommends python-pip
-          python -V
-          pip -V
-
-    - script:
-        name: package_install
-        code: |
-          pip install setuptools
-          pip install /pipeline/source/beprof-*.whl
-
-    # some dummy tests for now
-    - script:
-        name: test installed package
-        code: |
-          echo 'running: python -c "import beprof"'
-          python -c 'import beprof'
-          echo 'running: python -c "from beprof.curve import Curve"'
-          python -c 'from beprof.curve import Curve'
-          echo 'running: python -c "from beprof.profile import Profile"'
-          python -c 'from beprof.profile import Profile'
-          echo "all done"
-
-test_debian_testing_py3:
-  box: debian:testing
-
-  steps:
-    - script:
-        name: prerequisites
-        code: |
-          apt-get update
-          apt-get install -qq -y --no-install-recommends python3-pip
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip
+          python2 -V
+          pip2 -V
           python3 -V
           pip3 -V
 
     - script:
         name: package_install
         code: |
+          pip2 install setuptools
           pip3 install setuptools
+          pip2 install /pipeline/source/beprof-*.whl
           pip3 install /pipeline/source/beprof-*.whl
 
     # some dummy tests for now
     - script:
-        name: test installed package
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
         code: |
           echo 'running: python -c "import beprof"'
           python3 -c 'import beprof'
@@ -100,6 +85,55 @@ test_debian_testing_py3:
           echo 'running: python -c "from beprof.profile import Profile"'
           python3 -c 'from beprof.profile import Profile'
           echo "all done"
+
+
+
+
+test_debian_testing_repo:
+  box: debian:testing
+
+  steps:
+    - script:
+        name: prerequisites
+        code: |
+          apt-get update
+          apt-get install -qq -y --no-install-recommends python-pip python3-pip python-numpy python3-numpy
+          python2 -V
+          pip2 -V
+          python3 -V
+          pip3 -V
+
+    - script:
+        name: package_install
+        code: |
+          pip2 install setuptools
+          pip2 install --no-deps /pipeline/source/beprof-*.whl
+          pip3 install setuptools
+          pip3 install --no-deps /pipeline/source/beprof-*.whl
+
+    # some dummy tests for now
+    - script:
+        name: test installed package (py2)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python2 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python2 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python2 -c 'from beprof.profile import Profile'
+          echo "all done"
+
+    - script:
+        name: test installed package (py3)
+        code: |
+          echo 'running: python -c "import beprof"'
+          python3 -c 'import beprof'
+          echo 'running: python -c "from beprof.curve import Curve"'
+          python3 -c 'from beprof.curve import Curve'
+          echo 'running: python -c "from beprof.profile import Profile"'
+          python3 -c 'from beprof.profile import Profile'
+          echo "all done"
+
 
 # debian 8 jessie
 
@@ -290,7 +324,7 @@ test_ubuntu_1604_repo:
           python -c 'from beprof.profile import Profile'
           echo "all done"
 
-# openSUSE
+# openSUSE pip install
 
 test_opensuse_leap_pip:
   box: opensuse:leap
