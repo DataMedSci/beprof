@@ -146,7 +146,7 @@ class Profile(curve.Curve):
         except RuntimeWarning as e:
             logger.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
             raise Exception("Scaling factor error:\n" + str(e))
-        self.y /= ave
+        self.y = self.y / ave
 
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))

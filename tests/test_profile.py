@@ -106,4 +106,16 @@ class TestProfile(TestCase):
         assert np.isnan(p3.fwhm)
 
     def test_normalize(self):
-        pass
+        p1 = Profile([[1, 1], [2, 20], [3, 40]])
+        p1.normalize(1)
+        assert np.array_equal(p1.y, [1, 20, 40])
+        p1 = Profile([[1, 1], [2, 20], [3, 40]])
+        p1.normalize(-1)
+        assert np.array_equal(p1.y, [-9223372036854775808, -9223372036854775808, -9223372036854775808])
+        p1 = Profile([[1, 1], [2, 20], [3, 40]])
+        p1.normalize(2)
+        assert np.array_equal(p1.y, [0, 1, 3])
+        p1 = Profile([[1, 1], [2, 20], [3, 40]])
+        p1.normalize(100)
+        assert np.array_equal(p1.y, [0, 0, 1])
+
