@@ -40,15 +40,12 @@ class Curve(np.ndarray):
 
     def __new__(cls, input_array, **meta):
         shape = np.shape(input_array)
-        logger.info('Creating Curve object of shape {0} metadata is: {1}'
-                    .format(shape, meta))
+        logger.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
         if shape[1] != 2 and shape[1] != 3:
             logger.error('Creating Curve object failed.'
                          'Input array must be an 2D or 3D array\n'
                          'np.shape(input_array_[1] must be either 2 or 3.')
-            raise IndexError('Invalid format of input_array - '
-                             'shape is {0}, must be (X, 2) or (X, 3)'
-                             .format(shape))
+            raise IndexError('Invalid format of input_array - ' 'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
 
         obj = np.asarray(input_array).view(cls)
         if meta is None:
@@ -106,23 +103,17 @@ class Curve(np.ndarray):
         :return: new Curve object with domain set by 'domain' parameter
         """
         logger.info('Running {0}.change_domain() with new domain range:'
-                    ' [{1}, {2}]'
-                    .format(self.__class__, np.min(domain), np.max(domain))
-                    )
+                    ' [{1}, {2}]'.format(self.__class__, np.min(domain), np.max(domain)))
 
         # check if new domain includes in the original domain
         if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
             logger.error('Old domain range: [{0}, {1}] does not include '
                          'new domain range: [{2}, {3}]'
-                         .format(np.min(self.x), np.max(self.x),
-                                 np.min(domain), np.max(domain))
-                         )
-            raise ValueError('in change_domain():'
-                             'the old domain does not include the new one')
+                         .format(np.min(self.x), np.max(self.x), np.min(domain), np.max(domain)))
+            raise ValueError('in change_domain():' 'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
-        obj = self.__class__(np.stack((domain, y), axis=1),
-                             **self.__dict__['metadata'])
+        obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -143,8 +134,7 @@ class Curve(np.ndarray):
         :return: new Curve object with domain specified by
             step and fixp parameters
         """
-        logger.info('Running {0}.rebinned(step={1}, fixp={2})'
-                    .format(self.__class__, step, fixp))
+        logger.info('Running {0}.rebinned(step={1}, fixp={2})'.format(self.__class__, step, fixp))
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
@@ -161,8 +151,7 @@ class Curve(np.ndarray):
             count_start = -count_start
             count_stop = count_stop
 
-        domain = [fixp + n * step for n in range(int(count_start),
-                                                 int(count_stop) + 1)]
+        domain = [fixp + n * step for n in range(int(count_start), int(count_stop) + 1)]
         return self.change_domain(domain)
 
     def evaluate_at_x(self, arg, def_val=0):
@@ -294,8 +283,7 @@ def main():
     print('Y: ', b.y)
     print('M: ', b.metadata)
 
-    print('\nNow calling b.subtract(a) what should change b'
-          'so that is looks like dif2')
+    print('\nNow calling b.subtract(a) what should change b' 'so that is looks like dif2')
     b.subtract(a)
     print('\nb: \n')
     print('X: ', b.x)
