@@ -113,7 +113,7 @@ class Curve(np.ndarray):
             raise ValueError('in change_domain():' 'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
-        obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
+        obj = self.__class__(np.dstack((domain, y))[0], **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):

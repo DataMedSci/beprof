@@ -19,7 +19,7 @@ def subtract(curve1, curve2, def_val=0):
     y1 = curve1.evaluate_at_x(coord1, def_val)
     y2 = curve2.evaluate_at_x(coord1, def_val)
     coord2 = y1 - y2
-    obj = curve1.__class__(np.stack((coord1, coord2), axis=1), **curve1.__dict__['metadata'])
+    obj = curve1.__class__(np.dstack((coord1, coord2))[0], **curve1.__dict__['metadata'])
     return obj
 
 
