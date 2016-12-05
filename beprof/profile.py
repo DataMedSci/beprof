@@ -74,8 +74,7 @@ class Profile(curve.Curve):
         :param reverse: boolean value - direction of lookup
         :return: x value corresponding to given y or NaN if not found
         """
-        logger.info('Running {0}.y_at_x(y={1}, reverse={2})'
-                    .format(self.__class__, y, reverse))
+        logger.info('Running {0}.y_at_x(y={1}, reverse={2})'.format(self.__class__, y, reverse))
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
         if reverse:
@@ -139,13 +138,11 @@ class Profile(curve.Curve):
         :param dt:
         :return:
         """
-        logger.info('Running {0}.normalize(dt={1})'
-                    .format(self.__class__, dt))
+        logger.info('Running {0}.normalize(dt={1})'.format(self.__class__, dt))
         try:
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
-            logger.error('in normalize(). self class is {0}, dt={1}'
-                         .format(self.__class__, dt))
+            logger.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
             raise Exception("Scaling factor error:\n" + str(e))
         self.y /= ave
 
@@ -158,9 +155,7 @@ class Profile(curve.Curve):
 
 def main():
     print('\nProfile')
-    p = Profile([[0, 0], [1, 1], [2, 2], [3, 1]],
-                some='exemplary',
-                meta='data')
+    p = Profile([[0, 0], [1, 1], [2, 2], [3, 1]], some='exemplary', meta='data')
     print(p)
     print(type(p))
     print("X:", p.x)
