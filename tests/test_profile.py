@@ -1,11 +1,11 @@
-import unittest
+from unittest import TestCase
 
 import numpy as np
 
 from beprof.profile import Profile
 
 
-class TestProfileInit(unittest.TestCase):
+class TestProfileInit(TestCase):
     """
     Testing Profile initialization
     """
@@ -49,7 +49,7 @@ class TestProfileInit(unittest.TestCase):
         assert np.array_equal(Profile([['a', 'b']]).x, ['a'])
 
 
-class TestProfile(unittest.TestCase):
+class TestProfile(TestCase):
     """
     Testing Profile specific methods
     """

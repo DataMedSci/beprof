@@ -113,6 +113,7 @@ class Curve(np.ndarray):
             raise ValueError('in change_domain():' 'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
+        # np.dstack(...)[0] is used to extract nested array (previously used np.stack which behaved different)
         obj = self.__class__(np.dstack((domain, y))[0], **self.__dict__['metadata'])
         return obj
 
