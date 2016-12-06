@@ -19,7 +19,7 @@ def subtract(curve1, curve2, def_val=0):
     y1 = curve1.evaluate_at_x(coord1, def_val)
     y2 = curve2.evaluate_at_x(coord1, def_val)
     coord2 = y1 - y2
-    # np.dstack(...)[0] is used to extract nested array (previously used np.stack which behaved different)
+    # the below is explained at the end of curve.Curve.change_domain()
     obj = curve1.__class__(np.dstack((coord1, coord2))[0], **curve1.__dict__['metadata'])
     return obj
 

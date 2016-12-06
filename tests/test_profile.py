@@ -14,17 +14,17 @@ class TestProfileInit(TestCase):
 
     def test_list_init(self):
         p = Profile(self.simple_lists)
-        assert np.array_equal(p, self.simple_lists)
+        self.assertTrue(np.array_equal(p, self.simple_lists))
 
     def test_numpy_array_init(self):
         numpy_array = np.array(self.simple_lists)
         p = Profile(numpy_array)
-        assert np.array_equal(p, numpy_array)
+        self.assertTrue(np.array_equal(p, numpy_array))
 
     def test_numpy_view_init(self):
         numpy_array = np.array(self.simple_lists)
         p = Profile(numpy_array.view())
-        assert np.array_equal(p, numpy_array)
+        self.assertTrue(np.array_equal(p, numpy_array))
 
     def test_empty_init(self):
         with self.assertRaises(TypeError):
@@ -42,12 +42,12 @@ class TestProfileInit(TestCase):
     def test_two_point_init(self):
         array = [[-1, 3], [1, 7]]
         p = Profile(array)
-        assert np.array_equal(p, array)
+        self.assertTrue(np.array_equal(p, array))
 
     def test_nonnumerical_init(self):
+        self.assertTrue(np.array_equal(Profile([['a', 'b']]).x, ['a']))
         with self.assertRaises(IndexError):
             Profile(['a', 'b'])
-        assert np.array_equal(Profile([['a', 'b']]).x, ['a'])
 
 
 class TestProfile(TestCase):
@@ -59,10 +59,10 @@ class TestProfile(TestCase):
 
     def test_x_at_y(self):
         # points outside profile range [5.0, 20.0]
-        assert np.isnan(self.p.x_at_y(-1.0))
-        assert np.isnan(self.p.x_at_y(4.9999999))
-        assert np.isnan(self.p.x_at_y(20.0000001))
-        assert np.isnan(self.p.x_at_y(7.5, reverse=True))
+        self.assertTrue(np.isnan(self.p.x_at_y(-1.0)))
+        self.assertTrue(np.isnan(self.p.x_at_y(4.9999999)))
+        self.assertTrue(np.isnan(self.p.x_at_y(20.0000001)))
+        self.assertTrue(np.isnan(self.p.x_at_y(7.5, reverse=True)))
         # known points
         self.assertAlmostEqual(self.p.x_at_y(5.0), 0.0)
         self.assertAlmostEquals(self.p.x_at_y(10.0), 0.1)
@@ -82,11 +82,11 @@ class TestProfile(TestCase):
 
     def test_width(self):
         # out of range
-        assert np.isnan(self.p.width(0.0))
-        assert np.isnan(self.p.width(5.0))
-        assert np.isnan(self.p.width(9.9))
-        assert np.isnan(self.p.width(20.1))
-        assert np.isnan(self.p.width(25.0))
+        self.assertTrue(np.isnan(self.p.width(0.0)))
+        self.assertTrue(np.isnan(self.p.width(5.0)))
+        self.assertTrue(np.isnan(self.p.width(9.9)))
+        self.assertTrue(np.isnan(self.p.width(20.1)))
+        self.assertTrue(np.isnan(self.p.width(25.0)))
         # in range
         self.assertAlmostEquals(self.p.width(10.0), 0.2)
         self.assertAlmostEquals(self.p.width(15.0), 0.1)
@@ -104,7 +104,7 @@ class TestProfile(TestCase):
         self.assertAlmostEquals(p2.fwhm, 6.45089, 5)
         # should go out of range
         p3 = Profile([[-12, 1], [-1, 7], [0, 3], [3, 17]])
-        assert np.isnan(p3.fwhm)
+        self.assertTrue(np.isnan(p3.fwhm))
         # it is not callable
         with self.assertRaises(TypeError):
             self.p.fwhm()
@@ -112,18 +112,18 @@ class TestProfile(TestCase):
     def test_normalize(self):
         p1 = Profile([[1, 1], [2, 20], [3, 40]])
         p1.normalize(1)
-        assert np.array_equal(p1.y, [1, 20, 40])
+        self.assertTrue(np.array_equal(p1.y, [1, 20, 40]))
 
         p1 = Profile([[1, 1], [2, 20], [3, 40]])
         p1.normalize(2)
-        assert np.array_equal(p1.y, [0, 1, 3])
+        self.assertTrue(np.array_equal(p1.y, [0, 1, 3]))
 
         p1 = Profile([[1, 1], [2, 20], [3, 40]])
         p1.normalize(100)
-        assert np.array_equal(p1.y, [0, 0, 1])
+        self.assertTrue(np.array_equal(p1.y, [0, 0, 1]))
 
         # case - less or equal to 0
         p1 = Profile([[1, 1], [2, 20], [3, 40]])
         p1.normalize(-1)
         # in linux -9223372036854775808, but windows shows -2147483648
-        assert np.array_equal([e < -2147483647 for e in p1.y], np.ones(3, dtype=bool))
+        self.assertTrue(np.array_equal([e < -2147483647 for e in p1.y], np.ones(3, dtype=bool)))

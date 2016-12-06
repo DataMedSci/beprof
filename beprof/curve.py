@@ -113,7 +113,12 @@ class Curve(np.ndarray):
             raise ValueError('in change_domain():' 'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
-        # np.dstack(...)[0] is used to extract nested array (previously used np.stack which behaved different)
+        # We need to join together domain and y because we are recreating 2 dimensional Curve object
+        # (we pass it as argument to self.__class__ to do so and it takes 2 or 3 dimensional arrays as argument.
+        # np.dstack() joins given arrays by axis=1 but it also nests the result in additional list
+        # and this is the reason why we use [0] to remove this extra layer of list like this:
+        # np.dstack([[0, 5, 10], ] ):[[[0, 0], [5, 5], [10, 0]]] -> [[0,0], [5, 5], [10, 0]]
+        # which is a 2 dimensional array and can be used to create a new Curve object
         obj = self.__class__(np.dstack((domain, y))[0], **self.__dict__['metadata'])
         return obj
 
