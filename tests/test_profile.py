@@ -9,19 +9,20 @@ class TestProfileInit(TestCase):
     """
     Testing Profile initialization
     """
+    def setUp(self):
+        self.simple_lists = ([-12, 1], [-1, 7], [0, 3], [3, 17])
 
     def test_list_init(self):
-        simple_lists = [[-12, 1], [-1, 7], [0, 3], [3, 17]]
-        p = Profile(simple_lists)
-        assert np.array_equal(p, simple_lists)
+        p = Profile(self.simple_lists)
+        assert np.array_equal(p, self.simple_lists)
 
     def test_numpy_array_init(self):
-        numpy_array = np.array([[-12, 1], [-1, 7], [0, 3], [3, 17]])
+        numpy_array = np.array(self.simple_lists)
         p = Profile(numpy_array)
         assert np.array_equal(p, numpy_array)
 
     def test_numpy_view_init(self):
-        numpy_array = np.array([[-12, 1], [-1, 7], [0, 3], [3, 17]])
+        numpy_array = np.array(self.simple_lists)
         p = Profile(numpy_array.view())
         assert np.array_equal(p, numpy_array)
 
@@ -53,48 +54,48 @@ class TestProfile(TestCase):
     """
     Testing Profile specific methods
     """
+    def setUp(self):
+        self.p = Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]])
 
     def test_x_at_y(self):
-        p = Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]])
         # points outside profile range [5.0, 20.0]
-        assert np.isnan(p.x_at_y(-1.0))
-        assert np.isnan(p.x_at_y(4.9999999))
-        assert np.isnan(p.x_at_y(20.0000001))
-        assert np.isnan(p.x_at_y(7.5, reverse=True))
+        assert np.isnan(self.p.x_at_y(-1.0))
+        assert np.isnan(self.p.x_at_y(4.9999999))
+        assert np.isnan(self.p.x_at_y(20.0000001))
+        assert np.isnan(self.p.x_at_y(7.5, reverse=True))
         # known points
-        self.assertAlmostEqual(p.x_at_y(5.0), 0.0)
-        self.assertAlmostEquals(p.x_at_y(10.0), 0.1)
-        self.assertAlmostEquals(p.x_at_y(20.0), 0.2)
-        self.assertAlmostEquals(p.x_at_y(20.0, reverse=True), 0.2)
-        self.assertAlmostEquals(p.x_at_y(10.0, reverse=True), 0.3)
+        self.assertAlmostEqual(self.p.x_at_y(5.0), 0.0)
+        self.assertAlmostEquals(self.p.x_at_y(10.0), 0.1)
+        self.assertAlmostEquals(self.p.x_at_y(20.0), 0.2)
+        self.assertAlmostEquals(self.p.x_at_y(20.0, reverse=True), 0.2)
+        self.assertAlmostEquals(self.p.x_at_y(10.0, reverse=True), 0.3)
         # some points between known ones
-        self.assertAlmostEquals(p.x_at_y(7.5), 0.05)
-        self.assertAlmostEquals(p.x_at_y(11.11), 0.1111)
-        self.assertAlmostEquals(p.x_at_y(19.99), 0.1999)
-        self.assertAlmostEquals(p.x_at_y(19.99, reverse=True), 0.2001)
+        self.assertAlmostEquals(self.p.x_at_y(7.5), 0.05)
+        self.assertAlmostEquals(self.p.x_at_y(11.11), 0.1111)
+        self.assertAlmostEquals(self.p.x_at_y(19.99), 0.1999)
+        self.assertAlmostEquals(self.p.x_at_y(19.99, reverse=True), 0.2001)
         # basic exception testing
         with self.assertRaises(TypeError):
-            p.x_at_y()
+            self.p.x_at_y()
         with self.assertRaises(TypeError):
-            p.x_at_y('a')
+            self.p.x_at_y('a')
 
     def test_width(self):
-        p = Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]])
         # out of range
-        assert np.isnan(p.width(0.0))
-        assert np.isnan(p.width(5.0))
-        assert np.isnan(p.width(9.9))
-        assert np.isnan(p.width(20.1))
-        assert np.isnan(p.width(25.0))
+        assert np.isnan(self.p.width(0.0))
+        assert np.isnan(self.p.width(5.0))
+        assert np.isnan(self.p.width(9.9))
+        assert np.isnan(self.p.width(20.1))
+        assert np.isnan(self.p.width(25.0))
         # in range
-        self.assertAlmostEquals(p.width(10.0), 0.2)
-        self.assertAlmostEquals(p.width(15.0), 0.1)
-        self.assertAlmostEquals(p.width(20.0), 0.0)  # only one point (0, 20)
+        self.assertAlmostEquals(self.p.width(10.0), 0.2)
+        self.assertAlmostEquals(self.p.width(15.0), 0.1)
+        self.assertAlmostEquals(self.p.width(20.0), 0.0)  # only one point (0, 20)
         # some exception testing
         with self.assertRaises(TypeError):
-            p.width()
+            self.p.width()
         with self.assertRaises(TypeError):
-            p.width('a')
+            self.p.width('a')
 
     def test_fwhm(self):
         p1 = Profile([[1, 1], [2, 2], [3, 1]])
@@ -104,18 +105,25 @@ class TestProfile(TestCase):
         # should go out of range
         p3 = Profile([[-12, 1], [-1, 7], [0, 3], [3, 17]])
         assert np.isnan(p3.fwhm)
+        # it is not callable
+        with self.assertRaises(TypeError):
+            self.p.fwhm()
 
     def test_normalize(self):
         p1 = Profile([[1, 1], [2, 20], [3, 40]])
         p1.normalize(1)
         assert np.array_equal(p1.y, [1, 20, 40])
-        p1 = Profile([[1, 1], [2, 20], [3, 40]])
-        p1.normalize(-1)
-        assert np.array_equal(p1.y, [-9223372036854775808, -9223372036854775808, -9223372036854775808])
+
         p1 = Profile([[1, 1], [2, 20], [3, 40]])
         p1.normalize(2)
         assert np.array_equal(p1.y, [0, 1, 3])
+
         p1 = Profile([[1, 1], [2, 20], [3, 40]])
         p1.normalize(100)
         assert np.array_equal(p1.y, [0, 0, 1])
 
+        # case - less or equal to 0
+        p1 = Profile([[1, 1], [2, 20], [3, 40]])
+        p1.normalize(-1)
+        # in linux -9223372036854775808, but windows shows -2147483648
+        assert np.array_equal([e < -2147483647 for e in p1.y], np.ones(3, dtype=bool))
