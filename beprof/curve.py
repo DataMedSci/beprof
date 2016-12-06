@@ -223,9 +223,8 @@ class Curve(np.ndarray):
 
         # check whether domain condition is satisfied
         if a2 > a1 or b2 < b1:
-            logger.error('curve2 domain does not include self domain')
-            # todo: raise exception
-            return None
+            logger.error("Domain of self must be in domain of given curve")
+            raise Exception("curve2 does not include self domain")
         # if we want to create and return a new object
         # rather then modify existing one
         if new_obj:

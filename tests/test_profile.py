@@ -123,7 +123,7 @@ class TestProfile(TestCase):
         self.assertTrue(np.array_equal(p1.y, [0, 0, 1]))
 
         # case - less or equal to 0
-        p1 = Profile([[1, 1], [2, 20], [3, 40]])
-        p1.normalize(-1)
-        # in linux -9223372036854775808, but windows shows -2147483648
-        self.assertTrue(np.array_equal([e < -2147483647 for e in p1.y], np.ones(3, dtype=bool)))
+        with self.assertRaises(ValueError):
+            p1.normalize(0)
+        with self.assertRaises(ValueError):
+            p1.normalize(-1)
