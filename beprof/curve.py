@@ -38,7 +38,10 @@ class Curve(np.ndarray):
                     does not include the new one.
     """
 
-    def __new__(cls, input_array, **meta):
+    def __new__(cls, input_array, dtype=np.float, order='C', **meta):
+        # we don't know much about input_array and if it has the attribute .shape,
+        # so to avoid AttributeError we use np.shape(input_array)
+        # e.g. np.shape('whatever') returns ()
         shape = np.shape(input_array)
         logger.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
         if shape[1] != 2 and shape[1] != 3:
@@ -47,7 +50,7 @@ class Curve(np.ndarray):
                          'np.shape(input_array_[1] must be either 2 or 3.')
             raise IndexError('Invalid format of input_array - ' 'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
 
-        obj = np.asarray(input_array).view(cls)
+        obj = np.asarray(input_array, dtype=dtype, order=order).view(cls)
         if meta is None:
             obj.metadata = {}
         else:
@@ -75,8 +78,21 @@ class Curve(np.ndarray):
     def y(self, value):
         self[:, 1] = value
 
-    def rescale(self, factor=1.0):
-        self.y /= factor
+    def rescale(self, factor=1.0, allow_cast=True):
+        """
+
+        :param factor:
+        :param allow_cast:
+        :return:
+        """
+        try:
+            self.y /= factor
+        except TypeError as e:
+            logger.error("Division in place is impossible.\n%s" % e)
+            if allow_cast:
+                self.y = self.y / factor
+            else:
+                logger.error("allow_cast flag set to True should help")
 
     def smooth(self, window=3):
         self.y = functions.medfilt(self.y, window)
@@ -113,11 +129,12 @@ class Curve(np.ndarray):
             raise ValueError('in change_domain():' 'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
-        # We need to join together domain and y because we are recreating 2 dimensional Curve object
-        # (we pass it as argument to self.__class__ to do so and it takes 2 or 3 dimensional arrays as argument.
-        # np.dstack() joins given arrays by axis=1 but it also nests the result in additional list
-        # and this is the reason why we use [0] to remove this extra layer of list like this:
-        # np.dstack([[0, 5, 10], ] ):[[[0, 0], [5, 5], [10, 0]]] -> [[0,0], [5, 5], [10, 0]]
+        # We need to join together domain and values (y) because we are recreating Curve object
+        # (we pass it as argument to self.__class__)
+        # np.dstack((arrays), axis=1) joins given arrays like np.dstack() but it also nests the result
+        # in additional list and this is the reason why we use [0] to remove this extra layer of list like this:
+        # np.dstack([[0, 5, 10], [0, 0, 0]]) gives [[[ 0,  0], [ 5,  0], [10,  0]]] so use dtack()[0]
+        # to get this: [[0,0], [5, 5], [10, 0]]
         # which is a 2 dimensional array and can be used to create a new Curve object
         obj = self.__class__(np.dstack((domain, y))[0], **self.__dict__['metadata'])
         return obj

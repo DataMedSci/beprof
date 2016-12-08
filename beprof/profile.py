@@ -145,7 +145,7 @@ class Profile(curve.Curve):
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
             logger.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
-            raise Exception("Scaling factor error:\n" + str(e))
+            raise Exception("Scaling factor error: %s\n" % e)
         self.y = self.y / ave
 
     def __str__(self):

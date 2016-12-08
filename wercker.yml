@@ -805,8 +805,7 @@ test-python27-numpy1_8:
   box: python:2.7
   steps:
     - pip-install:
-        extra_args: "-rtests/requirements-test.txt"
-        packages_list: "numpy<1.9.0 pytest"
+        packages_list: "numpy<1.9.0 versioneer pytest"
 
     - script:
         name: echo python information
