@@ -80,7 +80,7 @@ class Curve(np.ndarray):
 
     def rescale(self, factor=1.0, allow_cast=True):
         """
-
+        todo: write docstring nad doctests
         :param factor:
         :param allow_cast:
         :return:

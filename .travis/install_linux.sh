@@ -13,5 +13,5 @@ lsb_release -a
 
 pip install --upgrade virtualenv$VENVVER pip$PIPVER setuptools$STVER tox wheel
 
-pip install -r tests/requirements-test.txt
+pip install -r beprof/tests/requirements-test.txt
 pip install -r requirements.txt

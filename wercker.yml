@@ -10,7 +10,7 @@ build:
     # installing necessary requirements
     - pip-install:
         requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
+        extra_args: "-rbeprof/tests/requirements-test.txt"
         packages_list: "wheel"
 
     # checking python version
@@ -801,31 +801,12 @@ test_archlinux_pip:
 
 # ------- testing new python versions -------
 
-test-python27-numpy1_8:
-  box: python:2.7
-  steps:
-    - script:
-        name: pip install
-        code: |
-          pip install numpy<1.9.0 versioneer pytest
-
-    - script:
-        name: echo python information
-        code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-          pip freeze
-
-    - script:
-        name: run pytest
-        code: python -m pytest
-
 test-python36:
   box: python:3.6
   steps:
     - pip-install:
         requirements_file: "requirements.txt"
-        extra_args: "-rtests/requirements-test.txt"
+        extra_args: "-rbeprof/tests/requirements-test.txt"
 
     # checking python version
     - script:

@@ -114,7 +114,8 @@ with open('README.rst') as readme_file:
 setuptools.setup(
     name='beprof',
     version=get_version(),
-    packages=['beprof'],
+    packages=['beprof', 'beprof.tests'],
+    test_suite='beprof.tests',
     url='https://github.com/DataMedSci/beprof',
     license='GPL',
     author=['Leszek Grzanka', 'Mateusz Krakowski', 'ant6'],
