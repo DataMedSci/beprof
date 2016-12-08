@@ -804,8 +804,10 @@ test_archlinux_pip:
 test-python27-numpy1_8:
   box: python:2.7
   steps:
-    - pip-install:
-        packages_list: "numpy<1.9.0 versioneer pytest"
+    - script:
+        name: pip install
+        code: |
+          pip install numpy<1.9.0 versioneer pytest
 
     - script:
         name: echo python information
