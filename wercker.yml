@@ -801,19 +801,19 @@ test_archlinux_pip:
 
 # ------- testing new python versions -------
 
-test-python27:
+test-python27-numpy1_8:
   box: python:2.7
   steps:
     - pip-install:
-        requirements_file: "requirements.txt"
         extra_args: "-rtests/requirements-test.txt"
-        packages_list: "pytest"
+        packages_list: "numpy<1.9.0 pytest"
 
     - script:
         name: echo python information
         code: |
           echo "python version $(python --version) running"
           echo "pip version $(pip --version) running"
+          pip freeze
 
     - script:
         name: run pytest

@@ -44,10 +44,10 @@ class TestCurveInit(TestCase):
         self.assertTrue(np.array_equal(c, array))
 
     def test_nonnumerical_init(self):
-        # todo: we need to investigate this
-        self.assertTrue(np.array_equal(Curve([['a', 'b']]).x, ['a']))
-        with self.assertRaises(IndexError):
-            Curve(['a', 'b'])
+        with self.assertRaises(ValueError):
+            Curve([['a', 'b']])
+        with self.assertRaises(ValueError):
+            Curve([['a', 1], [0.2, 'b']])
 
 
 class TestCurveRescale(TestCase):
