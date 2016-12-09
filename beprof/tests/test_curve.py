@@ -9,7 +9,6 @@ class TestCurveInit(TestCase):
     """
     Testing Curve initialization and .x .y
     """
-
     def test_list_init(self):
         simple_lists = [[-12, 1], [-1, 7], [0, 3], [3, 17]]
         c = Curve(simple_lists)
@@ -51,6 +50,9 @@ class TestCurveInit(TestCase):
 
 
 class TestCurveRescale(TestCase):
+    """
+    Testing Curve.rescale()
+    """
     def setUp(self):
         # two the same Curves - one for modification/testing,
         # one for comparison (unmodified)
@@ -86,6 +88,9 @@ class TestCurveRescale(TestCase):
 
 
 class TestCurveSmooth(TestCase):
+    """
+    Testing Curve.smooth() - median filter
+    """
     def setUp(self):
         # two the same Curves - one for modification/testing,
         # one for comparison (unmodified)
@@ -119,34 +124,56 @@ class TestCurveSmooth(TestCase):
         self.assertTrue(np.array_equal(self.test_curve, [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]))
 
 
-class TestCurve(TestCase):
+class TestCurveXatY(TestCase):
+    """
+    Testing Curve.x_at_y()
+    """
     def setUp(self):
         self.c = Curve([[0, 0], [5, 5], [10, 0]])
 
-    def test_y_at_x(self):
+    def test_basic_x_at_y(self):
         self.assertTrue(np.isnan(self.c.y_at_x(-12)))  # outside domain, left
         self.assertEqual(self.c.y_at_x(2.5), 2.5)  # in domain
         self.assertEqual(self.c.y_at_x(6.7), 3.3)
         self.assertTrue(np.isnan(self.c.y_at_x(12)))  # outside domain, right
-        # test existing points in Curve
+
+    def test_existing_points_x_at_y(self):
         self.assertEqual(self.c.y_at_x(0), 0)
         self.assertEqual(self.c.y_at_x(0.0), 0)
         self.assertEqual(self.c.y_at_x(-0.0), 0)  # 'negative zero'
         self.assertEqual(self.c.y_at_x(5), 5)
         self.assertEqual(self.c.y_at_x(10), 0)
 
-    def test_change_domain(self):
+
+class TestCurveChangeDomain(TestCase):
+    """
+    Testing Curve.change_domain()
+    """
+    def setUp(self):
+        self.c = Curve([[0, 0], [5, 5], [10, 0]])
+
+    def test_basic_change_domain(self):
         # one point
         self.assertTrue(np.array_equal(self.c.change_domain([7]).y, [3]))
         # two points
         self.assertTrue(np.array_equal(self.c.change_domain([3, 7]).y, [3, 3]))
         # more than previously
         self.assertTrue(np.array_equal(self.c.change_domain([1, 2, 3, 4, 5, 6, 7, 8]).y, [1, 2, 3, 4, 5, 4, 3, 2]))
+
+    def test_change_domain_exceptions(self):
         # outside domain
         with self.assertRaises(ValueError):
             self.c.change_domain([12])
         with self.assertRaises(ValueError):
             self.c.change_domain([-12])
+
+
+class TestCurveOther(TestCase):
+    """
+    Other test of Curve class
+    """
+    def setUp(self):
+        self.c = Curve([[0, 0], [5, 5], [10, 0]])
 
     def test_rebinned(self):
         new_c = self.c.rebinned(step=1)

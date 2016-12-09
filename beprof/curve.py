@@ -113,8 +113,7 @@ class Curve(np.ndarray):
                 self.y = self.y / factor
             else:
                 logger.error("allow_cast flag set to True should help")
-                raise e
-        return None
+                raise
 
     def smooth(self, window=3):
         self.y = functions.medfilt(self.y, window)

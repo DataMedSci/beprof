@@ -51,76 +51,133 @@ class TestProfileInit(TestCase):
             Profile([['a', 1], [0.2, 'b']])
 
 
-class TestProfile(TestCase):
+class TestProfileXatY(TestCase):
     """
-    Testing Profile specific methods
+    Testing Profile.x_at_y()
     """
     def setUp(self):
         self.p = Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]])
 
-    def test_x_at_y(self):
+    def test_outside_points(self):
         # points outside profile range [5.0, 20.0]
         self.assertTrue(np.isnan(self.p.x_at_y(-1.0)))
         self.assertTrue(np.isnan(self.p.x_at_y(4.9999999)))
         self.assertTrue(np.isnan(self.p.x_at_y(20.0000001)))
         self.assertTrue(np.isnan(self.p.x_at_y(7.5, reverse=True)))
-        # known points
+
+    def test_known_points(self):
         self.assertAlmostEqual(self.p.x_at_y(5.0), 0.0)
         self.assertAlmostEquals(self.p.x_at_y(10.0), 0.1)
         self.assertAlmostEquals(self.p.x_at_y(20.0), 0.2)
         self.assertAlmostEquals(self.p.x_at_y(20.0, reverse=True), 0.2)
         self.assertAlmostEquals(self.p.x_at_y(10.0, reverse=True), 0.3)
+
+    def test_between_known_points(self):
         # some points between known ones
         self.assertAlmostEquals(self.p.x_at_y(7.5), 0.05)
         self.assertAlmostEquals(self.p.x_at_y(11.11), 0.1111)
         self.assertAlmostEquals(self.p.x_at_y(19.99), 0.1999)
         self.assertAlmostEquals(self.p.x_at_y(19.99, reverse=True), 0.2001)
-        # basic exception testing
+
+    def test_exceptioons(self):
         with self.assertRaises(TypeError):
             self.p.x_at_y()
         with self.assertRaises(TypeError):
             self.p.x_at_y('a')
 
-    def test_width(self):
+
+class TestProfileWidth(TestCase):
+    """
+    Testing Profile.width()
+    """
+    def setUp(self):
+        self.p = Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]])
+
+    def test_out_of_range_width(self):
         # out of range
         self.assertTrue(np.isnan(self.p.width(0.0)))
         self.assertTrue(np.isnan(self.p.width(5.0)))
         self.assertTrue(np.isnan(self.p.width(9.9)))
         self.assertTrue(np.isnan(self.p.width(20.1)))
         self.assertTrue(np.isnan(self.p.width(25.0)))
-        # in range
+
+    def test_in_range_width(self):
         self.assertAlmostEquals(self.p.width(10.0), 0.2)
         self.assertAlmostEquals(self.p.width(15.0), 0.1)
         self.assertAlmostEquals(self.p.width(20.0), 0.0)  # only one point (0, 20)
-        # some exception testing
+
+    def test_width_exceptions(self):
         with self.assertRaises(TypeError):
             self.p.width()
         with self.assertRaises(TypeError):
             self.p.width('a')
 
-    def test_fwhm(self):
+
+class TestProfileFWHM(TestCase):
+    """
+    Testing Profile.fwhm
+    """
+    def setUp(self):
+        self.p = Profile([[0.0, 5.0], [0.1, 10.0], [0.2, 20.0], [0.3, 10.0]])
+
+    def test_basic_fwhm(self):
         p1 = Profile([[1, 1], [2, 2], [3, 1]])
         self.assertAlmostEquals(p1.fwhm, 2)
         p2 = Profile([[-12, 1], [-1, 17], [0, 3], [3, 1]])
         self.assertAlmostEquals(p2.fwhm, 6.45089, 5)
-        # should go out of range
+
+    def test_outside_range_fwhm(self):
         p3 = Profile([[-12, 1], [-1, 7], [0, 3], [3, 17]])
         self.assertTrue(np.isnan(p3.fwhm))
-        # it is not callable
+
+    def test_fwhm_exception(self):
+        # objects in not callable
         with self.assertRaises(TypeError):
             self.p.fwhm()
 
-    def test_normalize(self):
-        p1 = Profile([[1, 1], [2, 20], [3, 40]])
-        p1.normalize(1)
-        self.assertTrue(np.array_equal(p1.y, [1, 20, 40]))
 
-        p1 = Profile([[1, 1], [2, 2], [3, 3], [4, 2], [5, 1]])
-        p1.normalize(2)
-        self.assertTrue(np.allclose(p1.y, [0.666666, 1.333333, 2, 1.333333, 0.666666]))
+class TestProfileNormalize(TestCase):
+    """
+    Testing Profile.normalize()
+    """
+    def setUp(self):
+        self.p = Profile([[0.0, 5.0], [1, 10.0], [2, 15.0], [3, 10.0]])
+        self.p_int = Profile([[1, 1], [2, 2], [3, 3], [4, 2], [5, 1]], dtype=np.int)
 
+    def test_basic_normalize_by_one(self):
+        self.p.normalize(1)
+        self.assertTrue(np.allclose(self.p.y, [0.666666, 1.333333, 2., 1.333333]))
+
+    def test_basic_normalize_by_two(self):
+        self.p.normalize(2)
+        self.assertTrue(np.allclose(self.p.y, [0.5, 1., 1.5, 1.]))
+
+    def test_normalize_integers(self):
+        # Testing normalization of integer-filled profiles
+        # case 1 - int filled 'p_int /= dt' raises:
+        # TypeError: ufunc 'true_divide' output (typecode 'd') could not be coerced to provided output
+        # parameter (typecode 'l') according to the casting rule ''same_kind''
+        with self.assertRaises(TypeError):
+            self.p_int.normalize(1, allow_cast=False)
+        # case 2 - we allow p_int = p_int / dt
+        # division in place error is logged when trying to do 'p_int /= dt'
+        self.p_int.normalize(1, allow_cast=True)
+        self.assertTrue(np.array_equal(self.p_int.y, [1, 2, 3, 2, 1]))
+        # values in p_int are integers
+        self.assertTrue(np.issubdtype(self.p_int.dtype, int))
+
+    def test_normalize_integers_by_float(self):
+        # dtype==int preserved
+        self.p_int.normalize(2.2, allow_cast=True)
+        self.assertTrue(np.array_equal(self.p_int.y, [0, 1, 2, 1, 0]))
+        self.assertTrue(np.issubdtype(self.p_int.dtype, int))
+        # but if we do not allow cast:
+        with self.assertRaises(TypeError):
+            self.p_int.normalize(2.2, allow_cast=False)
+
+    def test_normalize_exception(self):
         # case - less or equal to 0
         with self.assertRaises(ValueError):
-            p1.normalize(0)
+            self.p.normalize(0)
         with self.assertRaises(ValueError):
-            p1.normalize(-1)
+            self.p.normalize(-1)
