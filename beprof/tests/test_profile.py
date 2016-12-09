@@ -117,7 +117,7 @@ class TestProfile(TestCase):
 
         p1 = Profile([[1, 1], [2, 2], [3, 3], [4, 2], [5, 1]])
         p1.normalize(2)
-        assert (np.allclose(p1.y, [0.666666, 1.333333, 2, 1.333333, 0.666666]))
+        self.assertTrue(np.allclose(p1.y, [0.666666, 1.333333, 2, 1.333333, 0.666666]))
 
         # case - less or equal to 0
         with self.assertRaises(ValueError):

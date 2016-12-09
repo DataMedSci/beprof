@@ -132,11 +132,14 @@ class Profile(curve.Curve):
         """
         return self.width(0.5 * np.max(self.y))
 
-    def normalize(self, dt):
+    def normalize(self, dt, allow_cast=True):
         """
-        Normalize to 1 over [-dt, +dt] area
+        Normalize to 1 over [-dt, +dt] area, if allow_cast is set
+        to True, division not in place and casting may occur.
+        If division in place is not possible and allow_cast is False
+        an exception is raised.
         :param dt:
-        :return:
+        :param allow_cast:
         """
         if dt <= 0:
             raise ValueError("Expected positive input")
@@ -145,8 +148,16 @@ class Profile(curve.Curve):
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
             logger.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
-            raise Exception("Scaling factor error: %s\n" % e)
-        self.y = self.y / ave
+            raise Exception("Scaling factor error: {0}".format(e))
+        try:
+            self.y /= ave
+        except TypeError as e:
+            logger.warning("Division in place is impossible: {0}".format(e))
+            if allow_cast:
+                self.y = self.y / ave
+            else:
+                logger.error("Division in place impossible - allow_cast flag set to True should help")
+                raise e
 
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))

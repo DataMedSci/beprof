@@ -74,6 +74,16 @@ class TestCurveRescale(TestCase):
         self.assertTrue(np.isinf(self.test_curve.y[1]))
         self.assertTrue(np.isinf(self.test_curve.y[2]))
 
+    def test_rescale_integer_array(self):
+        c = Curve([[0, 0], [5, 5], [10, 10]], dtype=np.int)
+        # should raise: TypeError: ufunc 'divide' output (typecode 'd') could not be coerced to provided output
+        # parameter (typecode 'l') according to the casting rule ''same_kind''
+        with self.assertRaises(TypeError):
+            c.rescale(1.5, allow_cast=False)
+        # floor division
+        c.rescale(1.5, allow_cast=True)
+        self.assertTrue(np.array_equal(c.y, [0, 3, 6]))
+
 
 class TestCurveSmooth(TestCase):
     def setUp(self):
@@ -141,11 +151,10 @@ class TestCurve(TestCase):
     def test_rebinned(self):
         new_c = self.c.rebinned(step=1)
         self.assertTrue(np.array_equal(new_c.x, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
-        # todo: probably something wrong with fixp, they both throw ValueError
-        # new_c = self.c.rebinned(step=2, fixp=15)
-        # self.assertTrue(np.array_equal(new_c.x, [1, 3, 5, 7, 9]))
-        # new_c = self.c.rebinned(step=2, fixp=-5)
-        # self.assertTrue(np.array_equal(new_c.x, [-1, 1, 3, 5, 7, 9]))
+        new_c = self.c.rebinned(step=2, fixp=15)
+        self.assertTrue(np.array_equal(new_c.x, [1, 3, 5, 7, 9]))
+        new_c = self.c.rebinned(step=2, fixp=0.5)
+        self.assertTrue(np.array_equal(new_c.x, [0.5, 2.5, 4.5, 6.5, 8.5]))
 
     def test_evaluate_at_x(self):
         # test inside and outside domain
