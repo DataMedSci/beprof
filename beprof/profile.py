@@ -162,7 +162,7 @@ class Profile(curve.Curve):
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))
         ret = curve.Curve.__str__(self)
-        ret += "\n FWHM = {:2.3f}".format(self.fwhm)
+        ret += "\nFWHM = {:2.3f}".format(self.fwhm)
         return ret
 
 

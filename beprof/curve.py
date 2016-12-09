@@ -277,9 +277,10 @@ class Curve(np.ndarray):
 
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))
+        # explicit cast of self.x.min and other is needed to prevent formatting exception
         ret = "shape: {}".format(self.shape) + \
-              "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
-              "\nY : [{:4.6f},{:4.6f}]".format(min(self.y), max(self.y)) + \
+              "\nX : [{:4.3f},{:4.3f}]".format(float(self.x.min()), float(self.x.max())) + \
+              "\nY : [{:4.6f},{:4.6f}]".format(float(self.y.min()), float(self.y.max())) + \
               "\nMetadata : " + str(self.metadata)
         return ret
 
