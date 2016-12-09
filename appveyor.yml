@@ -39,7 +39,7 @@ install:
   - activate python%PYTHON_VERSION%
   - python -V
   - conda install -q --name python%PYTHON_VERSION% setuptools wheel numpy scipy
-  - pip install -r tests/requirements-test.txt
+  - pip install -r beprof/tests/requirements-test.txt
   - pip install -r requirements.txt
 
 before_test:
