@@ -138,6 +138,12 @@ class Profile(curve.Curve):
         to True, division not in place and casting may occur.
         If division in place is not possible and allow_cast is False
         an exception is raised.
+
+        >>> a = Profile([[0, 0], [1, 5], [2, 10], [3, 5], [4, 0]])
+        >>> a.normalize(1, allow_cast=True)
+        >>> print(a.y)
+        [ 0.  2.  4.  2.  0.]
+
         :param dt:
         :param allow_cast:
         """
@@ -157,7 +163,7 @@ class Profile(curve.Curve):
                 self.y = self.y / ave
             else:
                 logger.error("Division in place impossible - allow_cast flag set to True should help")
-                raise e
+                raise
 
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))
