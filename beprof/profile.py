@@ -17,7 +17,7 @@ class Profile(curve.Curve):
     def __new__(cls, input_array, axis=None, **meta):
         logger.info('Creating Profile object, metadata is: {0}'.format(meta))
         # input_array shape control provided in Curve class
-        new = super().__new__(cls, input_array, **meta)
+        new = super(Profile, cls).__new__(cls, input_array, **meta)
         if axis is None:
             new.axis = getattr(input_array, 'axis', None)
         else:
@@ -132,24 +132,43 @@ class Profile(curve.Curve):
         """
         return self.width(0.5 * np.max(self.y))
 
-    def normalize(self, dt):
+    def normalize(self, dt, allow_cast=True):
         """
-        Normalize to 1 over [-dt, +dt] area
+        Normalize to 1 over [-dt, +dt] area, if allow_cast is set
+        to True, division not in place and casting may occur.
+        If division in place is not possible and allow_cast is False
+        an exception is raised.
+
+        >>> a = Profile([[0, 0], [1, 5], [2, 10], [3, 5], [4, 0]])
+        >>> a.normalize(1, allow_cast=True)
+        >>> print(a.y)
+        [ 0.  2.  4.  2.  0.]
+
         :param dt:
-        :return:
+        :param allow_cast:
         """
+        if dt <= 0:
+            raise ValueError("Expected positive input")
         logger.info('Running {0}.normalize(dt={1})'.format(self.__class__, dt))
         try:
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
             logger.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
-            raise Exception("Scaling factor error:\n" + str(e))
-        self.y /= ave
+            raise Exception("Scaling factor error: {0}".format(e))
+        try:
+            self.y /= ave
+        except TypeError as e:
+            logger.warning("Division in place is impossible: {0}".format(e))
+            if allow_cast:
+                self.y = self.y / ave
+            else:
+                logger.error("Division in place impossible - allow_cast flag set to True should help")
+                raise
 
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))
-        ret = super().__str__()
-        ret += "\n FWHM = {:2.3f}".format(self.fwhm)
+        ret = curve.Curve.__str__(self)
+        ret += "\nFWHM = {:2.3f}".format(self.fwhm)
         return ret
 
 

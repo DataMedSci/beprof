@@ -38,7 +38,10 @@ class Curve(np.ndarray):
                     does not include the new one.
     """
 
-    def __new__(cls, input_array, **meta):
+    def __new__(cls, input_array, dtype=np.float, order='C', **meta):
+        # we don't know much about input_array and if it has the attribute .shape,
+        # so to avoid AttributeError we use np.shape(input_array)
+        # e.g. np.shape('whatever') returns ()
         shape = np.shape(input_array)
         logger.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
         if shape[1] != 2 and shape[1] != 3:
@@ -47,7 +50,7 @@ class Curve(np.ndarray):
                          'np.shape(input_array_[1] must be either 2 or 3.')
             raise IndexError('Invalid format of input_array - ' 'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
 
-        obj = np.asarray(input_array).view(cls)
+        obj = np.asarray(input_array, dtype=dtype, order=order).view(cls)
         if meta is None:
             obj.metadata = {}
         else:
@@ -75,8 +78,42 @@ class Curve(np.ndarray):
     def y(self, value):
         self[:, 1] = value
 
-    def rescale(self, factor=1.0):
-        self.y /= factor
+    def rescale(self, factor=1.0, allow_cast=True):
+        """
+        Rescales self.y by given factor, if allow_cast is set to True
+        and division in place is impossible - casting and not in place
+        division may occur occur. If in place is impossible and allow_cast
+        is set to False - an exception is raised.
+
+        Check simple rescaling by 2 with no casting
+        >>> c = Curve([[0, 0], [5, 5], [10, 10]], dtype=np.float)
+        >>> c.rescale(2, allow_cast=False)
+        >>> print(c.y)
+        [ 0.   2.5  5. ]
+
+        Check rescaling with floor division
+        >>> c = Curve([[0, 0], [5, 5], [10, 10]], dtype=np.int)
+        >>> c.rescale(1.5, allow_cast=True)
+        >>> print(c.y)
+        [0 3 6]
+
+        >>> c = Curve([[0, 0], [5, 5], [10, 10]], dtype=np.int)
+        >>> c.rescale(-1, allow_cast=False)
+        >>> print(c.y)
+        [  0  -5 -10]
+
+        :param factor: rescaling factor, should be a number
+        :param allow_cast: bool - allow division not in place
+        """
+        try:
+            self.y /= factor
+        except TypeError as e:
+            logger.warning("Division in place is impossible: {0}".format(e))
+            if allow_cast:
+                self.y = self.y / factor
+            else:
+                logger.error("allow_cast flag set to True should help")
+                raise
 
     def smooth(self, window=3):
         self.y = functions.medfilt(self.y, window)
@@ -113,7 +150,14 @@ class Curve(np.ndarray):
             raise ValueError('in change_domain():' 'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
-        obj = self.__class__(np.stack((domain, y), axis=1), **self.__dict__['metadata'])
+        # We need to join together domain and values (y) because we are recreating Curve object
+        # (we pass it as argument to self.__class__)
+        # np.dstack((arrays), axis=1) joins given arrays like np.dstack() but it also nests the result
+        # in additional list and this is the reason why we use [0] to remove this extra layer of list like this:
+        # np.dstack([[0, 5, 10], [0, 0, 0]]) gives [[[ 0,  0], [ 5,  0], [10,  0]]] so use dtack()[0]
+        # to get this: [[0,0], [5, 5], [10, 0]]
+        # which is a 2 dimensional array and can be used to create a new Curve object
+        obj = self.__class__(np.dstack((domain, y))[0], **self.__dict__['metadata'])
         return obj
 
     def rebinned(self, step=0.1, fixp=0):
@@ -199,10 +243,13 @@ class Curve(np.ndarray):
         DataSet([-1.,  0.,  1.,  0.])
 
         Try using wrong inputs to create a new object,
-        and check whether it is None as expected:
+        and check whether it throws an exception:
         >>> Curve([[0, 0], [1, 1], [2, 2], [3, 1]]).subtract(\
             Curve([[1, -1], [2, -1]]), new_obj=True) is None
-        True
+        Traceback (most recent call last):
+        ...
+        Exception: curve2 does not include self domain
+
 
         :param curve2: second object to calculate difference
         :param new_obj: if True, method is creating new object
@@ -217,9 +264,8 @@ class Curve(np.ndarray):
 
         # check whether domain condition is satisfied
         if a2 > a1 or b2 < b1:
-            logger.error('curve2 domain does not include self domain')
-            # todo: raise exception
-            return None
+            logger.error("Domain of self must be in domain of given curve")
+            raise Exception("curve2 does not include self domain")
         # if we want to create and return a new object
         # rather then modify existing one
         if new_obj:
@@ -230,9 +276,10 @@ class Curve(np.ndarray):
 
     def __str__(self):
         logger.info('Running {0}.__str__'.format(self.__class__))
+        # explicit cast of self.x.min and other is needed to prevent formatting exception
         ret = "shape: {}".format(self.shape) + \
-              "\nX : [{:4.3f},{:4.3f}]".format(min(self.x), max(self.x)) + \
-              "\nY : [{:4.6f},{:4.6f}]".format(min(self.y), max(self.y)) + \
+              "\nX : [{:4.3f},{:4.3f}]".format(float(self.x.min()), float(self.x.max())) + \
+              "\nY : [{:4.6f},{:4.6f}]".format(float(self.y.min()), float(self.y.max())) + \
               "\nMetadata : " + str(self.metadata)
         return ret
 

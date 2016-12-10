@@ -3,11 +3,11 @@
   include *.py
   include LICENSE
   include requirements.txt
-  include tests/requirements-test.txt
+  include beprof/tests/requirements-test.txt
   recursive-include docs *.py
   recursive-include docs *.rst
   recursive-include beprof *.py
-  recursive-include tests *.py
+  recursive-include beprof/tests *.py
   include versioneer.py
   include beprof/_version.py
   include wercker.yml
