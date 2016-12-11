@@ -767,6 +767,8 @@ test_archlinux_pip:
     - script:
         name: prerequisites
         code: |
+          pacman --noconfirm -S archlinux-keyring
+          pacman -Syyu
           pacman --noconfirm -S python2-pip python-pip openssl
           python2 -V
           pip2 -V
