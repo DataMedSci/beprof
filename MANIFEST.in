@@ -11,6 +11,7 @@
   include versioneer.py
   include beprof/_version.py
   include wercker.yml
+  include pytest.ini
 
   exclude .gitkeep
   exclude .gitconfig
@@ -19,4 +20,3 @@
   exclude appveyor.yml
   prune .travis
   prune install_deps.sh
-

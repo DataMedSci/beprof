@@ -118,7 +118,7 @@ setuptools.setup(
     test_suite='beprof.tests',
     url='https://github.com/DataMedSci/beprof',
     license='GPL',
-    author=['Leszek Grzanka', 'Mateusz Krakowski', 'ant6'],
+    author=['Leszek Grzanka', 'Mateusz Krakowski', 'Agnieszka Rudnicka'],
     author_email='grzanka@agh.edu.pl',
     description='Beam Profile Analysing Tools',
     long_description=readme + '\n',
