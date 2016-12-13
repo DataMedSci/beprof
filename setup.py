@@ -1,4 +1,5 @@
 import setuptools
+import sys
 from pkg_resources import parse_version
 
 
@@ -111,6 +112,10 @@ def get_cmdclass():
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
+# requiring pytest-runner only when pytest is invoked
+needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if needs_pytest else []
+
 setuptools.setup(
     name='beprof',
     version=get_version(),
@@ -148,5 +153,7 @@ setuptools.setup(
     install_requires=[
         'numpy>=1.8.0',
     ],
+    setup_requires=[] + pytest_runner,
+    tests_require=['pytest'],
     cmdclass=get_cmdclass()
 )
