@@ -98,7 +98,7 @@ class Curve(np.ndarray):
         [0 3 6]
 
         >>> c = Curve([[0, 0], [5, 5], [10, 10]], dtype=np.int)
-        >>> c.rescale(-1, allow_cast=False)
+        >>> c.rescale(-1, allow_cast=True)
         >>> print(c.y)
         [  0  -5 -10]
 
