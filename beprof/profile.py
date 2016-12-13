@@ -10,8 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Profile(curve.Curve):
     """
-    General profile characterized by rising and falling edge
-    Might be depth profile (along Z axis) or lateral profile (X or Y scan)
+    General profile characterized by rising and falling edge (X or Y scan)
     """
 
     def __new__(cls, input_array, axis=None, **meta):

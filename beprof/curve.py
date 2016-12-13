@@ -33,7 +33,7 @@ class Curve(np.ndarray):
     Raises:
         IndexError: this can happen when user is trying to create new Curve
                     object but uses incorrect array of points to initialise it.
-                    Input array should be 2D or 3D (shape: (X, 2) or (X, 3)).
+                    Input array should be 2D (shape: (X, 2)).
         ValueError: in change domain function: when the old domain
                     does not include the new one.
     """
@@ -44,11 +44,11 @@ class Curve(np.ndarray):
         # e.g. np.shape('whatever') returns ()
         shape = np.shape(input_array)
         logger.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
-        if shape[1] != 2 and shape[1] != 3:
+        if shape[1] != 2:
             logger.error('Creating Curve object failed.'
-                         'Input array must be an 2D or 3D array\n'
-                         'np.shape(input_array_[1] must be either 2 or 3.')
-            raise IndexError('Invalid format of input_array - ' 'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
+                         'Input array must be an 2D array\n'
+                         'np.shape(input_array_[1] must be 2.')
+            raise IndexError('Invalid format of input_array - ' 'shape is {0}, must be (X, 2)'.format(shape))
 
         obj = np.asarray(input_array, dtype=dtype, order=order).view(cls)
         if meta is None:
