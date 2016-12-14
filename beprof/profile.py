@@ -10,12 +10,11 @@ logger = logging.getLogger(__name__)
 
 class Profile(curve.Curve):
     """
-    General profile characterized by rising and falling edge
-    Might be depth profile (along Z axis) or lateral profile (X or Y scan)
+    General profile characterized by rising and falling edge.
     """
 
     def __new__(cls, input_array, axis=None, **meta):
-        logger.info('Creating Profile object, metadata is: {0}'.format(meta))
+        logger.info('Creating Profile object, metadata is: %s', meta)
         # input_array shape control provided in Curve class
         new = super(Profile, cls).__new__(cls, input_array, **meta)
         if axis is None:
@@ -74,7 +73,8 @@ class Profile(curve.Curve):
         :param reverse: boolean value - direction of lookup
         :return: x value corresponding to given y or NaN if not found
         """
-        logger.info('Running {0}.y_at_x(y={1}, reverse={2})'.format(self.__class__, y, reverse))
+        logger.info('Running %(name)s.y_at_x(y=%(y)s, reverse=%(rev)s)',
+                    {"name": self.__class__, "y": y, "rev": reverse})
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
         if reverse:
@@ -149,16 +149,16 @@ class Profile(curve.Curve):
         """
         if dt <= 0:
             raise ValueError("Expected positive input")
-        logger.info('Running {0}.normalize(dt={1})'.format(self.__class__, dt))
+        logger.info('Running %(name)s.normalize(dt=%(dt)s)', {"name": self.__class__, "dt": dt})
         try:
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
-            logger.error('in normalize(). self class is {0}, dt={1}'.format(self.__class__, dt))
+            logger.error('in normalize(). self class is %(name)s, dt=%(dt)s', {"name": self.__class__, "dt": dt})
             raise Exception("Scaling factor error: {0}".format(e))
         try:
             self.y /= ave
         except TypeError as e:
-            logger.warning("Division in place is impossible: {0}".format(e))
+            logger.warning("Division in place is impossible: %s", e)
             if allow_cast:
                 self.y = self.y / ave
             else:
@@ -166,7 +166,7 @@ class Profile(curve.Curve):
                 raise
 
     def __str__(self):
-        logger.info('Running {0}.__str__'.format(self.__class__))
+        logger.info('Running %s.__str__', self.__class__)
         ret = curve.Curve.__str__(self)
         ret += "\nFWHM = {:2.3f}".format(self.fwhm)
         return ret

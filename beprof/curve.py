@@ -33,7 +33,7 @@ class Curve(np.ndarray):
     Raises:
         IndexError: this can happen when user is trying to create new Curve
                     object but uses incorrect array of points to initialise it.
-                    Input array should be 2D or 3D (shape: (X, 2) or (X, 3)).
+                    Input array should be 2D (shape: (X, 2)).
         ValueError: in change domain function: when the old domain
                     does not include the new one.
     """
@@ -43,12 +43,11 @@ class Curve(np.ndarray):
         # so to avoid AttributeError we use np.shape(input_array)
         # e.g. np.shape('whatever') returns ()
         shape = np.shape(input_array)
-        logger.info('Creating Curve object of shape {0} metadata is: {1}'.format(shape, meta))
-        if shape[1] != 2 and shape[1] != 3:
-            logger.error('Creating Curve object failed.'
-                         'Input array must be an 2D or 3D array\n'
-                         'np.shape(input_array_[1] must be either 2 or 3.')
-            raise IndexError('Invalid format of input_array - ' 'shape is {0}, must be (X, 2) or (X, 3)'.format(shape))
+        logger.info('Creating Curve object of shape %(sh)s metadata is: %(meta)s', {"sh": shape, "meta": meta})
+        if shape[1] != 2:
+            logger.error('Creating Curve object failed. Input array must be an 2D array\n'
+                         'and np.shape(input_array_[1] must be 2.')
+            raise IndexError('Invalid format of input_array - ' 'shape is %s, must be (X, 2)' % str(shape))
 
         obj = np.asarray(input_array, dtype=dtype, order=order).view(cls)
         if meta is None:
@@ -108,7 +107,7 @@ class Curve(np.ndarray):
         try:
             self.y /= factor
         except TypeError as e:
-            logger.warning("Division in place is impossible: {0}".format(e))
+            logger.warning("Division in place is impossible: %s", e)
             if allow_cast:
                 self.y = self.y / factor
             else:
@@ -139,14 +138,14 @@ class Curve(np.ndarray):
             Might be a list or np.array.
         :return: new Curve object with domain set by 'domain' parameter
         """
-        logger.info('Running {0}.change_domain() with new domain range:'
-                    ' [{1}, {2}]'.format(self.__class__, np.min(domain), np.max(domain)))
+        logger.info('Running %(name)s.change_domain() with new domain range:[%(ymin)s, %(ymax)s]',
+                    {"name": self.__class__, "ymin": np.min(domain), "ymax": np.max(domain)})
 
         # check if new domain includes in the original domain
         if np.max(domain) > np.max(self.x) or np.min(domain) < np.min(self.x):
-            logger.error('Old domain range: [{0}, {1}] does not include '
-                         'new domain range: [{2}, {3}]'
-                         .format(np.min(self.x), np.max(self.x), np.min(domain), np.max(domain)))
+            logger.error('Old domain range: [%(xmin)s, %(xmax)s] does not include new domain range:'
+                         '[%(ymin)s, %(ymax)s]', {"xmin": np.min(self.x), "xmax": np.max(self.x),
+                                                  "ymin": np.min(domain), "ymax": np.max(domain)})
             raise ValueError('in change_domain():' 'the old domain does not include the new one')
 
         y = np.interp(domain, self.x, self.y)
@@ -178,7 +177,8 @@ class Curve(np.ndarray):
         :return: new Curve object with domain specified by
             step and fixp parameters
         """
-        logger.info('Running {0}.rebinned(step={1}, fixp={2})'.format(self.__class__, step, fixp))
+        logger.info('Running %(name)s.rebinned(step=%(st)s, fixp=%(fx)s)',
+                    {"name": self.__class__, "st": step, "fx": fixp})
         a, b = (np.min(self.x), np.max(self.x))
         count_start = abs(fixp - a) / step
         count_stop = abs(fixp - b) / step
@@ -275,7 +275,7 @@ class Curve(np.ndarray):
         return None
 
     def __str__(self):
-        logger.info('Running {0}.__str__'.format(self.__class__))
+        logger.info('Running %s.__str__', self.__class__)
         # explicit cast of self.x.min and other is needed to prevent formatting exception
         ret = "shape: {}".format(self.shape) + \
               "\nX : [{:4.3f},{:4.3f}]".format(float(self.x.min()), float(self.x.max())) + \

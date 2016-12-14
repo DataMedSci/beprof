@@ -75,7 +75,7 @@ Overv.io issue board: https://overv.io/DataMedSci/beprof/
 Beam Profile Analysing Tools
 
 Library provides methods to work with Beam Profiles which are sets of points
-(might be 2-D or 3-D also with extra metadata) sorted by one of coordinates.
+(2-D with optional metadata) sorted by one of coordinates.
 cd
 beprof is based on nparray class from numpy, and it provides
 numerous tools for different computations and data analysis.
