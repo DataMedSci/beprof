@@ -73,7 +73,7 @@ class Profile(curve.Curve):
         :param reverse: boolean value - direction of lookup
         :return: x value corresponding to given y or NaN if not found
         """
-        logger.info('Running %(name)s.y_at_x(y=%(y)s, reverse=%(rev)s)' %
+        logger.info('Running %(name)s.y_at_x(y=%(y)s, reverse=%(rev)s)',
                     {"name": self.__class__, "y": y, "rev": reverse})
         # positive or negative direction handles
         x_handle, y_handle = self.x, self.y
@@ -149,16 +149,16 @@ class Profile(curve.Curve):
         """
         if dt <= 0:
             raise ValueError("Expected positive input")
-        logger.info('Running %(name)s.normalize(dt=%(dt)s)' % {"name": self.__class__, "dt": dt})
+        logger.info('Running %(name)s.normalize(dt=%(dt)s)', {"name": self.__class__, "dt": dt})
         try:
             ave = np.average(self.y[np.fabs(self.x) <= dt])
         except RuntimeWarning as e:
-            logger.error('in normalize(). self class is %(name)s, dt=%(dt)s' % {"name": self.__class__, "dt": dt})
+            logger.error('in normalize(). self class is %(name)s, dt=%(dt)s', {"name": self.__class__, "dt": dt})
             raise Exception("Scaling factor error: {0}".format(e))
         try:
             self.y /= ave
         except TypeError as e:
-            logger.warning("Division in place is impossible: %s" % e)
+            logger.warning("Division in place is impossible: %s", e)
             if allow_cast:
                 self.y = self.y / ave
             else:
@@ -166,7 +166,7 @@ class Profile(curve.Curve):
                 raise
 
     def __str__(self):
-        logger.info('Running %s.__str__' % self.__class__)
+        logger.info('Running %s.__str__', self.__class__)
         ret = curve.Curve.__str__(self)
         ret += "\nFWHM = {:2.3f}".format(self.fwhm)
         return ret
