@@ -24,7 +24,7 @@ index-servers =
     pypi
 
 [pypi]
-repository: https://upload.pypi.org/legacy
+repository: https://upload.pypi.org/legacy/
 username: ${PYPIUSER}
 password: ${PYPIPASS}
 pypirc
