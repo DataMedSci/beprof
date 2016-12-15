@@ -716,7 +716,7 @@ test_archlinux_repo:
         name: prerequisites
         code: |
           pacman --noconfirm -S archlinux-keyring
-          pacman -Syyu
+          pacman --noconfirm -Syyu
           pacman --noconfirm -S python2-pip python-pip openssl
           python2 -V
           pip2 -V
@@ -768,7 +768,7 @@ test_archlinux_pip:
         name: prerequisites
         code: |
           pacman --noconfirm -S archlinux-keyring
-          pacman -Syyu
+          pacman --noconfirm -Syyu
           pacman --noconfirm -S python2-pip python-pip openssl
           python2 -V
           pip2 -V
