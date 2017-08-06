@@ -2,6 +2,7 @@ from beprof import profile
 from beprof import curve
 import numpy as np
 from matplotlib import pyplot as plt
+import math
 
 
 class CrosswiseProfile(profile.Profile):
@@ -11,6 +12,14 @@ class CrosswiseProfile(profile.Profile):
         else:
             return self.x_at_y(0.1, True)-self.x_at_y(0.9, True)
 
+    def field_ratio(self, level):
+        return self.width(level)/self.width(0.5)
+
+    def symmetry(self, level):
+        a = math.fabs(self.x_at_y(level, False))
+        b = math.fabs(self.x_at_y(level, True))
+        return (math.fabs(a-b)/(a+b)) * 200
+
     def normalize(self, dt):
         """
         Normalize to 1 over [-dt, +dt] area from the mid of the profile
@@ -19,8 +28,9 @@ class CrosswiseProfile(profile.Profile):
         a = a/2
         w = self.width(a)
         mid = self.x_at_y(a) + w/2
+        self.x = self.x-mid
         
-        ave = np.average(self.y[np.fabs(self.x - mid) <= dt])
+        ave = np.average(self.y[np.fabs(self.x) <= dt])
 
         self.y = self.y / ave
 
