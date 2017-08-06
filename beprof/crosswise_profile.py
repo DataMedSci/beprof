@@ -5,9 +5,11 @@ from matplotlib import pyplot as plt
 
 
 class CrosswiseProfile(profile.Profile):
-    def penumbra(self, type):
-        if type == 'left':
-            return 0
+    def penumbra(self, reverse=False):
+        if reverse:
+            return self.x_at_y(0.9)-self.x_at_y(0.1)
+        else:
+            return self.x_at_y(0.1, True)-self.x_at_y(0.9, True)
 
     def normalize(self, dt):
         """
