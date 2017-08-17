@@ -44,24 +44,24 @@ eval "$(pyenv init -)"
 # this is most time-consuming issue, now takes about 2 min
 case "${TOXENV}" in
         py32*)
-            pyenv install -s 3.2
-            pyenv global 3.2
+            pyenv install -s 3.2.6
+            pyenv global 3.2.6
             ;;
         py33*)
             pyenv install -s 3.3.6
             pyenv global 3.3.6
             ;;
         py34*)
-            pyenv install -s 3.4.4
-            pyenv global 3.4.4
+            pyenv install -s 3.4.7
+            pyenv global 3.4.7
             ;;
         py35*)
-            pyenv install -s 3.5.1
-            pyenv global 3.5.1
+            pyenv install -s 3.5.4
+            pyenv global 3.5.4
             ;;
         py36*)
-            pyenv install -s 3.6-dev
-            pyenv global 3.6-dev
+            pyenv install -s 3.6.2
+            pyenv global 3.6.2
             ;;
         *)
             exit 1

@@ -80,12 +80,12 @@ sudo: false
 
 
 install:
-  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then travis_wait bash ./.travis/install_linux.sh ; fi
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then travis_wait 60 bash ./.travis/install_osx.sh ; fi
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then travis_wait ./.travis/install_linux.sh ; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then travis_wait 60 ./.travis/install_osx.sh ; fi
 
 # if scipy is used, then installation from pip last longer than 10min, thus we add travis_wait
 script:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then travis_wait tox --notest && tox ; fi
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then travis_wait bash ./.travis/run_osx.sh ; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then travis_wait ./.travis/run_osx.sh ; fi
 # in case all previous commands in script section succeeded, run deploy (if tag is present)
-  - if [[ "$TRAVIS_TEST_RESULT" == "0" ]] && [[ $TRAVIS_TAG != "" ]] && [[ $TOXENV == "packaging" ]]; then bash .travis/deploy_package.sh pypi ; fi
+  - if [[ "$TRAVIS_TEST_RESULT" == "0" ]] && [[ $TRAVIS_TAG != "" ]] && [[ $TOXENV == "packaging" ]]; then .travis/deploy_package.sh pypi ; fi
