@@ -116,6 +116,11 @@ with open('README.rst') as readme_file:
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 
+# set specific numpy version for python 3.2 and 3.3
+numpy_version = 'numpy'
+if sys.version.major == 3 and sys.version.minor in (2, 3):
+    numpy_version = 'numpy<1.12'
+
 setuptools.setup(
     name='beprof',
     version=get_version(),
@@ -150,10 +155,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    install_requires=[
-        'numpy<1.12; python_version>="3.2" and python_version<"3.4"',
-        'numpy; python_version<"3.0" or python_version>="3.4"'
-    ],
+    install_requires=[numpy_version],
     setup_requires=[] + pytest_runner,
     tests_require=['pytest'],
     cmdclass=get_cmdclass()
