@@ -1,2 +1,2 @@
-numpy<1.12 ; python_version >= '3.2' and python_version < '3.4' # numpy starting from 1.12 doesn't support python 3.2 and 3.3
-numpy ; python_version < '3.0' or python_version >= '3.4' # newest numpy for python 2.7, 3.4 and higher
+numpy<1.12,>=1.8 ; python_version >= '3.2' and python_version < '3.4' # numpy starting from 1.12 doesn't support python 3.2 and 3.3
+numpy>=1.8 ; python_version < '3.0' or python_version >= '3.4' # newest numpy for python 2.7, 3.4 and higher
