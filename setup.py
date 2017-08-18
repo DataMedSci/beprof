@@ -118,7 +118,7 @@ pytest_runner = ['pytest-runner'] if needs_pytest else []
 
 # set specific numpy version for python 3.2 and 3.3
 numpy_version = 'numpy'
-if sys.version.major == 3 and sys.version.minor in (2, 3):
+if sys.version_info.major == 3 and sys.version_info.minor in (2, 3):
     numpy_version = 'numpy<1.12'
 
 setuptools.setup(
@@ -141,7 +141,16 @@ setuptools.setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
+        'Intended Audience :: Science/Research',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Scientific/Engineering :: Physics',
+
+        # OS and env
+        'Environment :: Console',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: Unix',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: MacOS',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
