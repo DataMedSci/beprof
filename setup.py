@@ -117,9 +117,14 @@ needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 
 # set specific numpy version for python 3.2 and 3.3
-numpy_version = 'numpy'
-if sys.version_info.major == 3 and sys.version_info.minor in (2, 3):
-    numpy_version = 'numpy<1.12'
+numpy_version = [
+    "numpy<1.12,>=1.8;python_version >= '3.2' and python_version < '3.4'",
+    "numpy>=1.8;python_version < '3.0' or python_version >= '3.4'"
+]
+
+# python 3.2 doesn't understand environment markers
+if sys.version_info.major == 3 and sys.version_info.minor == 2:
+    numpy_version = ['numpy<1.12']
 
 setuptools.setup(
     name='beprof',
@@ -164,7 +169,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    install_requires=[numpy_version],
+    install_requires=numpy_version,
     setup_requires=[] + pytest_runner,
     tests_require=['pytest'],
     cmdclass=get_cmdclass()

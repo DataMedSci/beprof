@@ -34,7 +34,7 @@ matrix:
           env: TOXENV=pep8
         - python: 3.4
           env: TOXENV=pep8
-        - python: 3.4
+        - python: 3.5
           env: TOXENV=packaging
 #    uncomment and adjust if you want to allow some failures
     allow_failures:
