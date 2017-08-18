@@ -116,6 +116,11 @@ with open('README.rst') as readme_file:
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 
+# set specific numpy version for python 3.2 and 3.3
+numpy_version = 'numpy'
+if sys.version_info.major == 3 and sys.version_info.minor in (2, 3):
+    numpy_version = 'numpy<1.12'
+
 setuptools.setup(
     name='beprof',
     version=get_version(),
@@ -123,7 +128,7 @@ setuptools.setup(
     test_suite='beprof.tests',
     url='https://github.com/DataMedSci/beprof',
     license='GPL',
-    author=['Leszek Grzanka', 'Mateusz Krakowski', 'Agnieszka Rudnicka'],
+    author='Leszek Grzanka, Mateusz Krakowski, Agnieszka Rudnicka',
     author_email='grzanka@agh.edu.pl',
     description='Beam Profile Analysing Tools',
     long_description=readme + '\n',
@@ -136,7 +141,16 @@ setuptools.setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
+        'Intended Audience :: Science/Research',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Scientific/Engineering :: Physics',
+
+        # OS and env
+        'Environment :: Console',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: Unix',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: MacOS',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
@@ -150,9 +164,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    install_requires=[
-        'numpy>=1.8.0',
-    ],
+    install_requires=[numpy_version],
     setup_requires=[] + pytest_runner,
     tests_require=['pytest'],
     cmdclass=get_cmdclass()
