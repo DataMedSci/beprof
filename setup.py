@@ -119,7 +119,7 @@ pytest_runner = ['pytest-runner'] if needs_pytest else []
 # set specific numpy version for python 3.2 and 3.3
 numpy_version = [
     "numpy<1.12,>=1.8;python_version >= '3.2' and python_version < '3.4'",
-    "numpy,>=1.8;python_version < '3.0' or python_version >= '3.4'"
+    "numpy>=1.8;python_version < '3.0' or python_version >= '3.4'"
 ]
 
 # python 3.2 doesn't understand environment markers
