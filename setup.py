@@ -123,7 +123,7 @@ setuptools.setup(
     test_suite='beprof.tests',
     url='https://github.com/DataMedSci/beprof',
     license='GPL',
-    author=['Leszek Grzanka', 'Mateusz Krakowski', 'Agnieszka Rudnicka'],
+    author='Leszek Grzanka, Mateusz Krakowski, Agnieszka Rudnicka',
     author_email='grzanka@agh.edu.pl',
     description='Beam Profile Analysing Tools',
     long_description=readme + '\n',
@@ -151,7 +151,8 @@ setuptools.setup(
         'Programming Language :: Python :: 3.6',
     ],
     install_requires=[
-        'numpy>=1.8.0',
+        'numpy<1.12; python_version>="3.2" and python_version<"3.4"',
+        'numpy; python_version<"3.0" or python_version>="3.4"'
     ],
     setup_requires=[] + pytest_runner,
     tests_require=['pytest'],
