@@ -21,26 +21,31 @@ def git_version():
         return out
 
     try:
-        out = _minimal_ext_cmd(['git', 'describe', '--tags', '--always'])
+        out = _minimal_ext_cmd(['git', 'describe', '--tags', '--long'])
         GIT_REVISION = out.strip().decode('ascii')
+        no_of_commits_since_last_tag = int(GIT_REVISION.split('-')[1])
+        tag_name = GIT_REVISION.split('-')[0][1:]
+        if no_of_commits_since_last_tag==0:
+            version = tag_name
+        else:
+            version = '{}+rev{}'.format(tag_name, no_of_commits_since_last_tag)
     except OSError:
-        GIT_REVISION = "Unknown"
-    return GIT_REVISION
+        version = "Unknown"
 
-def write_version_py(filename='beprof/version.py'):
+    return version
+
+
+def write_version_py(filename='beprof/__init__.py'):
     cnt = """
-# THIS FILE IS GENERATED FROM BEPROF SETUP.PY
-#
-version = '%(version)s'
-git_revision = '%(git_revision)s'
+__version__ = '%(version)s'
 """
 
     GIT_REVISION = git_version()
+    VERSION=GIT_REVISION[1:]
 
-    a = open(filename, 'w')
+    a = open(filename, 'a')
     try:
-        a.write(cnt % {'version': GIT_REVISION,
-                       'git_revision': GIT_REVISION})
+        a.write(cnt % {'version': GIT_REVISION})
     finally:
         a.close()
 
