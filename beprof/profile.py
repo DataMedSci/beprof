@@ -142,7 +142,7 @@ class Profile(curve.Curve):
         >>> a = Profile([[0, 0], [1, 5], [2, 10], [3, 5], [4, 0]])
         >>> a.normalize(1, allow_cast=True)
         >>> print(a.y)
-        [ 0.  2.  4.  2.  0.]
+        [0. 2. 4. 2. 0.]
 
         :param dt:
         :param allow_cast:
