@@ -8,8 +8,6 @@
   recursive-include docs *.rst
   recursive-include beprof *.py
   recursive-include beprof/tests *.py
-  include versioneer.py
-  include beprof/_version.py
   include wercker.yml
   include pytest.ini
 

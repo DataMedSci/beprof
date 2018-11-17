@@ -88,7 +88,7 @@ class Curve(np.ndarray):
         >>> c = Curve([[0, 0], [5, 5], [10, 10]], dtype=np.float)
         >>> c.rescale(2, allow_cast=False)
         >>> print(c.y)
-        [ 0.   2.5  5. ]
+        [0.  2.5 5. ]
 
         Check rescaling with floor division
         >>> c = Curve([[0, 0], [5, 5], [10, 10]], dtype=np.int)
@@ -132,7 +132,7 @@ class Curve(np.ndarray):
         Calculate y - values of example curve with changed domain:
         >>> print(Curve([[0,0], [5, 5], [10, 0]])\
             .change_domain([1, 2, 8, 9]).y)
-        [ 1.  2.  2.  1.]
+        [1. 2. 2. 1.]
 
         :param domain: set of points representing new domain.
             Might be a list or np.array.
@@ -208,13 +208,13 @@ class Curve(np.ndarray):
 
         Check the interpolation when arg in domain of self:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x([1, 2 ,3])
-        array([ 1.,  2.,  3.])
+        array([1., 2., 3.])
 
         Check if behavior of the method is correct when arg
         id partly outside the domain:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x(\
             [-1, 1, 2 ,3, 5], 100)
-        array([ 100.,    1.,    2.,    3.,  100.])
+        array([100.,   1.,   2.,   3., 100.])
 
         :param arg: x-value to calculate Y (may be an array or list as well)
         :param def_val: default value to return if can't interpolate at arg
