@@ -34,7 +34,7 @@ def medfilt(vector, window):
 
     The 'edge' case is a bit tricky...
     >>> print(medfilt(np.array([15., 1., 1., 1., 1.]), 3))
-    [ 15.   1.   1.   1.   1.]
+    [15.  1.  1.  1.  1.]
 
     Inspired by: https://gist.github.com/bhawkins/3535131
     """

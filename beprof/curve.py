@@ -214,7 +214,7 @@ class Curve(np.ndarray):
         id partly outside the domain:
         >>> Curve([[0, 0], [2, 2], [4, 4]]).evaluate_at_x(\
             [-1, 1, 2 ,3, 5], 100)
-        array([ 100.,    1.,    2.,    3.,  100.])
+        array([100.,   1.,   2.,   3., 100.])
 
         :param arg: x-value to calculate Y (may be an array or list as well)
         :param def_val: default value to return if can't interpolate at arg
