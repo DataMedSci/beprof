@@ -11,9 +11,9 @@ environment:
       PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7"
 
-    - platform: x64
-      PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4"
+#    - platform: x64
+#      PYTHON: "C:\\Python34"
+#      PYTHON_VERSION: "3.4"
 
 # until we fix code of example project, lets allow failure here
 #matrix:
@@ -34,7 +34,7 @@ install:
   - ps: If ($env:Platform -Match "x64") {$env:MINICONDAPATH="C:\Miniconda-x64"}
   - set PATH=%MINICONDAPATH%\Scripts;%PATH%
   - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
+#  - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
   - activate python%PYTHON_VERSION%
   - python -V
