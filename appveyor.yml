@@ -44,7 +44,6 @@ install:
 
 before_test:
   - python -c "import numpy as np;print(np.version.version)"
-  - python %MINICONDAPATH%\envs\python%PYTHON_VERSION%\scripts\versioneer install
 
 build: false
 

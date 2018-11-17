@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+ve#!/usr/bin/env bash
 
 set -x # Print command traces before executing command
 
