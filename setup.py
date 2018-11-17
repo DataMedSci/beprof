@@ -1,9 +1,50 @@
 import setuptools
 import sys
+import os
+import subprocess
 from pkg_resources import parse_version
 
-def get_version():
-    return None
+# Return the git revision as a string
+def git_version():
+    def _minimal_ext_cmd(cmd):
+        # construct minimal environment
+        env = {}
+        for k in ['SYSTEMROOT', 'PATH', 'HOME']:
+            v = os.environ.get(k)
+            if v is not None:
+                env[k] = v
+        # LANGUAGE is used on win32
+        env['LANGUAGE'] = 'C'
+        env['LANG'] = 'C'
+        env['LC_ALL'] = 'C'
+        out = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env).communicate()[0]
+        return out
+
+    try:
+        out = _minimal_ext_cmd(['git', 'describe', '--tags', '--always'])
+        GIT_REVISION = out.strip().decode('ascii')
+    except OSError:
+        GIT_REVISION = "Unknown"
+    return GIT_REVISION
+
+def write_version_py(filename='beprof/version.py'):
+    cnt = """
+# THIS FILE IS GENERATED FROM BEPROF SETUP.PY
+#
+version = '%(version)s'
+git_revision = '%(git_revision)s'
+"""
+
+    GIT_REVISION = git_version()
+
+    a = open(filename, 'w')
+    try:
+        a.write(cnt % {'version': GIT_REVISION,
+                       'git_revision': GIT_REVISION})
+    finally:
+        a.close()
+
+write_version_py()
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -24,7 +65,7 @@ if sys.version_info.major == 3 and sys.version_info.minor == 2:
 
 setuptools.setup(
     name='beprof',
-    version=get_version(),
+    version=git_version(),
     packages=['beprof', 'beprof.tests'],
     test_suite='beprof.tests',
     url='https://github.com/DataMedSci/beprof',
