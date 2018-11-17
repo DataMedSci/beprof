@@ -24,12 +24,15 @@ def git_version():
         out = _minimal_ext_cmd(['git', 'describe', '--tags', '--long'])
         GIT_REVISION = out.strip().decode('ascii')
         print('GIT_REVISION', GIT_REVISION)
-        no_of_commits_since_last_tag = int(GIT_REVISION.split('-')[1])
-        tag_name = GIT_REVISION.split('-')[0][1:]
-        if no_of_commits_since_last_tag==0:
-            version = tag_name
+        if GIT_REVISION:
+            no_of_commits_since_last_tag = int(GIT_REVISION.split('-')[1])
+            tag_name = GIT_REVISION.split('-')[0][1:]
+            if no_of_commits_since_last_tag==0:
+                version = tag_name
+            else:
+                version = '{}+rev{}'.format(tag_name, no_of_commits_since_last_tag)
         else:
-            version = '{}+rev{}'.format(tag_name, no_of_commits_since_last_tag)
+            version = "Unknown"
     except OSError:
         version = "Unknown"
 
